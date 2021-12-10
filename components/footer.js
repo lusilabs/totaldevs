@@ -22,7 +22,7 @@ export default function Footer () {
       </div>
       <div className='container mx-auto px-4'>
         <div className='flex flex-wrap'>
-          <div className='w-full lg:w-6/12 px-4'>
+          {/* <div className='w-full lg:w-6/12 px-4'>
             <h4 className='text-3xl font-semibold'>
               Let's keep in touch!
             </h4>
@@ -55,7 +55,7 @@ export default function Footer () {
                 <i className='flex fab fa-github' />
               </button>
             </div>
-          </div>
+          </div> */}
           <div className='w-full lg:w-6/12 px-4'>
             <div className='flex flex-wrap items-top mb-6'>
               <div className='w-full lg:w-4/12 px-4 ml-auto'>
@@ -77,20 +77,6 @@ export default function Footer () {
                     >Blog
                     </a>
                   </li>
-                  <li>
-                    <a
-                      className='text-gray-700 hover:text-gray-900 font-semibold block pb-2 text-sm'
-                      href='https://www.github.com/creativetimofficial'
-                    >Github
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      className='text-gray-700 hover:text-gray-900 font-semibold block pb-2 text-sm'
-                      href='https://www.creative-tim.com/bootstrap-themes/free'
-                    >Free Products
-                    </a>
-                  </li>
 
                 </ul>
               </div>
@@ -99,13 +85,7 @@ export default function Footer () {
                   Other Resources
                 </span>
                 <ul className='list-unstyled'>
-                  <li>
-                    <a
-                      className='text-gray-700 hover:text-gray-900 font-semibold block pb-2 text-sm'
-                      href='https://github.com/creativetimofficial/argon-design-system/blob/master/LICENSE.md'
-                    >MIT License
-                    </a>
-                  </li>
+
                   <li>
                     <a
                       className='text-gray-700 hover:text-gray-900 font-semibold block pb-2 text-sm'
@@ -120,13 +100,7 @@ export default function Footer () {
                     >Privacy Policy
                     </a>
                   </li>
-                  <li>
-                    <a
-                      className='text-gray-700 hover:text-gray-900 font-semibold block pb-2 text-sm'
-                      href='https://creative-tim.com/contact-us'
-                    >Contact Us
-                    </a>
-                  </li>
+
                 </ul>
 
               </div>
@@ -136,15 +110,7 @@ export default function Footer () {
         <hr className='my-6 border-gray-400' />
         <div className='flex flex-wrap items-center md:justify-between justify-center'>
           <div className='w-full md:w-4/12 px-4 mx-auto text-center'>
-            <div className='text-sm text-gray-600 font-semibold py-1'>
-              Copyright © {new Date().getFullYear()}{' '}Tailwind Starter Kit by{' '}
-              <a
-                href='https://www.creative-tim.com'
-                className='text-gray-600 hover:text-gray-900'
-              >
-                Creative Tim
-              </a>.
-            </div>
+            <div className='text-sm text-gray-600 font-semibold py-1' />
           </div>
         </div>
       </div>

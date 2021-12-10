@@ -4,7 +4,7 @@ import Footer from '@/components/footer.js'
 export default function Landing () {
   return (
     <>
-      <Nav transparent />
+      <Nav />
       <main>
         <div
           className='relative pt-16 pb-32 flex content-center items-center justify-center'
@@ -20,19 +20,22 @@ export default function Landing () {
           >
             <span id='blackOverlay' className='w-full h-full absolute opacity-75 bg-black' />
           </div>
-          <div className='container relative mx-auto'>
+          <div className='container relative'>
             <div className='items-center flex flex-wrap'>
-              <div className='w-full lg:w-6/12 px-4 ml-auto mr-auto text-center'>
-                <div className='pr-12'>
-                  <h1 className='text-white font-semibold text-5xl'>
-                    Your story starts with us.
-                  </h1>
-                  <p className='mt-4 text-lg text-gray-300'>
-                    This is a simple example of a Landing Page you can build
-                    using Tailwind Starter Kit. It features multiple CSS
-                    components based on the Tailwindcss design system.
-                  </p>
-                </div>
+              <div className='w-full lg:w-6/12 px-4 m-auto text-center'>
+                <h1 className='text-white font-semibold text-5xl'>
+                  Totally committed to helping you.
+                </h1>
+                <p className='mt-4 text-lg text-gray-300'>
+                  An exclusive community of professional developers, with proven results globally.
+                </p>
+                <button
+                  className='bg-blue-800 text-white hover:bg-gray-700 text-sm font-bold uppercase px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 mt-12'
+                  type='button'
+                  style={{ transition: 'all .50s ease' }}
+                >
+                  Work with us.
+                </button>
               </div>
 
             </div>
@@ -268,7 +271,7 @@ export default function Landing () {
             <div className='flex flex-wrap justify-center text-center mb-24'>
               <div className='w-full lg:w-6/12 px-4'>
                 <h2 className='text-4xl font-semibold'>
-                  Here are our heroes
+                  Available devs
                 </h2>
                 <p className='text-lg leading-relaxed m-4 text-gray-600'>
                   According to the National Oceanic and Atmospheric
@@ -459,7 +462,7 @@ export default function Landing () {
             <div className='flex flex-wrap text-center justify-center'>
               <div className='w-full lg:w-6/12 px-4'>
                 <h2 className='text-4xl font-semibold text-white'>
-                  Build something
+                  Need something built?
                 </h2>
                 <p className='text-lg leading-relaxed mt-4 mb-4 text-gray-500'>
                   Put the potentially record low maximum sea ice extent tihs year down to low ice.
