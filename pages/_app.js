@@ -7,7 +7,7 @@ function MyApp ({ Component, pageProps }) {
       <Head>
         <script type='text/javascript' src='tawk.js' />
         <link rel='icon' href='totaldevs-logo.png' />
-        <meta name='totalves' content='&nbsp;' />
+        <meta name='totaldevs' content='&nbsp;' />
         <title>totaldevs</title>
       </Head>
       <Component {...pageProps} />
