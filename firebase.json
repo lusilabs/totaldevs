@@ -6,6 +6,10 @@
     "rules": "firestore.rules",
     "indexes": "firestore.indexes.json"
   },
+  "functions": {
+    "predeploy": [],
+    "source": "functions"
+  },
   "hosting": {
     "public": "out",
     "ignore": [
@@ -25,27 +29,36 @@
   },
   "emulators": {
     "auth": {
+      "host": "127.0.0.1",
       "port": 9099
     },
     "functions": {
+      "host": "127.0.0.1",
       "port": 5001
     },
     "firestore": {
+      "host": "127.0.0.1",
       "port": 8080
     },
     "database": {
+      "host": "127.0.0.1",
       "port": 9000
     },
     "hosting": {
+      "host": "127.0.0.1",
       "port": 5000
     },
     "pubsub": {
+      "host": "127.0.0.1",
       "port": 8085
     },
     "storage": {
+      "host": "127.0.0.1",
       "port": 9199
     },
     "ui": {
+      "host": "127.0.0.1",
+      "port": 9200,
       "enabled": true
     }
   },

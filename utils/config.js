@@ -8,14 +8,14 @@ import dynamic from 'next/dynamic'
 const { initializeAppCheck, ReCaptchaV3Provider } = require('firebase/app-check')
 
 const firebaseConfig = {
-  apiKey: 'AIzaSyBeT-KuLZkrUmQFdM38ErfGK8ys3iT_9eg',
-  authDomain: 'test1-1755d.firebaseapp.com',
-  databaseURL: 'https://test1-1755d-default-rtdb.firebaseio.com',
-  projectId: 'test1-1755d',
-  storageBucket: 'test1-1755d.appspot.com',
-  messagingSenderId: '787081418223',
-  appId: '1:787081418223:web:63574a0ff24df93736521a',
-  measurementId: 'G-E35TKW925G'
+  apiKey: 'AIzaSyBQLzw03hc8LWVv_JKdehpaUivJ-_9xxoE',
+  authDomain: 'totaldevs-25387.firebaseapp.com',
+  databaseURL: 'https://totaldevs-25387-default-rtdb.firebaseio.com',
+  projectId: 'totaldevs-25387',
+  storageBucket: 'totaldevs-25387.appspot.com',
+  messagingSenderId: '943127804670',
+  appId: '1:943127804670:web:509db05b1d73f9327143af',
+  measurementId: 'G-57SYGXKGKG'
 }
 
 const app = initializeApp(firebaseConfig)

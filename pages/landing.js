@@ -1,8 +1,15 @@
 import Nav from '@/components/nav.js'
 import Footer from '@/components/footer.js'
 import '@fortawesome/fontawesome-free/css/all.css'
+import { db } from '@/utils/config'
+import { getAnalytics, logEvent } from 'firebase/analytics'
+import { useEffect } from 'react'
 
 export default function Landing () {
+  useEffect(() => {
+    const analytics = getAnalytics()
+    logEvent(analytics, 'User visiting.')
+  }, [])
   return (
     <>
       <Nav />

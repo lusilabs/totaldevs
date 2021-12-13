@@ -4,15 +4,15 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "all": "next dev & yarn emulators & yarn stripe",
+    "all": "next dev & npm run emulators & npm run stripe",
     "_emulators": "lsof -ti:5000,5001,9099,8080,9000,8085,9199,9200 | xargs kill && firebase emulators:start",
-    "emulators": "yarn _emulators --import=./.firebase/emulators --export-on-exit",
+    "emulators": "npm run _emulators --import=./.firebase/emulators --export-on-exit",
     "stripe": "stripe listen --forward-to http://127.0.0.1:5001/totaldevs-25387/us-central1/stripe-handleWebhooks --forward-connect-to http://127.0.0.1:5001/totaldevs-25387/us-central1/stripe-handleWebhooks",
     "build": "next build && next export",
     "debug": "NODE_OPTIONS='--inspect' next dev & firebase emulators:start '--inspect-functions'",
-    "deploy-preview": "yarn build && firebase hosting:channel:deploy mvp",
-    "deploy-production": "yarn build && firebase deploy",
-    "install:clean": "rm -rf node_modules/ && rm -rf package-lock.json && yarn install && yarn dev"
+    "deploy-preview": "npm run build && firebase hosting:channel:deploy mvp",
+    "deploy-production": "npm run build && firebase deploy",
+    "install:clean": "rm -rf node_modules/ && rm -rf package-lock.json && npm i && npm run dev"
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.15.4",
