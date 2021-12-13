@@ -13,7 +13,7 @@ export default function Login () {
                   <div className='rounded-t mb-0 px-6 py-6'>
                     <div className='text-center mb-3'>
                       <h6 className='text-gray-600 text-sm font-bold'>
-                        Sign in with
+                        Login with
                       </h6>
                     </div>
                     <div className='btn-wrapper text-center'>
@@ -46,7 +46,7 @@ export default function Login () {
                   </div>
                   <div className='flex-auto px-4 lg:px-10 py-10 pt-0'>
                     <div className='text-gray-500 text-center mb-3 font-bold'>
-                      <small>Or sign in with credentials</small>
+                      <small>Or with credentials</small>
                     </div>
                     <form>
                       <div className='relative w-full mb-3'>
@@ -98,7 +98,7 @@ export default function Login () {
                           type='button'
                           style={{ transition: 'all .15s ease' }}
                         >
-                          Sign In
+                          Login
                         </button>
                       </div>
                     </form>

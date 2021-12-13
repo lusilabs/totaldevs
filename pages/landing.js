@@ -1,5 +1,6 @@
 import Nav from '@/components/nav.js'
 import Footer from '@/components/footer.js'
+import '@fortawesome/fontawesome-free/css/all.css'
 
 export default function Landing () {
   return (
@@ -30,11 +31,13 @@ export default function Landing () {
                   An exclusive community of professional developers, with proven results globally.
                 </p>
                 <button
-                  className='bg-blue-800 text-white hover:bg-gray-700 text-sm font-bold uppercase px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 mt-12'
+                  className='bg-blue-800 text-white hover:bg-gray-700 text-xl font-bold uppercase px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 mt-12'
                   type='button'
                   style={{ transition: 'all .50s ease' }}
+
                 >
-                  Work with us.
+                  Work with us. &nbsp;
+                  <i className='fas fa-arrow-alt-circle-right' />
                 </button>
               </div>
 
@@ -209,10 +212,10 @@ export default function Landing () {
               </div>
               <div className='w-full md:w-5/12 ml-auto mr-auto px-4'>
                 <div className='md:pr-12'>
-                  <div className='text-pink-600 p-3 text-center inline-flex items-center justify-center w-16 h-16 mb-6 shadow-lg rounded-full bg-pink-300'>
+                  <div className='text-pink-600 p-3 text-center inline-flex items-center justify-center w-16 h-16 mt-8 shadow-lg rounded-full bg-pink-300'>
                     <i className='fas fa-rocket text-xl' />
                   </div>
-                  <h3 className='text-3xl font-semibold'>
+                  <h3 className='text-3xl font-semibold mt-8'>
                     A growing company
                   </h3>
                   <p className='mt-4 text-lg leading-relaxed text-gray-600'>
@@ -461,7 +464,7 @@ export default function Landing () {
           <div className='container mx-auto px-4 lg:pt-24 lg:pb-64'>
             <div className='flex flex-wrap text-center justify-center'>
               <div className='w-full lg:w-6/12 px-4'>
-                <h2 className='text-4xl font-semibold text-white'>
+                <h2 className='text-4xl font-semibold text-white mt-16'>
                   Need something built?
                 </h2>
                 <p className='text-lg leading-relaxed mt-4 mb-4 text-gray-500'>
@@ -506,77 +509,6 @@ export default function Landing () {
                   Some quick example text to build on the card title and make up
                   the bulk of the card's content.
                 </p>
-              </div>
-            </div>
-          </div>
-        </section>
-        <section className='relative block py-24 lg:pt-0 bg-gray-900'>
-          <div className='container mx-auto px-4'>
-            <div className='flex flex-wrap justify-center lg:-mt-64 -mt-48'>
-              <div className='w-full lg:w-6/12 px-4'>
-                <div className='relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded-lg bg-gray-300'>
-                  <div className='flex-auto p-5 lg:p-10'>
-                    <h4 className='text-2xl font-semibold'>
-                      Want to work with us?
-                    </h4>
-                    <p className='leading-relaxed mt-1 mb-4 text-gray-600'>
-                      Complete this form and we will get back to you in 24 hours.
-                    </p>
-                    <div className='relative w-full mb-3 mt-8'>
-                      <label
-                        className='block uppercase text-gray-700 text-xs font-bold mb-2'
-                        htmlFor='full-name'
-                      >
-                        Full Name
-                      </label>
-                      <input
-                        type='text'
-                        className='border-0 px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full'
-                        placeholder='Full Name'
-                        style={{ transition: 'all .15s ease' }}
-                      />
-                    </div>
-
-                    <div className='relative w-full mb-3'>
-                      <label
-                        className='block uppercase text-gray-700 text-xs font-bold mb-2'
-                        htmlFor='email'
-                      >
-                        Email
-                      </label>
-                      <input
-                        type='email'
-                        className='border-0 px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full'
-                        placeholder='Email'
-                        style={{ transition: 'all .15s ease' }}
-                      />
-                    </div>
-
-                    <div className='relative w-full mb-3'>
-                      <label
-                        className='block uppercase text-gray-700 text-xs font-bold mb-2'
-                        htmlFor='message'
-                      >
-                        Message
-                      </label>
-                      <textarea
-                        rows='4'
-                        cols='80'
-                        className='border-0 px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full'
-                        placeholder='Type a message...'
-                      />
-                    </div>
-                    <div className='text-center mt-6'>
-                      <button
-                        className='bg-gray-900 text-white active:bg-gray-700 text-sm font-bold uppercase px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1'
-                        type='button'
-                        style={{ transition: 'all .15s ease' }}
-                      >
-                        Send Message
-                      </button>
-                    </div>
-                  </div>
-                </div>
               </div>
             </div>
           </div>

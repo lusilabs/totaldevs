@@ -6,7 +6,9 @@ export default function Nav (props) {
         type='button'
         style={{ transition: 'all .15s ease' }}
       >
-        <i className='fas fa-arrow-alt-circle-down' /> Sign in
+        <a href='/login'>
+          <i className='fas fa-arrow-alt-circle-right' /> Login
+        </a>
       </button>
     </nav>
   )
