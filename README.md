@@ -107,7 +107,7 @@ npm run stripe
 ### Setting secret keys and env variables
 
 To view config and run locally
-`firebase functions:config:get > .runtimeconfig.json`
+`firebase functions:config:get > functions/.runtimeconfig.json`
 
 To set keys locally
 `firebase functions:config:set stripe.secret_key_local="sk_test_.."`
