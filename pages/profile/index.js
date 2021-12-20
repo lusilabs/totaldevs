@@ -8,23 +8,34 @@ import { doc, setDoc } from 'firebase/firestore'
 
 import faker from 'faker'
 import _ from 'lodash'
+import { toast } from 'react-toastify'
+
 /*
 
 - [ ] list of tech stack
-- [ ] autopopulate fields
 - [ ] downloadable pdf
 
- */
+*/
+
+const addressDefinitions = faker.definitions.address
+const stateOptions = _.map(addressDefinitions.state, (state, index) => ({
+  key: addressDefinitions.state_abbr[index],
+  text: state,
+  value: addressDefinitions.state_abbr[index]
+}))
 
 function EditDevProfile ({ userDoc, ...props }) {
   const [saving, setSaving] = useState(false)
-  const [photo, setPhoto] = useState(null)
-  const [pdf, setPdf] = useState(null)
+  const [photoURL, setPhotoURL] = useState(null)
+  const [resumeURL, setResumeURL] = useState(null)
+  const [resumeName, setResumeName] = useState(null)
   const [state, setState] = useState({ searchQuery: '', value: [] })
 
   useEffect(() => {
-    setPhoto(userDoc.photoURL)
+    setPhotoURL(userDoc.photoURL)
     setState({ value: userDoc.stack })
+    setResumeName(userDoc.resumeName)
+    setResumeURL(userDoc.resumeURL)
   }, [])
 
   const onSubmit = async data => {
@@ -43,7 +54,10 @@ function EditDevProfile ({ userDoc, ...props }) {
       websiteURL: data.websiteURL,
       visibility: data.visibility,
       jobSearch: data.jobSearch,
-      hasAcceptedTerms: data.hasAcceptedTerms
+      resumeURL: resumeURL,
+      hasAcceptedTerms: data.hasAcceptedTerms,
+      photoURL,
+      resumeName
     }, { merge: true })
     setSaving(false)
   }
@@ -53,11 +67,13 @@ function EditDevProfile ({ userDoc, ...props }) {
       displayName: userDoc.displayName,
       title: userDoc.title,
       bio: userDoc.bio,
+      photoURL: userDoc.photoURL,
       githubURI: userDoc.githubURI,
       linkedInURI: userDoc.linkedInURI,
       websiteURL: userDoc.websiteURL,
       visibility: userDoc.visibility,
       jobSearch: userDoc.jobSearch,
+      resumeURL: userDoc.resumeURL,
       hasAcceptedTerms: userDoc.hasAcceptedTerms
     }
   })
@@ -65,31 +81,35 @@ function EditDevProfile ({ userDoc, ...props }) {
   const handleUploadPhoto = e => {
     const file = e.target.files[0]
     const fileRef = ref(storage, `images/${file.name}`)
-    uploadBytes(fileRef, file).then(snap => {
-      getDownloadURL(fileRef).then(url => setPhoto(url))
+    if (file.size > 1000000) {
+      toast.error('Please upload a < 1 MB image.')
+      return
+    }
+    uploadBytes(fileRef, file).then(_ => {
+      getDownloadURL(fileRef).then(url => setPhotoURL(url))
     })
   }
 
   const handleUploadResume = e => {
     const file = e.target.files[0]
+    console.log({ file })
+    if (!file.type.includes('pdf') && file.size > 3000000) {
+      toast.error('Please upload a < 3 MB pdf.')
+      return
+    }
     const fileRef = ref(storage, `resumes/${file.name}`)
-    uploadBytes(fileRef, file).then(snap => {
-      getDownloadURL(fileRef).then(url => setPdf(url))
+    uploadBytes(fileRef, file).then(_ => {
+      getDownloadURL(fileRef).then(url => {
+        setResumeURL(url)
+        setResumeName(file.name)
+      })
     })
   }
 
   console.log(watch(['displayName', 'title', 'bio', 'githubURI', 'linkedInURI', 'websiteURL', 'photoURL', 'visibility', 'jobSearch', 'resumeURL', 'hasAcceptedTerms']))
 
   const handleChange = (e, { searchQuery, value }) => setState({ searchQuery, value })
-
   const handleSearchChange = (e, { searchQuery }) => setState({ searchQuery })
-
-  const addressDefinitions = faker.definitions.address
-  const stateOptions = _.map(addressDefinitions.state, (state, index) => ({
-    key: addressDefinitions.state_abbr[index],
-    text: state,
-    value: addressDefinitions.state_abbr[index]
-  }))
 
   return (
     <div className='m-4 md:col-span-2 shadow-xl'>
@@ -156,7 +176,7 @@ function EditDevProfile ({ userDoc, ...props }) {
               <div className='col-span-6 sm:col-span-6'>
                 <label className='block text-sm font-medium text-gray-700'>profile picture</label>
                 <div className='flex justify-center p-2'>
-                  {photo && <img src={photo} alt={photo} className='rounded-md shadow-lg' />}
+                  {photoURL && <img src={photoURL} alt={photoURL} className='rounded-md shadow-lg' />}
                 </div>
                 <div className='mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md'>
                   <div className='space-y-1 text-center'>
@@ -344,43 +364,44 @@ function EditDevProfile ({ userDoc, ...props }) {
                 <label className='block text-sm font-medium text-gray-700'>resumé</label>
                 <div className='flex justify-center p-2'>
                   <div class='w-0 flex-1 flex items-center'>
-                    <svg class='flex-shrink-0 h-5 w-5 text-gray-400' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='currentColor' aria-hidden='true'>
+                    {resumeName && <> <svg class='flex-shrink-0 h-5 w-5 text-gray-400' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='currentColor' aria-hidden='true'>
                       <path fillRule='evenodd' d='M8 4a3 3 0 00-3 3v4a5 5 0 0010 0V7a1 1 0 112 0v4a7 7 0 11-14 0V7a5 5 0 0110 0v4a3 3 0 11-6 0V7a1 1 0 012 0v4a1 1 0 102 0V7a3 3 0 00-3-3z' clipRule='evenodd' />
-                    </svg>
-                    <span class='ml-2 flex-1 w-0 truncate'>
-                      coverletter_back_end_developer.pdf
-                    </span>
-                  </div>
-                  <div class='ml-4 flex-shrink-0'>
-                    <a href='/resume' class='font-medium text-indigo-600 hover:text-indigo-500'>
-                      download
-                    </a>
+                                      </svg>
+                      <span class='ml-2 flex-1 w-0 truncate'>
+                        {resumeName}
+                      </span>
+
+                      <div class='ml-4 flex-shrink-0'>
+                        <a href='/resume' class='font-medium text-indigo-600 hover:text-indigo-500'>
+                          download
+                        </a>
+                      </div>
+                                   </>}
                   </div>
                 </div>
-                {!pdf &&
-                  <div className='mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md'>
-                    <div className='space-y-1 text-center'>
+                <div className='mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md'>
+                  <div className='space-y-1 text-center'>
 
-                      <svg
-                        xmlns='http://www.w3.org/2000/svg'
-                        className='mx-auto h-8 w-8 text-gray-400'
-                        fill='none' viewBox='0 0 24 24' stroke='currentColor'
+                    <svg
+                      xmlns='http://www.w3.org/2000/svg'
+                      className='mx-auto h-8 w-8 text-gray-400'
+                      fill='none' viewBox='0 0 24 24' stroke='currentColor'
+                    >
+                      <path strokeLinecap='round' strokeLinejoin='round' strokeWidth='2' d='M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13' />
+                    </svg>
+                    <div className='flex text-sm text-gray-600'>
+                      <label
+                        htmlFor='resumeURL'
+                        className='relative cursor-pointer bg-white rounded-md font-medium text-indigo-600 hover:text-indigo-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500'
                       >
-                        <path strokeLinecap='round' strokeLinejoin='round' strokeWidth='2' d='M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13' />
-                      </svg>
-                      <div className='flex text-sm text-gray-600'>
-                        <label
-                          htmlFor='resume'
-                          className='relative cursor-pointer bg-white rounded-md font-medium text-indigo-600 hover:text-indigo-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500'
-                        >
-                          <span>upload</span>
-                          <input type='file' id='resume' className='sr-only' {...register('resume', { required: false })} onChange={handleUploadResume} />
-                        </label>
-                        <p className='pl-1'>or drag</p>
-                      </div>
-                      <p className='text-xs text-gray-500'>.pdf to 1MB</p>
+                        <span>upload</span>
+                        <input type='file' id='resumeURL' className='sr-only' {...register('resumeURL', { required: false })} onChange={handleUploadResume} />
+                      </label>
+                      <p className='pl-1'>or drag</p>
                     </div>
-                  </div>}
+                    <p className='text-xs text-gray-500'>.pdf to 1MB</p>
+                  </div>
+                </div>
               </div>
 
               <div className='col-span-6 sm:col-span-6 items-center'>
