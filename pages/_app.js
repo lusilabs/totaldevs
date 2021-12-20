@@ -28,7 +28,6 @@ const anonRoutes = [
 
 const devNavigation = [
   { name: 'projects', href: '/projects', current: false },
-  { name: 'padawans', href: '/padawans', current: false },
   { name: 'content', href: '/cms', current: false }
 ]
 

@@ -1,52 +1,63 @@
 import { useForm } from 'react-hook-form'
 import { Button, Dropdown } from 'semantic-ui-react'
-import React, { useState, useEffect, Component } from 'react'
+import React, { useState, useEffect } from 'react'
 import sleep from '@/utils/misc'
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
-import { storage, db, analytics } from '@/utils/config'
+import { storage, db } from '@/utils/config'
 import { doc, setDoc } from 'firebase/firestore'
-
-import faker from 'faker'
-import _ from 'lodash'
 import { toast } from 'react-toastify'
 
-/*
-
-- [ ] list of tech stack
-- [ ] downloadable pdf
-
-*/
-
-const addressDefinitions = faker.definitions.address
-const stateOptions = _.map(addressDefinitions.state, (state, index) => ({
-  key: addressDefinitions.state_abbr[index],
-  text: state,
-  value: addressDefinitions.state_abbr[index]
-}))
+const mergeSearchResults = (prev, names) => {
+  const prevNames = prev.map(({ value }) => value)
+  const dedupedNames = new Set([...prevNames, ...names])
+  const deduped = [...dedupedNames].map(name => ({ key: name, value: name, text: name }))
+  return deduped
+}
 
 function EditDevProfile ({ userDoc, ...props }) {
   const [saving, setSaving] = useState(false)
   const [photoURL, setPhotoURL] = useState(null)
   const [resumeURL, setResumeURL] = useState(null)
   const [resumeName, setResumeName] = useState(null)
-  const [state, setState] = useState({ searchQuery: '', value: [] })
+  const [searchQuery, setSearchQuery] = useState('')
+  const [selectedStack, setSelectedStack] = useState([])
+  const [dropdownOptions, setDropdownOptions] = useState([])
+
+  const handleSearchChange = async (e, { searchQuery: query }) => setSearchQuery(query)
+  const handleChange = (e, { value }) => {
+    setSelectedStack(value)
+  }
+  const fetchAndSetDropdownOptions = async url => {
+    const response = await fetch(url)
+    const { items } = await response.json()
+    if (items && items.length > 0) {
+      setDropdownOptions(prev => mergeSearchResults(prev, items.map(({ name }) => name)))
+    }
+  }
+
+  useEffect(() => {
+    const searchURL = `https://api.stackexchange.com/2.3/tags?pagesize=25&order=desc&sort=popular&inname=${searchQuery}&site=stackoverflow`
+    const timer = setTimeout(() => {
+      if (searchQuery !== '') fetchAndSetDropdownOptions(searchURL)
+    }, 300)
+    return () => clearTimeout(timer)
+  }, [searchQuery])
 
   useEffect(() => {
     setPhotoURL(userDoc.photoURL)
-    setState({ value: userDoc.stack })
+    setSelectedStack(userDoc.stack)
+    setDropdownOptions(userDoc.stack.map(name => ({ key: name, value: name, text: name })))
     setResumeName(userDoc.resumeName)
     setResumeURL(userDoc.resumeURL)
   }, [])
 
   const onSubmit = async data => {
-    console.table({ data })
-    console.log({ state })
     setSaving(true)
     await sleep(3000)
     const cityRef = doc(db, 'users', userDoc.uid)
     await setDoc(cityRef, {
       displayName: data.displayName,
-      stack: state.value,
+      stack: selectedStack,
       title: data.title,
       bio: data.bio,
       githubURI: data.githubURI,
@@ -81,7 +92,7 @@ function EditDevProfile ({ userDoc, ...props }) {
   const handleUploadPhoto = e => {
     const file = e.target.files[0]
     const fileRef = ref(storage, `images/${file.name}`)
-    if (file.size > 1000000) {
+    if (!file.name.match(/.(jpg|jpeg|png|gif)$/i) || file.size > 1000000) {
       toast.error('Please upload a < 1 MB image.')
       return
     }
@@ -92,8 +103,7 @@ function EditDevProfile ({ userDoc, ...props }) {
 
   const handleUploadResume = e => {
     const file = e.target.files[0]
-    console.log({ file })
-    if (!file.type.includes('pdf') && file.size > 3000000) {
+    if (!file.type.includes('pdf') || file.size > 3000000) {
       toast.error('Please upload a < 3 MB pdf.')
       return
     }
@@ -106,10 +116,7 @@ function EditDevProfile ({ userDoc, ...props }) {
     })
   }
 
-  console.log(watch(['displayName', 'title', 'bio', 'githubURI', 'linkedInURI', 'websiteURL', 'photoURL', 'visibility', 'jobSearch', 'resumeURL', 'hasAcceptedTerms']))
-
-  const handleChange = (e, { searchQuery, value }) => setState({ searchQuery, value })
-  const handleSearchChange = (e, { searchQuery }) => setState({ searchQuery })
+  //   console.log(watch(['displayName', 'title', 'bio', 'githubURI', 'linkedInURI', 'websiteURL', 'photoURL', 'visibility', 'jobSearch', 'resumeURL', 'hasAcceptedTerms']))
 
   return (
     <div className='m-4 md:col-span-2 shadow-xl'>
@@ -160,14 +167,13 @@ function EditDevProfile ({ userDoc, ...props }) {
                   tech stack
                 </label>
                 <Dropdown
-                  fluid
-                  multiple
                   onChange={handleChange}
                   onSearchChange={handleSearchChange}
-                  options={stateOptions}
-                  placeholder='stack'
-                  searchQuery={state.searchQuery}
-                  value={state.value}
+                  options={dropdownOptions}
+                  searchQuery={searchQuery}
+                  value={selectedStack}
+                  fluid
+                  multiple
                   selection
                   search
                 />
@@ -279,7 +285,7 @@ function EditDevProfile ({ userDoc, ...props }) {
 
                   <div>
                     <input
-                      {...register('visibility', { required: false })}
+                      {...register('visibility', { required: true })}
                       id='public'
                       name='visibility'
                       type='radio'
@@ -293,7 +299,7 @@ function EditDevProfile ({ userDoc, ...props }) {
 
                   <div>
                     <input
-                      {...register('visibility', { required: false })}
+                      {...register('visibility', { required: true })}
                       id='private'
                       name='visibility'
                       type='radio'
@@ -317,7 +323,7 @@ function EditDevProfile ({ userDoc, ...props }) {
 
                   <div>
                     <input
-                      {...register('jobSearch', { required: false })}
+                      {...register('jobSearch', { required: true })}
                       id='public'
                       name='jobSearch'
                       type='radio'
@@ -331,7 +337,7 @@ function EditDevProfile ({ userDoc, ...props }) {
 
                   <div>
                     <input
-                      {...register('jobSearch', { required: false })}
+                      {...register('jobSearch', { required: true })}
                       id='private'
                       name='jobSearch'
                       type='radio'
@@ -345,7 +351,7 @@ function EditDevProfile ({ userDoc, ...props }) {
 
                   <div>
                     <input
-                      {...register('jobSearch', { required: false })}
+                      {...register('jobSearch', { required: true })}
                       id='private'
                       name='jobSearch'
                       type='radio'
@@ -363,20 +369,20 @@ function EditDevProfile ({ userDoc, ...props }) {
               <div className='col-span-6 sm:col-span-6'>
                 <label className='block text-sm font-medium text-gray-700'>resumé</label>
                 <div className='flex justify-center p-2'>
-                  <div class='w-0 flex-1 flex items-center'>
-                    {resumeName && <> <svg class='flex-shrink-0 h-5 w-5 text-gray-400' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='currentColor' aria-hidden='true'>
+                  <div className='w-0 flex-1 flex items-center'>
+                    {resumeName && <> <svg className='flex-shrink-0 h-5 w-5 text-gray-400' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='currentColor' aria-hidden='true'>
                       <path fillRule='evenodd' d='M8 4a3 3 0 00-3 3v4a5 5 0 0010 0V7a1 1 0 112 0v4a7 7 0 11-14 0V7a5 5 0 0110 0v4a3 3 0 11-6 0V7a1 1 0 012 0v4a1 1 0 102 0V7a3 3 0 00-3-3z' clipRule='evenodd' />
-                                      </svg>
-                      <span class='ml-2 flex-1 w-0 truncate'>
+                    </svg>
+                      <span className='ml-2 flex-1 w-0 truncate'>
                         {resumeName}
                       </span>
 
-                      <div class='ml-4 flex-shrink-0'>
-                        <a href='/resume' class='font-medium text-indigo-600 hover:text-indigo-500'>
+                      <div className='ml-4 flex-shrink-0'>
+                        <a href={resumeURL} className='font-medium text-indigo-600 hover:text-indigo-500' download={resumeName}>
                           download
                         </a>
                       </div>
-                                   </>}
+                    </>}
                   </div>
                 </div>
                 <div className='mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md'>
