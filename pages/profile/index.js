@@ -3,7 +3,8 @@ import { Button, Dropdown } from 'semantic-ui-react'
 import React, { useState, useEffect, Component } from 'react'
 import sleep from '@/utils/misc'
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
-import { storage } from '@/utils/config'
+import { storage, db, analytics } from '@/utils/config'
+import { doc, setDoc } from 'firebase/firestore'
 
 import faker from 'faker'
 import _ from 'lodash'
@@ -12,32 +13,60 @@ import _ from 'lodash'
 - [ ] list of tech stack
 - [ ] autopopulate fields
 - [ ] downloadable pdf
-- [ ]
 
  */
 
 function EditDevProfile ({ userDoc, ...props }) {
-  console.log({ userDoc })
   const [saving, setSaving] = useState(false)
-  const [image, setImage] = useState(null)
+  const [photo, setPhoto] = useState(null)
   const [pdf, setPdf] = useState(null)
+  const [state, setState] = useState({ searchQuery: '', value: [] })
+
+  useEffect(() => {
+    setPhoto(userDoc.photoURL)
+    setState({ value: userDoc.stack })
+  }, [])
 
   const onSubmit = async data => {
-    console.log(data)
+    console.table({ data })
+    console.log({ state })
     setSaving(true)
     await sleep(3000)
+    const cityRef = doc(db, 'users', userDoc.uid)
+    await setDoc(cityRef, {
+      displayName: data.displayName,
+      stack: state.value,
+      title: data.title,
+      bio: data.bio,
+      githubURI: data.githubURI,
+      linkedInURI: data.linkedInURI,
+      websiteURL: data.websiteURL,
+      visibility: data.visibility,
+      jobSearch: data.jobSearch,
+      hasAcceptedTerms: data.hasAcceptedTerms
+    }, { merge: true })
     setSaving(false)
   }
 
   const { register, handleSubmit, watch, formState: { errors } } = useForm({
-    defaultValues: userDoc
+    defaultValues: {
+      displayName: userDoc.displayName,
+      title: userDoc.title,
+      bio: userDoc.bio,
+      githubURI: userDoc.githubURI,
+      linkedInURI: userDoc.linkedInURI,
+      websiteURL: userDoc.websiteURL,
+      visibility: userDoc.visibility,
+      jobSearch: userDoc.jobSearch,
+      hasAcceptedTerms: userDoc.hasAcceptedTerms
+    }
   })
 
   const handleUploadPhoto = e => {
     const file = e.target.files[0]
     const fileRef = ref(storage, `images/${file.name}`)
     uploadBytes(fileRef, file).then(snap => {
-      getDownloadURL(fileRef).then(url => setImage(url))
+      getDownloadURL(fileRef).then(url => setPhoto(url))
     })
   }
 
@@ -49,9 +78,7 @@ function EditDevProfile ({ userDoc, ...props }) {
     })
   }
 
-  console.log(watch(['displayName', 'title', 'bio', 'github-uri', 'linkedin-uri', 'website-uri', 'photoURL', 'visibility', 'job', 'resumeURL', 'terms']))
-
-  const [state, setState] = useState({ searchQuery: '', value: [] })
+  console.log(watch(['displayName', 'title', 'bio', 'githubURI', 'linkedInURI', 'websiteURL', 'photoURL', 'visibility', 'jobSearch', 'resumeURL', 'hasAcceptedTerms']))
 
   const handleChange = (e, { searchQuery, value }) => setState({ searchQuery, value })
 
@@ -82,7 +109,7 @@ function EditDevProfile ({ userDoc, ...props }) {
                   placeholder=''
                   autoComplete='given-name'
                   className='mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
-                  {...register('displayName', { required: false, minLength: 3, pattern: /^[A-Za-z0-9 ]+$/i })}
+                  {...register('displayName', { required: true, minLength: 3, pattern: /^[A-Za-z0-9 ]+$/i })}
                 />
                 {errors.name && <div className='m-2 text-sm text-red-500'>at least 3 chars</div>}
               </div>
@@ -97,7 +124,7 @@ function EditDevProfile ({ userDoc, ...props }) {
                   autoComplete='title-name'
                   disabled={props.sid}
                   className={`mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-gray-700 ${props.sid ? 'bg-gray-100' : ''}`}
-                  {...register('title', { required: false })}
+                  {...register('title', { required: true })}
                 >
                   <option value='front-dev'>frontend dev</option>
                   <option value='front-eng'>frontend engineer</option>
@@ -112,14 +139,13 @@ function EditDevProfile ({ userDoc, ...props }) {
                 <label htmlFor='stack' className='block text-sm font-medium text-gray-700'>
                   tech stack
                 </label>
-
                 <Dropdown
                   fluid
                   multiple
                   onChange={handleChange}
                   onSearchChange={handleSearchChange}
                   options={stateOptions}
-                  placeholder='technologies'
+                  placeholder='stack'
                   searchQuery={state.searchQuery}
                   value={state.value}
                   selection
@@ -130,7 +156,7 @@ function EditDevProfile ({ userDoc, ...props }) {
               <div className='col-span-6 sm:col-span-6'>
                 <label className='block text-sm font-medium text-gray-700'>profile picture</label>
                 <div className='flex justify-center p-2'>
-                  {image && <img src={image} alt={image} className='rounded-md shadow-lg' />}
+                  {photo && <img src={photo} alt={photo} className='rounded-md shadow-lg' />}
                 </div>
                 <div className='mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md'>
                   <div className='space-y-1 text-center'>
@@ -150,11 +176,11 @@ function EditDevProfile ({ userDoc, ...props }) {
                     </svg>
                     <div className='flex text-sm text-gray-600'>
                       <label
-                        htmlFor='photo'
+                        htmlFor='photoURL'
                         className='relative cursor-pointer bg-white rounded-md font-medium text-indigo-600 hover:text-indigo-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500'
                       >
                         <span>upload</span>
-                        <input type='file' id='photo' className='sr-only' {...register('photo', { required: false })} onChange={handleUploadPhoto} />
+                        <input type='file' id='photoURL' className='sr-only' {...register('photoURL', { required: false })} onChange={handleUploadPhoto} />
                       </label>
                       <p className='pl-1'>or drag</p>
                     </div>
@@ -188,7 +214,7 @@ function EditDevProfile ({ userDoc, ...props }) {
                   </span>
                   <input
                     type='text' name='company-website' id='company-website' className='focus:ring-indigo-500 focus:border-indigo-500 flex-1 block w-full rounded-none rounded-r-md sm:text-sm border-gray-300' placeholder=''
-                    {...register('github-uri', { required: false, maxLength: 256, pattern: /^[A-Za-z0-9 ]+$/i })}
+                    {...register('githubURI', { required: false, maxLength: 256, pattern: /^[A-Za-z0-9 ]+$/i })}
                   />
                 </div>
                 {errors.price && <div className='m-2 text-sm text-red-500'>El precio necesita ser positivo</div>}
@@ -204,7 +230,7 @@ function EditDevProfile ({ userDoc, ...props }) {
                   </span>
                   <input
                     type='text' name='company-website' id='company-website' className='focus:ring-indigo-500 focus:border-indigo-500 flex-1 block w-full rounded-none rounded-r-md sm:text-sm border-gray-300' placeholder=''
-                    {...register('linkedin-uri', { required: false, maxLength: 256, pattern: /^[A-Za-z0-9 ]+$/i })}
+                    {...register('linkedInURI', { required: false, maxLength: 256, pattern: /^[A-Za-z0-9 ]+$/i })}
                   />
                 </div>
                 {errors.price && <div className='m-2 text-sm text-red-500'>El precio necesita ser positivo</div>}
@@ -220,7 +246,7 @@ function EditDevProfile ({ userDoc, ...props }) {
                   </span>
                   <input
                     type='text' name='company-website' id='company-website' className='focus:ring-indigo-500 focus:border-indigo-500 flex-1 block w-full rounded-none rounded-r-md sm:text-sm border-gray-300' placeholder='example.com'
-                    {...register('website-uri', { required: false, maxLength: 256, pattern: /^[A-Za-z0-9 ]+$/i })}
+                    {...register('websiteURL', { required: false, maxLength: 256, pattern: /^[A-Za-z0-9 ]+$/i })}
                   />
                 </div>
                 {errors.price && <div className='m-2 text-sm text-red-500'>El precio necesita ser positivo</div>}
@@ -271,9 +297,9 @@ function EditDevProfile ({ userDoc, ...props }) {
 
                   <div>
                     <input
-                      {...register('job', { required: false })}
+                      {...register('jobSearch', { required: false })}
                       id='public'
-                      name='job'
+                      name='jobSearch'
                       type='radio'
                       value='public'
                       className='ml-1 h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded'
@@ -285,9 +311,9 @@ function EditDevProfile ({ userDoc, ...props }) {
 
                   <div>
                     <input
-                      {...register('job', { required: false })}
+                      {...register('jobSearch', { required: false })}
                       id='private'
-                      name='job'
+                      name='jobSearch'
                       type='radio'
                       value='private'
                       className='ml-1 h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded'
@@ -299,9 +325,9 @@ function EditDevProfile ({ userDoc, ...props }) {
 
                   <div>
                     <input
-                      {...register('job', { required: false })}
+                      {...register('jobSearch', { required: false })}
                       id='private'
-                      name='job'
+                      name='jobSearch'
                       type='radio'
                       value='private'
                       className='ml-1 h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded'
@@ -358,21 +384,19 @@ function EditDevProfile ({ userDoc, ...props }) {
               </div>
 
               <div className='col-span-6 sm:col-span-6 items-center'>
-                <label htmlFor='visibility' className='block text-sm font-medium text-gray-700 p-2'>
+                <label htmlFor='terms' className='block text-sm font-medium text-gray-700 p-2'>
                   Terms and conditions
                 </label>
                 <div className='flex items-center justify-start'>
 
                   <div>
                     <input
-                      {...register('terms', { required: false })}
-                      id='public'
-                      name='job'
-                      type='radio'
-                      value='public'
+                      {...register('hasAcceptedTerms', { required: true })}
+                      id='terms'
+                      type='checkbox'
                       className='ml-1 h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded'
                     />
-                    <label htmlFor='public' className='ml-2 text-md text-gray-700'>
+                    <label htmlFor='terms' className='ml-2 text-md text-gray-700'>
                       I have read and agree to the <a href='/terms'> Privacy Policy </a> of totaldevs.com
                     </label>
                   </div>
