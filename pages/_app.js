@@ -14,6 +14,7 @@ import Layout from '@/components/layout'
 import { signOut } from '@firebase/auth'
 import Landing from './index'
 import Spinner from '@/components/spinner'
+import InvitationRequired from './invitationRequired'
 
 Router.events.on('routeChangeStart', NProgress.start)
 Router.events.on('routeChangeComplete', NProgress.done)
@@ -32,7 +33,7 @@ const devNavigation = [
 ]
 
 const userNavigation = [
-  { name: 'account', href: '/account' },
+  { name: 'profile', href: '/profile' },
   { name: 'logout', href: '/', handleClick: () => signOut(auth) }
 ]
 
@@ -73,7 +74,8 @@ function MyApp ({ Component, pageProps }) {
       {isLoading && <Spinner />}
       {error && <Error title='Error while retrieving user' statusCode={500} />}
       {!user && !isLoading && !onAnonRoutes && <Landing />}
-      {user && !isLoading && !onAnonRoutes &&
+      {user && userDoc && !userDoc.wasInvited && <InvitationRequired userDoc={userDoc} {...pageProps} />}
+      {user && userDoc && userDoc.wasInvited && !onAnonRoutes &&
         <Layout user={user} userDoc={userDoc} navigation={navigation} userNavigation={userNavigation} {...pageProps}>
           <Component user={user} userDoc={userDoc} userError={error} userLoading={isLoading} {...pageProps} />
           <ToastContainer />

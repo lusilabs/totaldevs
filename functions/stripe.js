@@ -45,7 +45,7 @@ exports.createUserDoc = functions.auth.user().onCreate(async user => {
     .firestore()
     .collection('users')
     .doc(user.uid)
-    .set(userJSONData)
+    .set({ ...userJSONData, wasInvited: !!isDevelopment })
 })
 
 exports.handleUserLogin = functions.https.onCall(async (data, ctx) => {
@@ -63,7 +63,6 @@ exports.handleUserLogin = functions.https.onCall(async (data, ctx) => {
   if (isDev || isCompany || isExplorer) {
     if (isDev && !hasAcceptedInvite) {
       // try redeeming any invitations automatically
-      logger.info('Trying to set ')
       const iref = await admin
         .firestore()
         .collection('invitations')
@@ -76,7 +75,6 @@ exports.handleUserLogin = functions.https.onCall(async (data, ctx) => {
             .firestore()
             .collection('invitations')
             .doc(email)
-          logger.info('setting')
           uref2.update({ hasAcceptedInvite: true })
           iref2.update({ redeemed: true, redeemedAt: new Date().toISOString() })
         }
