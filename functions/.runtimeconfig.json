@@ -1,0 +1,5 @@
+{
+  "stripe": {
+    "secret_key_dev": "sk_test_51K5wctKId0epTCbqKe7PzedDO9zHmaLo0zoD9lh5QouTRNXUxMaLXRqefHorZ6gOA0JCtTlUcCrhJvwN25uQbo2e00TSenHmIu"
+  }
+}
