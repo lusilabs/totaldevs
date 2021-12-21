@@ -28,7 +28,7 @@ const anonRoutes = [
 
 const devNavigation = [
   { name: 'projects', href: '/projects', current: false },
-  { name: 'content', href: '/cms', current: false }
+  { name: 'content', href: '/content', current: false }
 ]
 
 const userNavigation = [
@@ -58,7 +58,6 @@ function MyApp ({ Component, pageProps }) {
   }, [user])
 
   useEffect(() => {
-    console.log({ user, userDoc, isLoading, error, onAnonRoutes })
     if (userDoc && userDoc.isDev) setNavigation(devNavigation)
   })
 
@@ -76,12 +75,12 @@ function MyApp ({ Component, pageProps }) {
       {user && userDoc && !userDoc.wasInvited && <InvitationRequired userDoc={userDoc} {...pageProps} />}
       {user && userDoc && userDoc.wasInvited && !onAnonRoutes &&
         <Layout user={user} userDoc={userDoc} navigation={navigation} userNavigation={userNavigation} {...pageProps}>
-          <Component user={user} userDoc={userDoc} userError={error} userLoading={isLoading} {...pageProps} />
+          <Component user={user} userDoc={userDoc} userError={error} {...pageProps} />
           <ToastContainer />
         </Layout>}
       {onAnonRoutes &&
         <>
-          <Component user={user} userDoc={userDoc} userError={error} userLoading={isLoading} {...pageProps} />
+          <Component user={user} userDoc={userDoc} userError={error} {...pageProps} />
           <ToastContainer />
         </>}
     </>
