@@ -15,7 +15,7 @@ export default function Login () {
     setLoading(true)
     const result = await signInWithPopup(auth, provider)
     if (result.user && result.user.uid) {
-      await new Promise(resolve => setTimeout(resolve, 2500))
+      await new Promise(resolve => setTimeout(resolve, 5000))
       await handleUserLogin({ isDev: true })
       router.push('/')
     }
