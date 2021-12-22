@@ -8,7 +8,6 @@ import { doc, setDoc } from 'firebase/firestore'
 import { toast } from 'react-toastify'
 
 const mergeSearchResults = (prev, names) => {
-  console.log({ prev })
   const prevNames = prev.map(({ value }) => value)
   const dedupedNames = new Set([...prevNames, ...names])
   const deduped = [...dedupedNames].map(name => ({ key: name, value: name, text: name }))
@@ -45,7 +44,6 @@ function EditDevProfile ({ userDoc, ...props }) {
   }, [searchQuery])
 
   useEffect(() => {
-    console.log({ stack: userDoc.stack })
     setPhotoURL(userDoc.photoURL)
     setSelectedStack(userDoc.stack ?? [])
     setDropdownOptions(userDoc.stack?.map(name => ({ key: name, value: name, text: name })) ?? [])
