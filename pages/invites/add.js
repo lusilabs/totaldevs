@@ -12,10 +12,9 @@ function AddInvite ({ userDoc, ...props }) {
 
   const onSubmit = async data => {
     setSaving(true)
-    await sleep(3000)
     const ref = doc(db, 'invites', data.email)
     const d = await getDoc(ref)
-    if (d.exists) {
+    if (d.exists()) {
       toast.error('That user has already been invited')
       setSaving(false)
       return

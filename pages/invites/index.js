@@ -16,7 +16,6 @@ function Invites ({ userDoc, ...props }) {
   const router = useRouter()
   const { created } = router.query
   useEffect(() => {
-    console.log({ created })
     if (created) { toast.success('Invite sent!', { position: toast.POSITION.TOP_CENTER }) }
   }, [])
 
@@ -101,10 +100,10 @@ function Invites ({ userDoc, ...props }) {
                         <td className='px-6 py-4 whitespace-nowrap'>
                           {inv.redeemed && <span className='px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800'>
                             Redeemed
-                          </span>}
+                                           </span>}
                           {!inv.redeemed && <span className='px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800'>
                             Pending
-                          </span>}
+                                            </span>}
                         </td>
                       </tr>
                     ))}
@@ -115,9 +114,9 @@ function Invites ({ userDoc, ...props }) {
           </div>
           {userDoc.numInvitesLeft > 0 && <div className='fixed bottom-16 right-8 lg:bottom-8 lg:right-4 text-md' onClick={() => router.push('invites/add')}>
             <CreateButton />
-          </div>}
+                                         </div>}
         </div>
-      </div>}
+                     </div>}
     </>
   )
 }
