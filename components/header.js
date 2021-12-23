@@ -37,7 +37,7 @@ function Header ({ user, userDoc, navigation, userNavigation, ...props }) {
                       <img
                         className='h-8 w-8'
                         src='logo-small.png'
-                        alt='Workflow'
+                        alt='logo'
                       />
                     </div>
                   </Link>

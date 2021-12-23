@@ -33,6 +33,7 @@ const devNavigation = [
 
 const userNavigation = [
   { name: 'profile', href: '/profile' },
+  { name: 'invites', href: '/invites' },
   { name: 'logout', href: '/', handleClick: () => signOut(auth) }
 ]
 
@@ -60,6 +61,8 @@ function MyApp ({ Component, pageProps }) {
   useEffect(() => {
     if (userDoc && userDoc.isDev) setNavigation(devNavigation)
   })
+
+  console.log({ Component, user, userDoc })
 
   return (
     <>
