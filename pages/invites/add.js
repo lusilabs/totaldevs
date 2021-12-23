@@ -2,11 +2,10 @@ import { useForm } from 'react-hook-form'
 import { Button, Dropdown } from 'semantic-ui-react'
 import React, { useState, useEffect } from 'react'
 import sleep from '@/utils/misc'
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 import { storage, db } from '@/utils/config'
-import { doc, setDoc, increment } from 'firebase/firestore'
-import { toast } from 'react-toastify'
+import { doc, setDoc, addDoc, increment, collection, getDoc } from 'firebase/firestore'
 import router from 'next/router'
+import { toast } from 'react-toastify'
 
 function AddInvite ({ userDoc, ...props }) {
   const [saving, setSaving] = useState(false)
@@ -15,6 +14,27 @@ function AddInvite ({ userDoc, ...props }) {
     setSaving(true)
     await sleep(3000)
     const ref = doc(db, 'invites', data.email)
+    const d = await getDoc(ref)
+    if (d.exists) {
+      toast.error('That user has already been invited')
+      setSaving(false)
+      return
+    }
+    await setDoc(ref, {
+      text: data.inviteText,
+      referrer: userDoc.email,
+      redeemed: false,
+      createdAt: new Date().toISOString()
+    }, { merge: true })
+    const mref = collection(db, 'mail')
+    await addDoc(mref, {
+      message: {
+        text: data.inviteText,
+        subject: 'Welcome to totaldevs.com'
+      },
+      to: [data.email],
+      createdAt: new Date().toISOString()
+    })
     await setDoc(ref, {
       text: data.inviteText,
       referrer: userDoc.email,

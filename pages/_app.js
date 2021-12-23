@@ -62,8 +62,6 @@ function MyApp ({ Component, pageProps }) {
     if (userDoc && userDoc.isDev) setNavigation(devNavigation)
   })
 
-  console.log({ Component, user, userDoc })
-
   return (
     <>
       <Head>
