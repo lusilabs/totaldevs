@@ -69,8 +69,8 @@ function EditDevProfile ({ userDoc, ...props }) {
       websiteURL: data.websiteURL,
       visibility: data.visibility,
       jobSearch: data.jobSearch,
-      resumeURL: resumeURL,
       hasAcceptedTerms: data.hasAcceptedTerms,
+      resumeURL,
       photoURL,
       resumeName
     }, { merge: true })
@@ -409,7 +409,7 @@ function EditDevProfile ({ userDoc, ...props }) {
                       </label>
                       <p className='pl-1'>or drag</p>
                     </div>
-                    <p className='text-xs text-gray-500'>.pdf to 1MB</p>
+                    <p className='text-xs text-gray-500'>.pdf up to 1MB</p>
                   </div>
                 </div>
               </div>

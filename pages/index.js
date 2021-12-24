@@ -7,12 +7,21 @@ import { useEffect } from 'react'
 import { getRedirectResult } from '@firebase/auth'
 import Dashboard from './dashboard'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
+import { signInAnonymously } from 'firebase/auth'
 
 export default function Landing ({ userDoc, ...props }) {
+  const router = useRouter()
   useEffect(() => {
     const analytics = getAnalytics()
     logEvent(analytics, 'User visiting.')
   }, [])
+
+  const handleWorkWithUs = async () => {
+    // sign in as Anon, at the end of the flow we prompt for login
+    await signInAnonymously(auth)
+    router.push('/signup')
+  }
 
   // this doesn't work for some reason.
   // const checkUserCreate = async () => {
@@ -54,16 +63,15 @@ export default function Landing ({ userDoc, ...props }) {
                     <p className='mt-4 text-lg text-gray-300'>
                       An exclusive community of professional developers, with proven results globally.
                     </p>
-                    <Link href='/signup'>
-                      <button
-                        className='bg-blue-800 text-white hover:bg-gray-700 text-xl font-bold uppercase px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 mt-12'
-                        type='button'
-                        style={{ transition: 'all .50s ease' }}
-                      >
-                        Work with us. &nbsp;
-                        <i className='fas fa-arrow-alt-circle-right' />
-                      </button>
-                    </Link>
+                    <button
+                      className='bg-blue-800 text-white hover:bg-gray-700 text-xl font-bold uppercase px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 mt-12'
+                      type='button'
+                      style={{ transition: 'all .50s ease' }}
+                      onClick={handleWorkWithUs}
+                    >
+                      Work with us. &nbsp;
+                      <i className='fas fa-arrow-alt-circle-right' />
+                    </button>
                   </div>
 
                 </div>
