@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
-import { fetchStories } from './utils'
-import { StoryCard } from './components'
+
+import { StoryCard } from '@/components/content'
+import { fetchStories } from '@/utils/content'
 
 const ContentMain = ({}) => {
     const [stories, setStories] = useState([])

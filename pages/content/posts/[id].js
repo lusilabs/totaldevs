@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
-import { fetchStory } from '../utils'
-import { Title, Body } from './components'
+
+import { Title, Body } from '@/components/content'
+import { fetchStory } from '@/utils/content'
 
 const PostEntry = () => {
   const router = useRouter()
