@@ -1,15 +1,27 @@
 import Nav from '@/components/nav.js'
 import Footer from '@/components/footer.js'
 import '@fortawesome/fontawesome-free/css/all.css'
-import { db } from '@/utils/config'
+import { db, auth } from '@/utils/config'
 import { getAnalytics, logEvent } from 'firebase/analytics'
 import { useEffect } from 'react'
+import { getRedirectResult } from '@firebase/auth'
 
 export default function Landing () {
   useEffect(() => {
     const analytics = getAnalytics()
     logEvent(analytics, 'User visiting.')
   }, [])
+
+  // this doesn't work for some reason.
+  // const checkUserCreate = async () => {
+  //   const result = await getRedirectResult(auth)
+  //   console.log('useEffect landing')
+  //   console.info(result)
+  // }
+  // useEffect(() => {
+  //   checkUserCreate()
+  // })
+
   return (
     <>
       <Nav />
