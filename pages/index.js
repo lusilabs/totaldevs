@@ -6,6 +6,7 @@ import { getAnalytics, logEvent } from 'firebase/analytics'
 import { useEffect } from 'react'
 import { getRedirectResult } from '@firebase/auth'
 import Dashboard from './dashboard'
+import Link from 'next/link'
 
 export default function Landing ({ userDoc, ...props }) {
   useEffect(() => {
@@ -53,14 +54,16 @@ export default function Landing ({ userDoc, ...props }) {
                     <p className='mt-4 text-lg text-gray-300'>
                       An exclusive community of professional developers, with proven results globally.
                     </p>
-                    <button
-                      className='bg-blue-800 text-white hover:bg-gray-700 text-xl font-bold uppercase px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 mt-12'
-                      type='button'
-                      style={{ transition: 'all .50s ease' }}
-                    >
-                      Work with us. &nbsp;
-                      <i className='fas fa-arrow-alt-circle-right' />
-                    </button>
+                    <Link href='/signup'>
+                      <button
+                        className='bg-blue-800 text-white hover:bg-gray-700 text-xl font-bold uppercase px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 mt-12'
+                        type='button'
+                        style={{ transition: 'all .50s ease' }}
+                      >
+                        Work with us. &nbsp;
+                        <i className='fas fa-arrow-alt-circle-right' />
+                      </button>
+                    </Link>
                   </div>
 
                 </div>
