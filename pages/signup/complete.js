@@ -2,11 +2,14 @@ import { GoogleAuthProvider, linkWithRedirect, getRedirectResult } from 'firebas
 import { auth, db, functions } from '@/utils/config'
 import { httpsCallable } from 'firebase/functions'
 import { getAnalytics, logEvent } from 'firebase/analytics'
+import { useRouter } from 'next/router'
+import sleep from '@/utils/misc'
 
 const handleAnonUserConversion = httpsCallable(functions, 'stripe-handleAnonUserConversion')
 
 function CompleteSignupFlow ({ userDoc, ...props }) {
   const provider = new GoogleAuthProvider()
+  const router = useRouter()
   const currentUser = auth.currentUser
   const analytics = getAnalytics()
   const handleLinkWithRedirect = () => linkWithRedirect(currentUser, provider).then((result) => {
@@ -19,7 +22,7 @@ function CompleteSignupFlow ({ userDoc, ...props }) {
     logEvent(analytics, 'handleLinkWithRedirect error: ' + JSON.stringify(error))
     console.error(error)
   })
-  getRedirectResult(auth).then((result) => {
+  getRedirectResult(auth).then(async (result) => {
     const credential = GoogleAuthProvider.credentialFromResult(result)
     if (credential) {
       const user = result.user
@@ -27,7 +30,9 @@ function CompleteSignupFlow ({ userDoc, ...props }) {
       const role = localStorage.getItem('totalDevsRole')
       logEvent(analytics, 'getRedirectResult user converted: role ' + role + ' ' + JSON.stringify(userData))
       console.log('setting role', { role })
-      handleAnonUserConversion({ ...userData, role })
+      await handleAnonUserConversion({ ...userData, role })
+      await sleep(2000)
+      router.push('/')
     }
   }).catch((error) => {
     logEvent(analytics, 'getRedirectResult error: ' + JSON.stringify(error))

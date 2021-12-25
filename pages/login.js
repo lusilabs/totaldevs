@@ -1,10 +1,8 @@
 import { GoogleAuthProvider, signInWithPopup } from '@firebase/auth'
 import { auth, db, functions } from '@/utils/config'
 import { useRouter } from 'next/router'
-import { useEffect, useState } from 'react'
-import { doc, setDoc } from 'firebase/firestore'
 import { httpsCallable } from 'firebase/functions'
-import Spinner from '@/components/spinner'
+import sleep from '@/utils/misc'
 const handleUserLogin = httpsCallable(functions, 'stripe-handleUserLogin')
 
 export default function Login ({ setIsPageLoading }) {
@@ -14,7 +12,7 @@ export default function Login ({ setIsPageLoading }) {
     setIsPageLoading(true)
     const result = await signInWithPopup(auth, provider)
     if (result.user && result.user.uid) {
-      await new Promise(resolve => setTimeout(resolve, 3000))
+      await sleep(3000)
       await handleUserLogin({ role: 'dev' })
       router.push('/')
     }
@@ -130,7 +128,6 @@ export default function Login ({ setIsPageLoading }) {
                 <div className='flex flex-wrap mt-6'>
                   <div className='w-1/2'>
                     <a
-                      href='#pablo'
                       onClick={e => e.preventDefault()}
                       className='text-gray-300'
                     >
@@ -139,7 +136,6 @@ export default function Login ({ setIsPageLoading }) {
                   </div>
                   <div className='w-1/2 text-right'>
                     <a
-                      href='#pablo'
                       onClick={e => e.preventDefault()}
                       className='text-gray-300'
                     >
