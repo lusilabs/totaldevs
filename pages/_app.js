@@ -31,6 +31,11 @@ const devNavigation = [
   { name: 'content', href: '/content', current: false }
 ]
 
+const companyNavigation = [
+  { name: 'jobs', href: '/jobs', current: false },
+  { name: 'content', href: '/content', current: false }
+]
+
 const userNavigation = [
   { name: 'profile', href: '/profile' },
   { name: 'invites', href: '/invites' },
@@ -59,14 +64,16 @@ function MyApp ({ Component, pageProps }) {
   }, [user])
 
   useEffect(() => {
+    // console.log({ user, userDoc })
     if (userDoc && userDoc.isDev) setNavigation(devNavigation)
+    if (userDoc && userDoc.isCompany) setNavigation(companyNavigation)
   })
 
   return (
     <>
       <Head>
-        <script type='text/javascript' src='tawk.js' />
-        <link rel='icon' href='logo-small.png' />
+        <script type='text/javascript' src='/tawk.js' />
+        <link rel='icon' href='/logo-small.png' />
         <meta name='totaldevs' content='&nbsp;' />
         <title>totaldevs</title>
       </Head>

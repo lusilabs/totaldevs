@@ -9,7 +9,7 @@ import { getRedirectResult } from '@firebase/auth'
 export default function Landing () {
   useEffect(() => {
     const analytics = getAnalytics()
-    logEvent(analytics, 'User visiting.')
+    logEvent(analytics, 'New visit.')
   }, [])
 
   // this doesn't work for some reason.
@@ -307,7 +307,7 @@ export default function Landing () {
                 <div className='px-6'>
                   <img
                     alt='...'
-                    src='team-1-800x800.jpg'
+                    src='/team-1-800x800.jpg'
                     className='shadow-lg rounded-full max-w-full mx-auto'
                     style={{ maxWidth: '120px' }}
                   />
@@ -345,7 +345,7 @@ export default function Landing () {
                 <div className='px-6'>
                   <img
                     alt='...'
-                    src='team-2-800x800.jpg'
+                    src='/team-2-800x800.jpg'
                     className='shadow-lg rounded-full max-w-full mx-auto'
                     style={{ maxWidth: '120px' }}
                   />
@@ -377,7 +377,7 @@ export default function Landing () {
                 <div className='px-6'>
                   <img
                     alt='...'
-                    src='team-3-800x800.jpg'
+                    src='/team-3-800x800.jpg'
                     className='shadow-lg rounded-full max-w-full mx-auto'
                     style={{ maxWidth: '120px' }}
                   />
@@ -415,7 +415,7 @@ export default function Landing () {
                 <div className='px-6'>
                   <img
                     alt='...'
-                    src='team-4-470x470.png'
+                    src='/team-4-470x470.png'
                     className='shadow-lg rounded-full max-w-full mx-auto'
                     style={{ maxWidth: '120px' }}
                   />

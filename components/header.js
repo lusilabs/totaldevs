@@ -19,6 +19,7 @@ function Header ({ user, userDoc, navigation, userNavigation, ...props }) {
     setActiveTab(href)
   }
   const handleUserNavigation = item => {
+    if (item.hasOwnProperty('handleClick')) item.handleClick()
     router.push(item.href)
   }
   useEffect(() => {

@@ -89,6 +89,16 @@ exports.handleUserLogin = functions.https.onCall(async (data, ctx) => {
   await uref2.update(data)
 })
 
+exports.handleAnonUserConversion = functions.https.onCall(async (data, ctx) => {
+  const uid = isAuthedAndAppChecked(ctx)
+  const uref = await admin
+    .firestore()
+    .collection('users')
+    .doc(uid)
+  logger.info('handleAnonUserConversion ', data)
+  await uref.update(data)
+})
+
 exports.handleWebhooks = functions.https.onRequest(async (req, resp) => {
   let event
   let stripe

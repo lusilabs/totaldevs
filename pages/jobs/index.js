@@ -6,15 +6,17 @@ import { SuspensePlaceholders } from '@/components/suspense'
 import { query, collection, where, orderBy, limit, getDocs } from '@firebase/firestore'
 import { db } from '@/utils/config'
 import Link from 'next/link'
+import CreateButton from '@/components/createbutton'
 
 function JobList ({ userDoc, ...props }) {
   const router = useRouter()
   const [jobs, setJobs] = useState([])
   const [isLoading, setIsLoading] = useState(true)
-  const { created } = router.query
+  const { created, edited } = router.query
 
   useEffect(() => {
     if (created) toast.success('Job posting created successfully.')
+    if (edited) toast.success('Job posting edited successfully.')
     const retrieveJobs = async () => {
       const q = query(collection(db, 'jobs'), where('uid', '==', userDoc.uid), orderBy('createdAt'), limit(10))
       const querySnapshot = await getDocs(q)
@@ -33,6 +35,7 @@ function JobList ({ userDoc, ...props }) {
         {isLoading && <SuspensePlaceholders />}
         {!isLoading && jobs.length > 0 && jobs.map((s, ix) => <CatalogProduct key={ix} job={s} {...props} />)}
         {!isLoading && jobs.length === 0 && <div className='text-md text-gray-600'>No jobs posted yet.</div>}
+        <div className='fixed bottom-16 right-8 lg:bottom-8 lg:right-4 text-md' onClick={() => router.push('/jobs/add')}> <CreateButton /> </div>
       </div>
     </div>
   )
