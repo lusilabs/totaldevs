@@ -15,10 +15,10 @@ function JobList ({ userDoc, ...props }) {
   const { created, edited } = router.query
 
   useEffect(() => {
-    if (created) toast.success('Job posting created successfully.')
-    if (edited) toast.success('Job posting edited successfully.')
+    if (created) toast.success('job posting created successfully.')
+    if (edited) toast.success('job posting edited successfully.')
     const retrieveJobs = async () => {
-      const q = query(collection(db, 'jobs'), where('uid', '==', userDoc.uid), orderBy('createdAt'), limit(10))
+      const q = query(collection(db, 'jobs'), where('uid', '==', userDoc.uid), orderBy('createdAt'))
       const querySnapshot = await getDocs(q)
       const snaps = []
       querySnapshot.forEach(doc => {
@@ -34,7 +34,7 @@ function JobList ({ userDoc, ...props }) {
       <div className='mt-6 grid grid-cols-2 gap-y-2 gap-x-6 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8'>
         {isLoading && <SuspensePlaceholders />}
         {!isLoading && jobs.length > 0 && jobs.map((s, ix) => <CatalogProduct key={ix} job={s} {...props} />)}
-        {!isLoading && jobs.length === 0 && <div className='text-md text-gray-600'>No jobs posted yet.</div>}
+        {!isLoading && jobs.length === 0 && <div className='text-md text-gray-600'>no jobs posted yet.</div>}
         <div className='fixed bottom-16 right-8 lg:bottom-8 lg:right-4 text-md' onClick={() => router.push('/jobs/add')}> <CreateButton /> </div>
       </div>
     </div>

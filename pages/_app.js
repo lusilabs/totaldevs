@@ -26,28 +26,52 @@ const anonRoutes = [
   '/signup'
 ]
 
-const devNavigation = [
-  { name: 'projects', href: '/projects', current: false },
-  { name: 'content', href: '/content', current: false }
-]
+const pageNavigationByRole = {
+  dev: [
+    { name: 'projects', href: '/projects', current: false },
+    { name: 'content', href: '/content', current: false }
+  ],
+  company: [
+    { name: 'jobs', href: '/jobs', current: false },
+    { name: 'content', href: '/content', current: false }
+  ],
+  explorer: [
+    { name: 'jobs', href: '/jobs', current: false },
+    { name: 'content', href: '/content', current: false }
+  ]
 
-const companyNavigation = [
-  { name: 'jobs', href: '/jobs', current: false },
-  { name: 'content', href: '/content', current: false }
-]
+}
 
-const userNavigation = [
-  { name: 'profile', href: '/profile' },
-  { name: 'invites', href: '/invites' },
+const userNavigationByRole = {
+  dev: [
+    { name: 'profile', href: '/profile' },
+    { name: 'invites', href: '/invites' },
+    { name: 'logout', href: '/', handleClick: () => signOut(auth) }
+  ],
+  company: [
+    { name: 'profile', href: '/profile' },
+    { name: 'logout', href: '/', handleClick: () => signOut(auth) }
+  ],
+  explorer: [
+    { name: 'profile', href: '/profile' },
+    { name: 'logout', href: '/', handleClick: () => signOut(auth) }
+  ]
+}
+
+const anonNavigation = []
+const anonUserNavigation = [
+  { name: 'signup', href: '/signup' },
   { name: 'logout', href: '/', handleClick: () => signOut(auth) }
 ]
 
 function MyApp ({ Component, pageProps }) {
-  const [user, isLoading, error] = useAuthState(auth)
+  const [user, isUserLoading, error] = useAuthState(auth)
   const [userDoc, setUserDoc] = useState()
-  const [navigation, setNavigation] = useState([])
+  const [navigation, setNavigation] = useState(anonNavigation)
+  const [userNavigation, setUserNavigation] = useState(anonUserNavigation)
   const router = useRouter()
   const onAnonRoutes = anonRoutes.includes(router.pathname)
+  const [isPageLoading, setIsPageLoading] = useState(false)
 
   useEffect(() => {
     let unsubscribe = () => {}
@@ -65,8 +89,10 @@ function MyApp ({ Component, pageProps }) {
 
   useEffect(() => {
     // console.log({ user, userDoc })
-    if (userDoc && userDoc.isDev) setNavigation(devNavigation)
-    if (userDoc && userDoc.isCompany) setNavigation(companyNavigation)
+    if (userDoc && userDoc.role) {
+      setNavigation(pageNavigationByRole[userDoc.role])
+      setUserNavigation(userNavigationByRole[userDoc.role])
+    }
   })
 
   return (
@@ -77,18 +103,18 @@ function MyApp ({ Component, pageProps }) {
         <meta name='totaldevs' content='&nbsp;' />
         <title>totaldevs</title>
       </Head>
-      {isLoading && <Spinner />}
+      {(isUserLoading || isPageLoading) && <Spinner />}
       {error && <Error title='Error while retrieving user' statusCode={500} />}
-      {!user && !isLoading && !onAnonRoutes && <Landing />}
+      {!user && !isUserLoading && !onAnonRoutes && <Landing setIsPageLoading={setIsPageLoading} />}
       {user && userDoc && !userDoc.wasInvited && <InvitationRequired userDoc={userDoc} {...pageProps} />}
       {user && userDoc && userDoc.wasInvited && !onAnonRoutes &&
         <Layout user={user} userDoc={userDoc} navigation={navigation} userNavigation={userNavigation} {...pageProps}>
-          <Component user={user} userDoc={userDoc} userError={error} {...pageProps} />
+          <Component user={user} userDoc={userDoc} setIsPageLoading={setIsPageLoading} {...pageProps} />
           <ToastContainer />
         </Layout>}
       {onAnonRoutes &&
         <>
-          <Component user={user} userDoc={userDoc} userError={error} {...pageProps} />
+          <Component user={user} userDoc={userDoc} setIsPageLoading={setIsPageLoading} {...pageProps} />
           <ToastContainer />
         </>}
     </>

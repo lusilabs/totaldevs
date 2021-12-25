@@ -10,20 +10,22 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { signInAnonymously } from 'firebase/auth'
 
-export default function Landing ({ userDoc, ...props }) {
+export default function Landing ({ userDoc, setIsPageLoading, ...props }) {
   const router = useRouter()
   useEffect(() => {
     const analytics = getAnalytics()
-    logEvent(analytics, 'User visiting.')
+    logEvent(analytics, 'New visit.')
   }, [])
 
   const handleWorkWithUs = async () => {
-    // sign in as Anon, at the end of the flow we prompt for login
+    // sign in as Anon, at the end of the flow we prompt for optional login.
+    setIsPageLoading(true)
     await signInAnonymously(auth)
     router.push('/signup')
+    setIsPageLoading(false)
   }
 
-  // this doesn't work for some reason.
+  // this doesn't work for popUp login, I think I needed to do 'loginWithRedirect', not using for now.
   // const checkUserCreate = async () => {
   //   const result = await getRedirectResult(auth)
   //   console.log('useEffect landing')

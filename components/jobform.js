@@ -1,10 +1,9 @@
 import { useForm } from 'react-hook-form'
 import { Button, Dropdown } from 'semantic-ui-react'
 import React, { useState, useEffect } from 'react'
-import sleep from '@/utils/misc'
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 import { storage, db } from '@/utils/config'
-import { doc, setDoc, addDoc, increment, collection, getDoc } from 'firebase/firestore'
+import { doc, setDoc, addDoc, collection, getDoc } from 'firebase/firestore'
 import { toast } from 'react-toastify'
 import router from 'next/router'
 
@@ -35,7 +34,7 @@ function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
       setPdfName(jobDoc.pdfName)
       setPdfURL(jobDoc.pdfURL)
       setPhotoURL(jobDoc.photoURL)
-      reset(jobDoc) // this refires the defaultValues on the form.
+      reset(jobDoc) // this refires the defaultValues on the form to fill them up once the db data loads.
     }
   }, [jobDoc])
 
@@ -46,7 +45,6 @@ function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
       setJobDoc(d.data())
     }
     if (jobID) retrieveJob()
-    console.log({ jobID })
   }, [jobID])
 
   const handleUploadPhoto = e => {
@@ -65,6 +63,10 @@ function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
     const unsplashURL = 'https://source.unsplash.com/random/300x300/?software'
     const { url } = await fetch(unsplashURL)
     setPhotoURL(url)
+  }
+
+  const handleSkip = async () => {
+    router.push('/jobs')
   }
 
   const onSubmit = async data => {
@@ -87,7 +89,7 @@ function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
       }, { merge: true })
     } else {
       const jref = collection(db, 'jobs')
-      console.log({ pdfURL })
+      console.log({ pdfURL, photoURL })
       await addDoc(jref, {
         title: data.title,
         stack,
@@ -383,7 +385,7 @@ function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
                   <div className='w-0 flex-1 flex items-center'>
                     {pdfName && <> <svg className='flex-shrink-0 h-5 w-5 text-gray-400' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='currentColor' aria-hidden='true'>
                       <path fillRule='evenodd' d='M8 4a3 3 0 00-3 3v4a5 5 0 0010 0V7a1 1 0 112 0v4a7 7 0 11-14 0V7a5 5 0 0110 0v4a3 3 0 11-6 0V7a1 1 0 012 0v4a1 1 0 102 0V7a3 3 0 00-3-3z' clipRule='evenodd' />
-                    </svg>
+                                   </svg>
                       <span className='ml-2 flex-1 w-0 truncate'>
                         {pdfName}
                       </span>
@@ -393,7 +395,7 @@ function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
                           download
                         </a>
                       </div>
-                    </>}
+                                </>}
                   </div>
                 </div>
                 <div className='mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md'>
@@ -451,9 +453,9 @@ function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
               {!saving && <span>{jobID && <span>re</span>}post</span>}
             </Button>
             &nbsp;
-            {allowSkip && <Button disabled={saving} loading={saving} type='submit' color='grey' fluid className='text-sm'>
+            {allowSkip && <Button disabled={saving} loading={saving} onClick={handleSkip} color='grey' fluid className='text-sm'>
               skip
-            </Button>}
+                          </Button>}
           </div>
         </div>
       </form>
