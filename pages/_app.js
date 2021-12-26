@@ -104,7 +104,7 @@ function MyApp ({ Component, pageProps }) {
       {error && <Error title='Error while retrieving user' statusCode={500} />}
       {!user && !isUserLoading && !onAnonRoutes && <Landing setIsPageLoading={setIsPageLoading} />}
       {user && userDoc && userDoc.role === 'dev' && !userDoc.wasInvited && <InvitationRequired userDoc={userDoc} {...pageProps} />}
-      {user && userDoc && userDoc.wasInvited && !onAnonRoutes &&
+      {user && userDoc && !onAnonRoutes &&
         <Layout user={user} userDoc={userDoc} navigation={navigation} userNavigation={userNavigation} {...pageProps}>
           <Component user={user} userDoc={userDoc} setIsPageLoading={setIsPageLoading} {...pageProps} />
           <ToastContainer />
