@@ -86,7 +86,7 @@ function MyApp ({ Component, pageProps }) {
   }, [user])
 
   useEffect(() => {
-    // console.log({ user, userDoc })
+    console.log({ user, userDoc })
     if (userDoc && userDoc.role) {
       setNavigation(pageNavigationByRole[userDoc.role])
       setUserNavigation(userNavigationByRole[userDoc.role])
@@ -100,7 +100,9 @@ function MyApp ({ Component, pageProps }) {
     router.push('/signup')
     setIsPageLoading(false)
   }
-
+  if (user && userDoc && userDoc.role === 'dev' && !userDoc.wasInvited) {
+    return <InvitationRequired userDoc={userDoc} {...pageProps} />
+  }
   return (
     <>
       <Head>
@@ -112,7 +114,6 @@ function MyApp ({ Component, pageProps }) {
       {(isUserLoading || isPageLoading) && <Spinner />}
       {error && <Error title='Error while retrieving user' statusCode={500} />}
       {!user && !isUserLoading && !onAnonRoutes && <Landing setIsPageLoading={setIsPageLoading} handleWorkWithUs={handleWorkWithUs} />}
-      {user && userDoc && userDoc.role === 'dev' && !userDoc.wasInvited && <InvitationRequired userDoc={userDoc} {...pageProps} />}
       {user && userDoc && !onAnonRoutes &&
         <Layout user={user} userDoc={userDoc} navigation={navigation} userNavigation={userNavigation} {...pageProps}>
           <Component user={user} userDoc={userDoc} setIsPageLoading={setIsPageLoading} {...pageProps} />
