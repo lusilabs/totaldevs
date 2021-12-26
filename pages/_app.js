@@ -8,11 +8,12 @@ import { useAuthState } from 'react-firebase-hooks/auth'
 import { useState, useEffect } from 'react'
 import { doc, onSnapshot } from 'firebase/firestore'
 import { ToastContainer } from 'react-toastify'
+import { signInAnonymously } from 'firebase/auth'
 import Router, { useRouter } from 'next/router'
 import NProgress from 'nprogress'
 import Layout from '@/components/layout'
 import { signOut } from '@firebase/auth'
-import Landing from './index'
+import Landing from '@/components/landing'
 import Spinner from '@/components/spinner'
 import InvitationRequired from './invitationRequired'
 
@@ -92,6 +93,14 @@ function MyApp ({ Component, pageProps }) {
     }
   })
 
+  const handleWorkWithUs = async () => {
+    // sign in as Anon, at the end of the flow we prompt for optional login.
+    setIsPageLoading(true)
+    await signInAnonymously(auth)
+    router.push('/signup')
+    setIsPageLoading(false)
+  }
+
   return (
     <>
       <Head>
@@ -102,7 +111,7 @@ function MyApp ({ Component, pageProps }) {
       </Head>
       {(isUserLoading || isPageLoading) && <Spinner />}
       {error && <Error title='Error while retrieving user' statusCode={500} />}
-      {!user && !isUserLoading && !onAnonRoutes && <Landing setIsPageLoading={setIsPageLoading} />}
+      {!user && !isUserLoading && !onAnonRoutes && <Landing setIsPageLoading={setIsPageLoading} handleWorkWithUs={handleWorkWithUs} />}
       {user && userDoc && userDoc.role === 'dev' && !userDoc.wasInvited && <InvitationRequired userDoc={userDoc} {...pageProps} />}
       {user && userDoc && !onAnonRoutes &&
         <Layout user={user} userDoc={userDoc} navigation={navigation} userNavigation={userNavigation} {...pageProps}>

@@ -1,27 +1,8 @@
 import Nav from '@/components/nav.js'
 import Footer from '@/components/footer.js'
 import '@fortawesome/fontawesome-free/css/all.css'
-import { db, auth } from '@/utils/config'
-import { getAnalytics, logEvent } from 'firebase/analytics'
-import { useEffect } from 'react'
-import { getRedirectResult } from '@firebase/auth'
 
-export default function Landing () {
-  useEffect(() => {
-    const analytics = getAnalytics()
-    logEvent(analytics, 'New visit.')
-  }, [])
-
-  // this doesn't work for some reason.
-  // const checkUserCreate = async () => {
-  //   const result = await getRedirectResult(auth)
-  //   console.log('useEffect landing')
-  //   console.info(result)
-  // }
-  // useEffect(() => {
-  //   checkUserCreate()
-  // })
-
+function Landing ({ handleWorkWithUs }) {
   return (
     <>
       <Nav />
@@ -53,7 +34,7 @@ export default function Landing () {
                   className='bg-blue-800 text-white hover:bg-gray-700 text-xl font-bold uppercase px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 mt-12'
                   type='button'
                   style={{ transition: 'all .50s ease' }}
-
+                  onClick={handleWorkWithUs}
                 >
                   Work with us. &nbsp;
                   <i className='fas fa-arrow-alt-circle-right' />
@@ -537,3 +518,5 @@ export default function Landing () {
     </>
   )
 }
+
+export default Landing

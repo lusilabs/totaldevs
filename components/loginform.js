@@ -19,7 +19,7 @@ function LoginForm ({ handleLogin, allowRecovery }) {
                   <img
                     alt='...'
                     className='w-5 mr-1'
-                    src='github.svg'
+                    src='/github.svg'
                   />
                   Github
                 </button>
@@ -32,7 +32,7 @@ function LoginForm ({ handleLogin, allowRecovery }) {
                   <img
                     alt='...'
                     className='w-5 mr-1'
-                    src='google.svg'
+                    src='/google.svg'
                   />
                   Google
                 </button>
