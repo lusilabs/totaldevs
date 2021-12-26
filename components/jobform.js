@@ -23,7 +23,9 @@ function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
   const [stack, setStack] = useState([])
   const [dropdownOptions, setDropdownOptions] = useState([])
   const [jobDoc, setJobDoc] = useState({})
-  const [photoURL, setPhotoURL] = useState('')
+  const [photoURL, setPhotoURL] = useState(null)
+
+  console.log({ userDoc })
 
   const { jobID } = router.query
   const { register, handleSubmit, watch, formState: { errors }, reset } = useForm({ defaultValues: jobDoc })
@@ -64,6 +66,7 @@ function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
     const unsplashURL = 'https://source.unsplash.com/random/300x300/?software'
     const { url } = await fetch(unsplashURL)
     setPhotoURL(url)
+    return url
   }
 
   const handleSkip = async () => {
@@ -72,7 +75,7 @@ function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
 
   const onSubmit = async data => {
     setSaving(true)
-    if (!photoURL) await generateRandomPhoto()
+    const url = await generateRandomPhoto()
     await sleep(2000)
     console.log({ pdfURL, photoURL })
     if (jobID) {
@@ -87,7 +90,7 @@ function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
         jobURL: data.jobURL,
         pdfURL,
         pdfName,
-        photoURL,
+        photoURL: url,
         editedAt: new Date().toISOString()
       }, { merge: true })
     } else {
@@ -102,7 +105,7 @@ function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
         jobURL: data.jobURL,
         pdfURL,
         pdfName,
-        photoURL,
+        photoURL: url,
         uid: userDoc.uid,
         status: 'seeking',
         hasAcceptedTerms: data.hasAcceptedTerms,
@@ -387,7 +390,7 @@ function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
                   <div className='w-0 flex-1 flex items-center'>
                     {pdfName && <> <svg className='flex-shrink-0 h-5 w-5 text-gray-400' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='currentColor' aria-hidden='true'>
                       <path fillRule='evenodd' d='M8 4a3 3 0 00-3 3v4a5 5 0 0010 0V7a1 1 0 112 0v4a7 7 0 11-14 0V7a5 5 0 0110 0v4a3 3 0 11-6 0V7a1 1 0 012 0v4a1 1 0 102 0V7a3 3 0 00-3-3z' clipRule='evenodd' />
-                                   </svg>
+                    </svg>
                       <span className='ml-2 flex-1 w-0 truncate'>
                         {pdfName}
                       </span>
@@ -397,7 +400,7 @@ function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
                           download
                         </a>
                       </div>
-                                </>}
+                    </>}
                   </div>
                 </div>
                 <div className='mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md'>
@@ -457,7 +460,7 @@ function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
             &nbsp;
             {allowSkip && <Button disabled={saving} loading={saving} onClick={handleSkip} color='grey' fluid className='text-sm'>
               skip
-                          </Button>}
+            </Button>}
           </div>
         </div>
       </form>

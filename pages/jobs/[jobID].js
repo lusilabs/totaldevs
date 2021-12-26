@@ -1,9 +1,9 @@
 import JobForm from "@/components/jobform";
 
 
-function EditJob() {
+function EditJob(props) {
     return (
-        <JobForm />
+        <JobForm {...props} />
     )
 }
 

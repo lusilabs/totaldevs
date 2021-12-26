@@ -1,8 +1,8 @@
 import JobForm from '@/components/jobform'
 
-function AddJob () {
+function AddJob (props) {
   return (
-    <JobForm />
+    <JobForm {...props} />
   )
 }
 
