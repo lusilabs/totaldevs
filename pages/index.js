@@ -35,7 +35,8 @@ export default function Landing ({ userDoc, setIsPageLoading, ...props }) {
 
   return (
     <>
-      {userDoc && userDoc.wasInvited && <Dashboard userDoc={userDoc} {...props} />}
+      {/* {userDoc && userDoc.role === 'dev' && <Dashboard userDoc={userDoc} {...props} />} */}
+      {userDoc && <Dashboard userDoc={userDoc} {...props} />}
       {!userDoc &&
         <>
           <Nav />

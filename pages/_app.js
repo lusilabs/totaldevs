@@ -32,12 +32,10 @@ const pageNavigationByRole = {
     { name: 'content', href: '/content', current: false }
   ],
   company: [
-    { name: 'jobs', href: '/jobs', current: false },
-    { name: 'content', href: '/content', current: false }
+    { name: 'jobs', href: '/jobs', current: false }
   ],
   explorer: [
-    { name: 'jobs', href: '/jobs', current: false },
-    { name: 'content', href: '/content', current: false }
+    { name: 'jobs', href: '/jobs', current: false }
   ]
 
 }
@@ -60,7 +58,6 @@ const userNavigationByRole = {
 
 const anonNavigation = []
 const anonUserNavigation = [
-  { name: 'signup', href: '/signup' },
   { name: 'logout', href: '/', handleClick: () => signOut(auth) }
 ]
 
@@ -99,7 +96,7 @@ function MyApp ({ Component, pageProps }) {
     <>
       <Head>
         <script type='text/javascript' src='/tawk.js' />
-        <link rel='icon' href='/logo-small.png' />
+        <link rel='icon' href='/public/logo-small.png' />
         <meta name='totaldevs' content='&nbsp;' />
         <title>totaldevs</title>
       </Head>

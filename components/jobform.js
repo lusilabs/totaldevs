@@ -6,6 +6,7 @@ import { storage, db } from '@/utils/config'
 import { doc, setDoc, addDoc, collection, getDoc } from 'firebase/firestore'
 import { toast } from 'react-toastify'
 import router from 'next/router'
+import sleep from '@/utils/misc'
 
 const mergeSearchResults = (prev, names) => {
   const prevNames = prev.map(({ value }) => value)
@@ -71,7 +72,9 @@ function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
 
   const onSubmit = async data => {
     setSaving(true)
-    if (!photoURL) generateRandomPhoto()
+    if (!photoURL) await generateRandomPhoto()
+    await sleep(2000)
+    console.log({ pdfURL, photoURL })
     if (jobID) {
       const jref = doc(db, 'jobs', jobID)
       await setDoc(jref, {
@@ -89,7 +92,6 @@ function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
       }, { merge: true })
     } else {
       const jref = collection(db, 'jobs')
-      console.log({ pdfURL, photoURL })
       await addDoc(jref, {
         title: data.title,
         stack,

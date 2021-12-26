@@ -2,7 +2,7 @@
 function Dashboard () {
   return (
     <div>
-      Success. User dashboard.
+      dashboard.
     </div>
   )
 }

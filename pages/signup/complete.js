@@ -1,13 +1,17 @@
-import { GoogleAuthProvider, linkWithRedirect, getRedirectResult } from 'firebase/auth'
+import { GoogleAuthProvider, linkWithRedirect, getRedirectResult, signInWithPopup } from 'firebase/auth'
+import { Button, Dropdown } from 'semantic-ui-react'
 import { auth, db, functions } from '@/utils/config'
 import { httpsCallable } from 'firebase/functions'
 import { getAnalytics, logEvent } from 'firebase/analytics'
 import { useRouter } from 'next/router'
 import sleep from '@/utils/misc'
+import LoginForm from '@/components/loginform'
+import Link from 'next/link'
 
 const handleAnonUserConversion = httpsCallable(functions, 'stripe-handleAnonUserConversion')
+const handleUserLogin = httpsCallable(functions, 'stripe-handleUserLogin')
 
-function CompleteSignupFlow ({ userDoc, ...props }) {
+function CompleteSignupFlow ({ userDoc, setIsPageLoading, ...props }) {
   const provider = new GoogleAuthProvider()
   const router = useRouter()
   const currentUser = auth.currentUser
@@ -40,7 +44,16 @@ function CompleteSignupFlow ({ userDoc, ...props }) {
   })
 
   return (
-    <div onClick={handleLinkWithRedirect}> Am I successful? Yes. </div>
+    <div className='flex flex-col p-4'>
+      <div className='flex items-center p-4'>
+        <img className='w-36 h-36' src='/astronaut.png' />
+        <h3 className='font-extrabold tracking-tight text-indigo-600 sm:text-4xl'>
+          just one more step...
+          &nbsp;
+        </h3>
+      </div>
+      <LoginForm handleLogin={handleLinkWithRedirect} />
+    </div>
   )
 }
 
