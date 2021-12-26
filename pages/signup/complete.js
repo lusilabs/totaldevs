@@ -16,6 +16,7 @@ function CompleteSignupFlow ({ userDoc, setIsPageLoading, ...props }) {
   const router = useRouter()
   const currentUser = auth.currentUser
   const analytics = getAnalytics()
+  console.log('CompleteSignupFlow')
   const handleLinkWithRedirect = () => linkWithRedirect(currentUser, provider).then((result) => {
     // Accounts successfully linked.
     // this never triggers for some reason. so we have to go with the
