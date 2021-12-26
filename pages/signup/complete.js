@@ -36,6 +36,7 @@ function CompleteSignupFlow ({ userDoc, setIsPageLoading, ...props }) {
       console.log('setting role', { role })
       await handleAnonUserConversion({ ...userData, role })
       await sleep(2000)
+      localStorage.removeItem('totalDevsRole')
       router.push('/')
     }
   }).catch((error) => {
