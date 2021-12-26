@@ -29,6 +29,7 @@ function CompleteSignupFlow ({ userDoc, setIsPageLoading, ...props }) {
   getRedirectResult(auth).then(async (result) => {
     console.log('getRedirectResult')
     const credential = GoogleAuthProvider.credentialFromResult(result)
+    console.log({ credential, result })
     if (credential) {
       const user = result.user
       const userData = JSON.parse(JSON.stringify(user.toJSON()))

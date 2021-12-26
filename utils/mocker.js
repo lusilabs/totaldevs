@@ -3,6 +3,7 @@ import faker from 'faker'
 export const FakeName = () => {
   console.log(faker.name.findName())
 }
+
 function getRandomInt (max) {
   return Math.floor(Math.random() * max)
 }
