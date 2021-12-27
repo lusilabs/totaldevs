@@ -36,8 +36,8 @@ function Header ({ user, userDoc, navigation, userNavigation, ...props }) {
                     <div className='flex-shrink-0'>
                       <img
                         className='h-8 w-8'
-                        src='logo-small.png'
-                        alt='logo'
+                        src='/logo-small.png'
+                        alt='Workflow'
                       />
                     </div>
                   </Link>
