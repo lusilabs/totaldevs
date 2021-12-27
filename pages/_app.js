@@ -100,7 +100,7 @@ function MyApp ({ Component, pageProps }) {
     setIsPageLoading(false)
   }
 
-  if (user && userDoc && userDoc.role === 'dev' && !userDoc.wasInvited) {
+  if (user && userDoc && userDoc.role === 'dev' && !userDoc.hasAcceptedInvite) {
     return <InvitationRequired userDoc={userDoc} {...pageProps} />
   }
   return (

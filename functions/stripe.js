@@ -47,7 +47,7 @@ exports.createUserDoc = functions.auth.user().onCreate(async user => {
     .doc(user.uid)
     .set({
       ...userJSONData,
-      wasInvited: !!isDevelopment,
+      hasAcceptedInvite: !!isDevelopment,
       numInvitesLeft: 5
     })
 })
