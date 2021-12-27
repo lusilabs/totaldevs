@@ -86,7 +86,7 @@ function MyApp ({ Component, pageProps }) {
   }, [user])
 
   useEffect(() => {
-    console.log({ user, userDoc })
+    console.log({ user, userDoc, Component })
     if (userDoc && userDoc.role) {
       setNavigation(pageNavigationByRole[userDoc.role])
       setUserNavigation(userNavigationByRole[userDoc.role])
@@ -100,6 +100,7 @@ function MyApp ({ Component, pageProps }) {
     router.push('/signup')
     setIsPageLoading(false)
   }
+
   if (user && userDoc && userDoc.role === 'dev' && !userDoc.wasInvited) {
     return <InvitationRequired userDoc={userDoc} {...pageProps} />
   }
