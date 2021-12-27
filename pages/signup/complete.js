@@ -51,7 +51,7 @@ function CompleteSignupFlow ({ userDoc, setIsPageLoading, ...props }) {
       }
     }
     awaitRedirectResults()
-  })
+  }, [userDoc])
 
   return (
     <div className='flex flex-col p-4'>
