@@ -87,6 +87,7 @@ exports.handleUserLogin = functions.https.onCall(async (data, ctx) => {
     // if we have a role, just return. don't update any data as the user is already set.
     return
   }
+  // first time logging in
   await uref2.update(data)
 })
 

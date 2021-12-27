@@ -2,13 +2,14 @@ import 'tailwindcss/tailwind.css'
 import 'semantic-ui-css/semantic.min.css'
 import 'react-toastify/dist/ReactToastify.css'
 import 'nprogress/nprogress.css'
-import { auth, db } from '@/utils/config'
+import { auth, db, functions } from '@/utils/config'
 import Head from 'next/head'
 import { useAuthState } from 'react-firebase-hooks/auth'
+import { httpsCallable } from 'firebase/functions'
 import { useState, useEffect } from 'react'
 import { doc, onSnapshot } from 'firebase/firestore'
 import { ToastContainer } from 'react-toastify'
-import { signInAnonymously } from 'firebase/auth'
+import { signInAnonymously, getRedirectResult } from 'firebase/auth'
 import Router, { useRouter } from 'next/router'
 import NProgress from 'nprogress'
 import Layout from '@/components/layout'
@@ -16,6 +17,7 @@ import { signOut } from '@firebase/auth'
 import Landing from '@/components/landing'
 import Spinner from '@/components/spinner'
 import InvitationRequired from './invitationRequired'
+import sleep from '@/utils/misc'
 
 Router.events.on('routeChangeStart', NProgress.start)
 Router.events.on('routeChangeComplete', NProgress.done)
@@ -61,6 +63,8 @@ const anonUserNavigation = [
   { name: 'logout', href: '/', handleClick: () => signOut(auth) }
 ]
 
+const handleAnonUserConversion = httpsCallable(functions, 'stripe-handleAnonUserConversion')
+
 function MyApp ({ Component, pageProps }) {
   const [user, isUserLoading, error] = useAuthState(auth)
   const [userDoc, setUserDoc] = useState()
@@ -99,6 +103,29 @@ function MyApp ({ Component, pageProps }) {
     router.push('/signup')
     setIsPageLoading(false)
   }
+  useEffect(() => {
+    const awaitRedirectResults = async () => {
+      try {
+        console.log('inside awaitRedirectResults')
+        const result = await getRedirectResult(auth)
+        if (result) {
+          const user = result.user
+          const userData = JSON.parse(JSON.stringify(user.toJSON()))
+          const role = localStorage.getItem('totalDevsRole')
+          // logEvent(analytics, 'getRedirectResult user converted: role ' + role + ' ' + JSON.stringify(userData))
+          console.log({ userData, role })
+          await handleAnonUserConversion({ ...userData, role })
+          await sleep(1000)
+          localStorage.removeItem('totalDevsRole')
+          router.push('/')
+        }
+      } catch (err) {
+        // logEvent(analytics, 'getRedirectResult error: ' + JSON.stringify(err))
+        console.error(err)
+      }
+    }
+    awaitRedirectResults()
+  }, [userDoc])
 
   if (user && userDoc && userDoc.role === 'dev' && !userDoc.hasAcceptedInvite) {
     return <InvitationRequired userDoc={userDoc} {...pageProps} />
