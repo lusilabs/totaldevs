@@ -1,8 +1,10 @@
 import Nav from '@/components/nav.js'
 import Footer from '@/components/footer.js'
 import '@fortawesome/fontawesome-free/css/all.css'
+import { Label } from 'semantic-ui-react'
+import Link from 'next/link'
 
-function Landing ({ handleWorkWithUs }) {
+function Landing ({ handleWorkWithUs, profiles, ...props }) {
   return (
     <>
       <Nav />
@@ -25,18 +27,18 @@ function Landing ({ handleWorkWithUs }) {
             <div className='items-center flex flex-wrap'>
               <div className='w-full lg:w-6/12 px-4 m-auto text-center'>
                 <h1 className='text-white font-semibold text-5xl'>
-                  Totally committed to helping you.
+                  totally committed to helping you.
                 </h1>
                 <p className='mt-4 text-lg text-gray-300'>
-                  An exclusive community of professional developers, with proven results globally.
+                  hire from an exclusive community of professional developers, with proven results globally.
                 </p>
                 <button
-                  className='bg-blue-800 text-white hover:bg-gray-700 text-xl font-bold uppercase px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 mt-12'
+                  className='bg-blue-800 text-white hover:bg-gray-700 text-xl font-bold px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 mt-12'
                   type='button'
                   style={{ transition: 'all .50s ease' }}
                   onClick={handleWorkWithUs}
                 >
-                  Work with us. &nbsp;
+                  work with us &nbsp;
                   <i className='fas fa-arrow-alt-circle-right' />
                 </button>
               </div>
@@ -71,11 +73,11 @@ function Landing ({ handleWorkWithUs }) {
                 <div className='relative flex flex-col min-w-0 break-words bg-white w-full mb-8 shadow-lg rounded-lg'>
                   <div className='px-4 py-5 flex-auto'>
                     <div className='text-white p-3 text-center inline-flex items-center justify-center w-12 h-12 mb-5 shadow-lg rounded-full bg-red-400'>
-                      <i className='fas fa-award' />
+                      <i className='fas fa-piggy-bank' />
                     </div>
-                    <h6 className='text-xl font-semibold'>Awarded Agency</h6>
+                    <h6 className='text-xl font-semibold'>affordable services.</h6>
                     <p className='mt-2 mb-4 text-gray-600'>
-                      Divide details about your product or agency work into parts. A paragraph describing a feature will be enough.
+                      save up to 50% on quality developers from Latin America without upfront costs.
                     </p>
                   </div>
                 </div>
@@ -85,13 +87,13 @@ function Landing ({ handleWorkWithUs }) {
                 <div className='relative flex flex-col min-w-0 break-words bg-white w-full mb-8 shadow-lg rounded-lg'>
                   <div className='px-4 py-5 flex-auto'>
                     <div className='text-white p-3 text-center inline-flex items-center justify-center w-12 h-12 mb-5 shadow-lg rounded-full bg-blue-400'>
-                      <i className='fas fa-retweet' />
+                      <i className='fas fa-fingerprint' />
                     </div>
                     <h6 className='text-xl font-semibold'>
-                      Free Revisions
+                      hassle free.
                     </h6>
                     <p className='mt-2 mb-4 text-gray-600'>
-                      Keep you user engaged by providing meaningful information. Remember that by this time, the user is curious.
+                      from search to start in an instant entirely within our secure platform.
                     </p>
                   </div>
                 </div>
@@ -101,47 +103,36 @@ function Landing ({ handleWorkWithUs }) {
                 <div className='relative flex flex-col min-w-0 break-words bg-white w-full mb-8 shadow-lg rounded-lg'>
                   <div className='px-4 py-5 flex-auto'>
                     <div className='text-white p-3 text-center inline-flex items-center justify-center w-12 h-12 mb-5 shadow-lg rounded-full bg-green-400'>
-                      <i className='fas fa-fingerprint' />
+                      <i className='fas fa-check' />
                     </div>
                     <h6 className='text-xl font-semibold'>
-                      Verified Company
+                      guaranteed results.
                     </h6>
                     <p className='mt-2 mb-4 text-gray-600'>
-                      Write a few lines about each one. A paragraph describing a feature will be enough. Keep you user engaged!
+                      talent selected from an exclusive community of professional developers.
                     </p>
                   </div>
                 </div>
               </div>
             </div>
 
-            <div className='flex flex-wrap items-center mt-32'>
+            <div className='flex flex-wrap items-center mt-20'>
               <div className='w-full md:w-5/12 px-4 mr-auto ml-auto'>
-                <div className='text-gray-600 p-3 text-center inline-flex items-center justify-center w-16 h-16 mb-6 shadow-lg rounded-full bg-gray-100'>
-                  <i className='fas fa-user-friends text-xl' />
+                <div className='flex flex-row items-center justify-center'>
+
+                  <h3 className='text-3xl font-semibold'>
+                    why work with us?
+                  </h3>
                 </div>
-                <h3 className='text-3xl mb-2 font-semibold leading-normal'>
-                  Working with us is a pleasure
-                </h3>
                 <p className='text-lg font-light leading-relaxed mt-4 mb-4 text-gray-700'>
-                  Don't let your uses guess by attaching tooltips and popoves
-                  to any element. Just make sure you enable them first via
-                  JavaScript.
+                  with totaldevs you can get quality software built at a fraction of the cost by talented and qualified developers from Latin America.
                 </p>
                 <p className='text-lg font-light leading-relaxed mt-0 mb-4 text-gray-700'>
-                  The kit comes with three pre-built pages to help you get
-                  started faster. You can change the text and images and
-                  you're good to go. Just make sure you enable them first via
-                  JavaScript.
+                  our talent is selected from an exclusive community and has gone through an extensive screening process plus mentorship to deliver results.
                 </p>
-                <a
-                  href='https://www.creative-tim.com/learning-lab/tailwind-starter-kit#/presentation'
-                  className='font-bold text-gray-800 mt-8'
-                >
-                  Check Tailwind Starter Kit!
-                </a>
               </div>
 
-              <div className='w-full md:w-4/12 px-4 mr-auto ml-auto'>
+              <div className='w-full md:w-4/12 px-4 mr-auto ml-auto mt-8'>
                 <div className='relative flex flex-col min-w-0 break-words bg-white w-full mb-6 shadow-lg rounded-lg bg-pink-600'>
                   <img
                     alt='...'
@@ -165,12 +156,10 @@ function Landing ({ handleWorkWithUs }) {
                       />
                     </svg>
                     <h4 className='text-xl font-bold text-white'>
-                      Top Notch Services
+                      proven quality.
                     </h4>
                     <p className='text-md font-light mt-2 text-white'>
-                      The Arctic Ocean freezes every winter and much of the
-                      sea-ice then thaws every summer, and that process will
-                      continue whatever happens.
+                      total devs are great team players and know how to work remotely.
                     </p>
                   </blockquote>
                 </div>
@@ -212,17 +201,14 @@ function Landing ({ handleWorkWithUs }) {
               </div>
               <div className='w-full md:w-5/12 ml-auto mr-auto px-4'>
                 <div className='md:pr-12'>
-                  <div className='text-pink-600 p-3 text-center inline-flex items-center justify-center w-16 h-16 mt-8 shadow-lg rounded-full bg-pink-300'>
-                    <i className='fas fa-rocket text-xl' />
+                  <div className='flex flex-row items-center justify-center p-4'>
+                    <div className='text-pink-600 p-3 text-center inline-flex items-center justify-center w-16 h-16 mt-8 shadow-lg rounded-full bg-pink-300'>
+                      <i className='fas fa-rocket text-xl' />
+                    </div>
+                    <h3 className='text-3xl font-semibold m-8'>
+                      from search to start in an instant.
+                    </h3>
                   </div>
-                  <h3 className='text-3xl font-semibold mt-8'>
-                    A growing company
-                  </h3>
-                  <p className='mt-4 text-lg leading-relaxed text-gray-600'>
-                    The extension comes with three pre-built pages to help you
-                    get started faster. You can change the text and images and
-                    you're good to go.
-                  </p>
                   <ul className='list-none mt-6'>
                     <li className='py-2'>
                       <div className='flex items-center'>
@@ -232,9 +218,7 @@ function Landing ({ handleWorkWithUs }) {
                           </span>
                         </div>
                         <div>
-                          <h4 className='text-gray-600'>
-                            Carefully crafted components
-                          </h4>
+                          <h4 className='text-gray-600'>create your job posting</h4>
                         </div>
                       </div>
                     </li>
@@ -246,7 +230,7 @@ function Landing ({ handleWorkWithUs }) {
                           </span>
                         </div>
                         <div>
-                          <h4 className='text-gray-600'>Amazing page examples</h4>
+                          <h4 className='text-gray-600'>totaldevs will find a match and begin onboarding</h4>
                         </div>
                       </div>
                     </li>
@@ -258,7 +242,7 @@ function Landing ({ handleWorkWithUs }) {
                           </span>
                         </div>
                         <div>
-                          <h4 className='text-gray-600'>Dynamic components</h4>
+                          <h4 className='text-gray-600'>accept and start</h4>
                         </div>
                       </div>
                     </li>
@@ -274,168 +258,16 @@ function Landing ({ handleWorkWithUs }) {
             <div className='flex flex-wrap justify-center text-center mb-24'>
               <div className='w-full lg:w-6/12 px-4'>
                 <h2 className='text-4xl font-semibold'>
-                  Available devs
+                  available devs
                 </h2>
                 <p className='text-lg leading-relaxed m-4 text-gray-600'>
-                  According to the National Oceanic and Atmospheric
-                  Administration, Ted, Scambos, NSIDClead scentist, puts the
-                  potentially record maximum.
+                  select any of the following top talent right now.
                 </p>
               </div>
             </div>
-            <div className='flex flex-wrap'>
-              <div className='w-full md:w-6/12 lg:w-3/12 lg:mb-0 mb-12 px-4'>
-                <div className='px-6'>
-                  <img
-                    alt='...'
-                    src='/team-1-800x800.jpg'
-                    className='shadow-lg rounded-full max-w-full mx-auto'
-                    style={{ maxWidth: '120px' }}
-                  />
-                  <div className='pt-6 text-center'>
-                    <h5 className='text-xl font-bold'>
-                      Ryan Tompson
-                    </h5>
-                    <p className='mt-1 text-sm text-gray-500 uppercase font-semibold'>
-                      Web Developer
-                    </p>
-                    <div className='mt-6'>
-                      <button
-                        className='bg-blue-400 text-white w-8 h-8 rounded-full outline-none focus:outline-none mr-1 mb-1'
-                        type='button'
-                      >
-                        <i className='fab fa-twitter' />
-                      </button>
-                      <button
-                        className='bg-blue-600 text-white w-8 h-8 rounded-full outline-none focus:outline-none mr-1 mb-1'
-                        type='button'
-                      >
-                        <i className='fab fa-facebook-f' />
-                      </button>
-                      <button
-                        className='bg-pink-500 text-white w-8 h-8 rounded-full outline-none focus:outline-none mr-1 mb-1'
-                        type='button'
-                      >
-                        <i className='fab fa-dribbble' />
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className='w-full md:w-6/12 lg:w-3/12 lg:mb-0 mb-12 px-4'>
-                <div className='px-6'>
-                  <img
-                    alt='...'
-                    src='/team-2-800x800.jpg'
-                    className='shadow-lg rounded-full max-w-full mx-auto'
-                    style={{ maxWidth: '120px' }}
-                  />
-                  <div className='pt-6 text-center'>
-                    <h5 className='text-xl font-bold'>
-                      Romina Hadid
-                    </h5>
-                    <p className='mt-1 text-sm text-gray-500 uppercase font-semibold'>
-                      Marketing Specialist
-                    </p>
-                    <div className='mt-6'>
-                      <button
-                        className='bg-red-600 text-white w-8 h-8 rounded-full outline-none focus:outline-none mr-1 mb-1'
-                        type='button'
-                      >
-                        <i className='fab fa-google' />
-                      </button>
-                      <button
-                        className='bg-blue-600 text-white w-8 h-8 rounded-full outline-none focus:outline-none mr-1 mb-1'
-                        type='button'
-                      >
-                        <i className='fab fa-facebook-f' />
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className='w-full md:w-6/12 lg:w-3/12 lg:mb-0 mb-12 px-4'>
-                <div className='px-6'>
-                  <img
-                    alt='...'
-                    src='/team-3-800x800.jpg'
-                    className='shadow-lg rounded-full max-w-full mx-auto'
-                    style={{ maxWidth: '120px' }}
-                  />
-                  <div className='pt-6 text-center'>
-                    <h5 className='text-xl font-bold'>
-                      Alexa Smith
-                    </h5>
-                    <p className='mt-1 text-sm text-gray-500 uppercase font-semibold'>
-                      UI/UX Designer
-                    </p>
-                    <div className='mt-6'>
-                      <button
-                        className='bg-red-600 text-white w-8 h-8 rounded-full outline-none focus:outline-none mr-1 mb-1'
-                        type='button'
-                      >
-                        <i className='fab fa-google' />
-                      </button>
-                      <button
-                        className='bg-blue-400 text-white w-8 h-8 rounded-full outline-none focus:outline-none mr-1 mb-1'
-                        type='button'
-                      >
-                        <i className='fab fa-twitter' />
-                      </button>
-                      <button
-                        className='bg-gray-800 text-white w-8 h-8 rounded-full outline-none focus:outline-none mr-1 mb-1'
-                        type='button'
-                      >
-                        <i className='fab fa-instagram' />
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className='w-full md:w-6/12 lg:w-3/12 lg:mb-0 mb-12 px-4'>
-                <div className='px-6'>
-                  <img
-                    alt='...'
-                    src='/team-4-470x470.png'
-                    className='shadow-lg rounded-full max-w-full mx-auto'
-                    style={{ maxWidth: '120px' }}
-                  />
-                  <div className='pt-6 text-center'>
-                    <h5 className='text-xl font-bold'>
-                      Jenna Kardi
-                    </h5>
-                    <p className='mt-1 text-sm text-gray-500 uppercase font-semibold'>
-                      Founder and CEO
-                    </p>
-                    <div className='mt-6'>
-                      <button
-                        className='bg-pink-500 text-white w-8 h-8 rounded-full outline-none focus:outline-none mr-1 mb-1'
-                        type='button'
-                      >
-                        <i className='fab fa-dribbble' />
-                      </button>
-                      <button
-                        className='bg-red-600 text-white w-8 h-8 rounded-full outline-none focus:outline-none mr-1 mb-1'
-                        type='button'
-                      >
-                        <i className='fab fa-google' />
-                      </button>
-                      <button
-                        className='bg-blue-400 text-white w-8 h-8 rounded-full outline-none focus:outline-none mr-1 mb-1'
-                        type='button'
-                      >
-                        <i className='fab fa-twitter' />
-                      </button>
-                      <button
-                        className='bg-gray-800 text-white w-8 h-8 rounded-full outline-none focus:outline-none mr-1 mb-1'
-                        type='button'
-                      >
-                        <i className='fab fa-instagram' />
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
+            <div className='flex flex-wrap justify-center'>
+              {profiles.length > 0 && profiles.map((p, ix) => <Profile key={ix} {...p} />)}
+              {profiles.length === 0 && <h3 className='text-gray text-xl'>(no devs available atm)</h3>}
             </div>
           </div>
         </section>
@@ -465,12 +297,8 @@ function Landing ({ handleWorkWithUs }) {
             <div className='flex flex-wrap text-center justify-center'>
               <div className='w-full lg:w-6/12 px-4'>
                 <h2 className='pt-8 text-4xl font-semibold text-white'>
-                  Need something built?
+                  need something built?
                 </h2>
-                <p className='text-lg leading-relaxed mt-4 mb-4 text-gray-500'>
-                  Put the potentially record low maximum sea ice extent tihs year down to low ice.
-                  According to the National Oceanic and Atmospheric Administration, Ted, Scambos.
-                </p>
               </div>
             </div>
             <div className='flex flex-wrap mt-12 justify-center'>
@@ -479,35 +307,33 @@ function Landing ({ handleWorkWithUs }) {
                   <i className='fas fa-medal text-xl' />
                 </div>
                 <h6 className='text-xl mt-5 font-semibold text-white'>
-                  Excelent Services
+                  pay until dev starts
                 </h6>
                 <p className='mt-2 mb-4 text-gray-500'>
-                  Some quick example text to build on the card title and make up
-                  the bulk of the card's content.
+                  no upfront costs, save up to 50% working vs. US or Canada devs.
                 </p>
               </div>
-              <div className='w-full lg:w-3/12 px-4 text-center'>
+              <div className='w-full lg:w-3/12 px-4 text-center mt-4'>
                 <div className='text-gray-900 p-3 w-12 h-12 shadow-lg rounded-full bg-white inline-flex items-center justify-center'>
-                  <i className='fas fa-poll text-xl' />
+                  <i className='fas fa-bolt text-xl' />
                 </div>
                 <h5 className='text-xl mt-5 font-semibold text-white'>
-                  Grow your market
+                  quick and easy
                 </h5>
                 <p className='mt-2 mb-4 text-gray-500'>
-                  Some quick example text to build on the card title and make up
-                  the bulk of the card's content.
+                  we can provide a candidate within 5 business days.
+                  close a deal within 3 weeks.
                 </p>
               </div>
               <div className='w-full lg:w-3/12 px-4 text-center'>
-                <div className='text-gray-900 p-3 w-12 h-12 shadow-lg rounded-full bg-white inline-flex items-center justify-center'>
+                <div className='text-gray-900 p-3 w-12 h-12 shadow-lg rounded-full bg-white inline-flex items-center justify-center mt-4'>
                   <i className='fas fa-lightbulb text-xl' />
                 </div>
                 <h5 className='text-xl mt-5 font-semibold text-white'>
-                  Launch time
+                  the software is yours
                 </h5>
                 <p className='mt-2 mb-4 text-gray-500'>
-                  Some quick example text to build on the card title and make up
-                  the bulk of the card's content.
+                  with confidentiality and IP agreements, all work done by a total dev is your property only.
                 </p>
               </div>
             </div>
@@ -516,6 +342,64 @@ function Landing ({ handleWorkWithUs }) {
       </main>
       <Footer />
     </>
+  )
+}
+
+export function Profile (props) {
+  return (
+    <div className='w-full md:w-6/12 lg:w-3/12 lg:mb-0 mb-12 px-4'>
+      <div className='px-6'>
+        <img
+          alt='...'
+          src={props.photoURL}
+          className='shadow-lg rounded-full max-w-full mx-auto'
+          style={{ maxWidth: '120px' }}
+        />
+        <div className='pt-6 text-center'>
+          <h5 className='text-xl font-bold'>
+            {props.displayName}
+          </h5>
+          <p className='text-lg text-gray-500 font-bold'>
+            {props.title}
+          </p>
+          <div className='m-2 flex flex-row items-center justify-center'>
+            {props.stack.map((s, ix) => <Label key={ix}>{s}</Label>)}
+          </div>
+
+          <div className='mt-4'>
+            {props.githubURI && <button
+              className='bg-gray-600 text-white w-8 h-8 rounded-full outline-none focus:outline-none m-1 mb-1'
+              type='button'
+                                >
+              <a className='text-white' href={`https://github.com/${props.githubURI}`}>
+                <i className='fab fa-github text-center' />
+              </a>
+                                </button>}
+
+            {props.linkedInURI &&
+              <button
+                className='bg-blue-500 text-white w-8 h-8 rounded-full outline-none focus:outline-none mr-1 mb-1'
+                type='button'
+              >
+                <a className='text-white' href={`https://linkedin.com/in/${props.linkedInURI}`}>
+                  <i className='fab fa-linkedin-in ' />
+                </a>
+              </button>}
+
+            {props.websiteURL && <button
+              className='bg-pink-500 text-white w-8 h-8 rounded-full outline-none focus:outline-none mr-1 mb-1'
+              type='button'
+                                 >
+              <a className='text-white' href={`https://${props.websiteURL}`}>
+                <i className='fas fa-link' />
+              </a>
+                                 </button>}
+          </div>
+
+        </div>
+      </div>
+    </div>
+
   )
 }
 

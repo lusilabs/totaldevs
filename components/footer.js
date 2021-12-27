@@ -67,14 +67,14 @@ export default function Footer () {
                     <a
                       className='text-gray-700 hover:text-gray-900 font-semibold block pb-2 text-sm'
                       href='https://www.creative-tim.com/presentation'
-                    >About Us
+                    >about us
                     </a>
                   </li>
                   <li>
                     <a
                       className='text-gray-700 hover:text-gray-900 font-semibold block pb-2 text-sm'
                       href='https://blog.creative-tim.com'
-                    >Blog
+                    >blog
                     </a>
                   </li>
 
@@ -82,7 +82,7 @@ export default function Footer () {
               </div>
               <div className='w-full lg:w-4/12 px-4'>
                 <span className='block uppercase text-gray-600 text-sm font-semibold mb-2'>
-                  Other Resources
+                  other Resources
                 </span>
                 <ul className='list-unstyled'>
 

@@ -53,13 +53,13 @@ function EditDevProfile ({ userDoc, ...props }) {
 
   const onSubmit = async data => {
     if (!resumeURL) {
-      toast.error('Please upload a resumé')
+      toast.error('please upload a resumé')
       return
     }
     setSaving(true)
     await sleep(3000)
-    const cityRef = doc(db, 'users', userDoc.uid)
-    await setDoc(cityRef, {
+    const uref = doc(db, 'users', userDoc.uid)
+    await setDoc(uref, {
       displayName: data.displayName,
       stack: selectedStack,
       title: data.title,
@@ -74,6 +74,19 @@ function EditDevProfile ({ userDoc, ...props }) {
       photoURL,
       resumeName
     }, { merge: true })
+    // save to /profiles
+    const pref = doc(db, 'profiles', userDoc.uid)
+    await setDoc(pref, {
+      displayName: data.displayName,
+      stack: selectedStack,
+      title: data.title,
+      githubURI: data.githubURI,
+      linkedInURI: data.linkedInURI,
+      websiteURL: data.websiteURL,
+      visibility: data.visibility,
+      photoURL
+    }, { merge: true })
+    toast.success('profile saved successfully.')
     setSaving(false)
   }
 
@@ -256,7 +269,7 @@ function EditDevProfile ({ userDoc, ...props }) {
                 </label>
                 <div className='mt-1 flex rounded-md shadow-sm'>
                   <span className='inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm'>
-                    https://linkedin.com/
+                    https://linkedin.com/in/
                   </span>
                   <input
                     type='text' name='company-website' id='company-website' className='focus:ring-indigo-500 focus:border-indigo-500 flex-1 block w-full rounded-none rounded-r-md sm:text-sm border-gray-300' placeholder=''
@@ -276,7 +289,7 @@ function EditDevProfile ({ userDoc, ...props }) {
                   </span>
                   <input
                     type='text' name='company-website' id='company-website' className='focus:ring-indigo-500 focus:border-indigo-500 flex-1 block w-full rounded-none rounded-r-md sm:text-sm border-gray-300' placeholder='example.com'
-                    {...register('websiteURL', { required: false, maxLength: 256, pattern: /^[A-Za-z0-9 ]+$/i })}
+                    {...register('websiteURL', { required: false, maxLength: 256 })}
                   />
                 </div>
                 {errors.price && <div className='m-2 text-sm text-red-500'>El precio necesita ser positivo</div>}
