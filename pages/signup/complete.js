@@ -7,6 +7,7 @@ import { useRouter } from 'next/router'
 import sleep from '@/utils/misc'
 import LoginForm from '@/components/loginform'
 import Link from 'next/link'
+import { useEffect } from 'react'
 
 const handleAnonUserConversion = httpsCallable(functions, 'stripe-handleAnonUserConversion')
 const handleUserLogin = httpsCallable(functions, 'stripe-handleUserLogin')
@@ -27,24 +28,29 @@ function CompleteSignupFlow ({ userDoc, setIsPageLoading, ...props }) {
     logEvent(analytics, 'handleLinkWithRedirect error: ' + JSON.stringify(error))
     console.error(error)
   })
-  getRedirectResult(auth).then(async (result) => {
-    console.log('getRedirectResult')
-    const credential = GoogleAuthProvider.credentialFromResult(result)
-    console.log({ credential, result })
-    if (credential) {
-      const user = result.user
-      const userData = JSON.parse(JSON.stringify(user.toJSON()))
-      const role = localStorage.getItem('totalDevsRole')
-      logEvent(analytics, 'getRedirectResult user converted: role ' + role + ' ' + JSON.stringify(userData))
-      console.log({ userData, role })
-      await handleAnonUserConversion({ ...userData, role })
-      await sleep(2000)
-      localStorage.removeItem('totalDevsRole')
-      router.push('/')
+
+  useEffect(() => {
+    const awaitRedirectResults = async () => {
+      try {
+        console.log('inside awaitRedirectResults')
+        const result = await getRedirectResult(auth)
+        if (result) {
+          const user = result.user
+          const userData = JSON.parse(JSON.stringify(user.toJSON()))
+          const role = localStorage.getItem('totalDevsRole')
+          logEvent(analytics, 'getRedirectResult user converted: role ' + role + ' ' + JSON.stringify(userData))
+          console.log({ userData, role })
+          await handleAnonUserConversion({ ...userData, role })
+          await sleep(2000)
+          localStorage.removeItem('totalDevsRole')
+          router.push('/')
+        }
+      } catch (err) {
+        logEvent(analytics, 'getRedirectResult error: ' + JSON.stringify(err))
+        console.error(err)
+      }
     }
-  }).catch((error) => {
-    logEvent(analytics, 'getRedirectResult error: ' + JSON.stringify(error))
-    console.error(error)
+    awaitRedirectResults()
   })
 
   return (
