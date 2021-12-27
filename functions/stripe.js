@@ -47,7 +47,7 @@ exports.createUserDoc = functions.auth.user().onCreate(async user => {
     .doc(user.uid)
     .set({
       ...userJSONData,
-      wasInvited: !!isDevelopment,
+      hasAcceptedInvite: !!isDevelopment,
       numInvitesLeft: 5
     })
 })
@@ -59,13 +59,13 @@ exports.handleUserLogin = functions.https.onCall(async (data, ctx) => {
     .collection('users')
     .doc(uid)
     .get()
-  const { isDev, isCompany, isExplorer, email, hasAcceptedInvite } = uref.data()
+  const { role, email, hasAcceptedInvite } = uref.data()
   const uref2 = await admin
     .firestore()
     .collection('users')
     .doc(uid)
-  if (isDev || isCompany || isExplorer) {
-    if (isDev && !hasAcceptedInvite) {
+  if (role) {
+    if (role === 'dev' && !hasAcceptedInvite) {
       // try redeeming any invites automatically
       const iref = await admin
         .firestore()
@@ -84,9 +84,21 @@ exports.handleUserLogin = functions.https.onCall(async (data, ctx) => {
         }
       }
     }
+    // if we have a role, just return. don't update any data as the user is already set.
     return
   }
+  // first time logging in
   await uref2.update(data)
+})
+
+exports.handleAnonUserConversion = functions.https.onCall(async (data, ctx) => {
+  const uid = isAuthedAndAppChecked(ctx)
+  const uref = await admin
+    .firestore()
+    .collection('users')
+    .doc(uid)
+  logger.info('handleAnonUserConversion ', data)
+  await uref.update(data)
 })
 
 exports.handleWebhooks = functions.https.onRequest(async (req, resp) => {

@@ -1,8 +1,7 @@
 import { useForm } from 'react-hook-form'
-import { Button, Dropdown } from 'semantic-ui-react'
-import React, { useState, useEffect } from 'react'
-import sleep from '@/utils/misc'
-import { storage, db } from '@/utils/config'
+import { Button } from 'semantic-ui-react'
+import React, { useState } from 'react'
+import { db } from '@/utils/config'
 import { doc, setDoc, addDoc, increment, collection, getDoc } from 'firebase/firestore'
 import router from 'next/router'
 import { toast } from 'react-toastify'
@@ -54,7 +53,7 @@ function AddInvite ({ userDoc, ...props }) {
     }
   })
 
-  console.log(watch(['email', 'inviteText']))
+  // console.log(watch(['email', 'inviteText']))
 
   return (
     <div className='m-4 md:col-span-2 shadow-xl'>

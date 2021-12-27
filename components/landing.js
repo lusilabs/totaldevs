@@ -1,27 +1,8 @@
 import Nav from '@/components/nav.js'
 import Footer from '@/components/footer.js'
 import '@fortawesome/fontawesome-free/css/all.css'
-import { db, auth } from '@/utils/config'
-import { getAnalytics, logEvent } from 'firebase/analytics'
-import { useEffect } from 'react'
-import { getRedirectResult } from '@firebase/auth'
 
-export default function Landing () {
-  useEffect(() => {
-    const analytics = getAnalytics()
-    logEvent(analytics, 'User visiting.')
-  }, [])
-
-  // this doesn't work for some reason.
-  // const checkUserCreate = async () => {
-  //   const result = await getRedirectResult(auth)
-  //   console.log('useEffect landing')
-  //   console.info(result)
-  // }
-  // useEffect(() => {
-  //   checkUserCreate()
-  // })
-
+function Landing ({ handleWorkWithUs }) {
   return (
     <>
       <Nav />
@@ -53,7 +34,7 @@ export default function Landing () {
                   className='bg-blue-800 text-white hover:bg-gray-700 text-xl font-bold uppercase px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 mt-12'
                   type='button'
                   style={{ transition: 'all .50s ease' }}
-
+                  onClick={handleWorkWithUs}
                 >
                   Work with us. &nbsp;
                   <i className='fas fa-arrow-alt-circle-right' />
@@ -307,7 +288,7 @@ export default function Landing () {
                 <div className='px-6'>
                   <img
                     alt='...'
-                    src='team-1-800x800.jpg'
+                    src='/team-1-800x800.jpg'
                     className='shadow-lg rounded-full max-w-full mx-auto'
                     style={{ maxWidth: '120px' }}
                   />
@@ -345,7 +326,7 @@ export default function Landing () {
                 <div className='px-6'>
                   <img
                     alt='...'
-                    src='team-2-800x800.jpg'
+                    src='/team-2-800x800.jpg'
                     className='shadow-lg rounded-full max-w-full mx-auto'
                     style={{ maxWidth: '120px' }}
                   />
@@ -377,7 +358,7 @@ export default function Landing () {
                 <div className='px-6'>
                   <img
                     alt='...'
-                    src='team-3-800x800.jpg'
+                    src='/team-3-800x800.jpg'
                     className='shadow-lg rounded-full max-w-full mx-auto'
                     style={{ maxWidth: '120px' }}
                   />
@@ -415,7 +396,7 @@ export default function Landing () {
                 <div className='px-6'>
                   <img
                     alt='...'
-                    src='team-4-470x470.png'
+                    src='/team-4-470x470.png'
                     className='shadow-lg rounded-full max-w-full mx-auto'
                     style={{ maxWidth: '120px' }}
                   />
@@ -483,7 +464,7 @@ export default function Landing () {
           <div className='container mx-auto px-4 lg:pt-24 lg:pb-64'>
             <div className='flex flex-wrap text-center justify-center'>
               <div className='w-full lg:w-6/12 px-4'>
-                <h2 className='text-4xl font-semibold text-white mt-16'>
+                <h2 className='pt-8 text-4xl font-semibold text-white'>
                   Need something built?
                 </h2>
                 <p className='text-lg leading-relaxed mt-4 mb-4 text-gray-500'>
@@ -537,3 +518,5 @@ export default function Landing () {
     </>
   )
 }
+
+export default Landing
