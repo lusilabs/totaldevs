@@ -9,7 +9,7 @@ const PostEntry = () => {
   const [story, setStory] = useState(null)
 
   useEffect(async () => {
-    const {story} = await fetchStory(router.query.id)
+    const { story } = await fetchStory(router.query.postID)
     setStory(story)
   }, [])
 
