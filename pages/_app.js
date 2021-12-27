@@ -33,6 +33,7 @@ const devNavigation = [
 
 const userNavigation = [
   { name: 'profile', href: '/profile' },
+  { name: 'invites', href: '/invites' },
   { name: 'logout', href: '/', handleClick: () => signOut(auth) }
 ]
 
