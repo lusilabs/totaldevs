@@ -1,8 +1,9 @@
 import { getAnalytics, logEvent } from 'firebase/analytics'
 import { useEffect } from 'react'
 import Dashboard from './dashboard'
+import Landing from '@/components/landing'
 
-export default function Landing ({ userDoc, setIsPageLoading, handleWorkWithUs, ...props }) {
+export default function Index ({ userDoc, setIsPageLoading, handleWorkWithUs, ...props }) {
   useEffect(() => {
     const analytics = getAnalytics()
     logEvent(analytics, 'New visit.')
@@ -22,7 +23,7 @@ export default function Landing ({ userDoc, setIsPageLoading, handleWorkWithUs, 
     <>
       {/* {userDoc && userDoc.role === 'dev' && <Dashboard userDoc={userDoc} {...props} />} */}
       {userDoc && <Dashboard userDoc={userDoc} {...props} />}
-      {!userDoc && <Landing setIsPageLoading={setIsPageLoading} handleWorkWithUs={handleWorkWithUs} />}
+      {!userDoc && <Landing setIsPageLoading={setIsPageLoading} handleWorkWithUs={handleWorkWithUs} {...props} />}
     </>
   )
 }

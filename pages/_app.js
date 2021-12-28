@@ -7,7 +7,7 @@ import Head from 'next/head'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import { httpsCallable } from 'firebase/functions'
 import { useState, useEffect } from 'react'
-import { doc, onSnapshot } from 'firebase/firestore'
+import { doc, onSnapshot, where, orderBy, limit, query, collection, getDocs } from 'firebase/firestore'
 import { ToastContainer } from 'react-toastify'
 import { signInAnonymously, getRedirectResult } from 'firebase/auth'
 import Router, { useRouter } from 'next/router'
@@ -25,7 +25,9 @@ Router.events.on('routeChangeError', NProgress.done)
 NProgress.configure({ showSpinner: false })
 
 const anonRoutes = [
-  '/login'
+  '/login',
+  '/terms',
+  '/privacy'
 ]
 
 const pageNavigationByRole = {
@@ -73,6 +75,7 @@ function MyApp ({ Component, pageProps }) {
   const router = useRouter()
   const onAnonRoutes = anonRoutes.includes(router.pathname)
   const [isPageLoading, setIsPageLoading] = useState(false)
+  const [profiles, setProfiles] = useState([])
 
   useEffect(() => {
     let unsubscribe = () => {}
@@ -87,6 +90,26 @@ function MyApp ({ Component, pageProps }) {
     }
     return unsubscribe
   }, [user])
+
+  useEffect(() => {
+    const retrievePublicProfiles = async () => {
+      const q = query(
+        collection(db, 'profiles'),
+        where('visibility', '==', 'public'),
+        where('stack', '!=', []),
+        // where('rating', '>', 3),
+        // orderBy('rating'),
+        limit(6)
+      )
+      const querySnapshot = await getDocs(q)
+      const snaps = []
+      querySnapshot.forEach(doc => {
+        snaps.push({ id: doc.id, ...doc.data() })
+      })
+      setProfiles(snaps)
+    }
+    retrievePublicProfiles()
+  }, [])
 
   useEffect(() => {
     console.log({ user, userDoc, Component })
@@ -130,6 +153,7 @@ function MyApp ({ Component, pageProps }) {
   if (user && userDoc && userDoc.role === 'dev' && !userDoc.hasAcceptedInvite) {
     return <InvitationRequired userDoc={userDoc} {...pageProps} />
   }
+
   return (
     <>
       <Head>
@@ -140,7 +164,7 @@ function MyApp ({ Component, pageProps }) {
       </Head>
       {(isUserLoading || isPageLoading) && <Spinner />}
       {error && <Error title='Error while retrieving user' statusCode={500} />}
-      {!user && !isUserLoading && !onAnonRoutes && <Landing setIsPageLoading={setIsPageLoading} handleWorkWithUs={handleWorkWithUs} />}
+      {!user && !isUserLoading && !onAnonRoutes && <Landing profiles={profiles} setIsPageLoading={setIsPageLoading} handleWorkWithUs={handleWorkWithUs} />}
       {user && userDoc && !onAnonRoutes &&
         <Layout user={user} userDoc={userDoc} navigation={navigation} userNavigation={userNavigation} {...pageProps}>
           <Component user={user} userDoc={userDoc} setIsPageLoading={setIsPageLoading} {...pageProps} />
