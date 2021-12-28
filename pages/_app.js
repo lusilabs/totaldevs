@@ -25,7 +25,9 @@ Router.events.on('routeChangeError', NProgress.done)
 NProgress.configure({ showSpinner: false })
 
 const anonRoutes = [
-  '/login'
+  '/login',
+  '/terms',
+  '/privacy'
 ]
 
 const pageNavigationByRole = {

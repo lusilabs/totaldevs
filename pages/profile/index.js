@@ -132,9 +132,10 @@ function EditDevProfile ({ userDoc, ...props }) {
       toast.error('Please upload a < 3 MB pdf.')
       return
     }
-    const fileRef = ref(storage, `resumes/${file.name}`)
+    const fileRef = ref(storage, `resumes/${file.name}-${Date.now()}`)
     uploadBytes(fileRef, file).then(_ => {
       getDownloadURL(fileRef).then(url => {
+        console.log({ fileRef, url })
         setResumeURL(url)
         setResumeName(file.name)
       })
@@ -405,7 +406,9 @@ function EditDevProfile ({ userDoc, ...props }) {
                         </span>
 
                         <div className='ml-4 flex-shrink-0'>
-                          <a href={resumeURL} className='font-medium text-indigo-600 hover:text-indigo-500' download={resumeName}>
+                          <a
+                            href={resumeURL} target='blank' className='font-medium text-indigo-600 hover:text-indigo-500'
+                          >
                             view
                           </a>
                         </div>

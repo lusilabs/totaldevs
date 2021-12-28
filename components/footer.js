@@ -66,14 +66,12 @@ export default function Footer () {
                   <li>
                     <a
                       className='text-gray-700 hover:text-gray-900 font-semibold block pb-2 text-sm'
-                      href='https://www.creative-tim.com/presentation'
                     >about us
                     </a>
                   </li>
                   <li>
                     <a
                       className='text-gray-700 hover:text-gray-900 font-semibold block pb-2 text-sm'
-                      href='https://blog.creative-tim.com'
                     >blog
                     </a>
                   </li>
@@ -89,14 +87,14 @@ export default function Footer () {
                   <li>
                     <a
                       className='text-gray-700 hover:text-gray-900 font-semibold block pb-2 text-sm'
-                      href='https://creative-tim.com/terms'
+                      href='/terms'
                     >Terms & Conditions
                     </a>
                   </li>
                   <li>
                     <a
                       className='text-gray-700 hover:text-gray-900 font-semibold block pb-2 text-sm'
-                      href='https://creative-tim.com/privacy'
+                      href='/privacy'
                     >Privacy Policy
                     </a>
                   </li>
