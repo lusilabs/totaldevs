@@ -19,6 +19,8 @@ const STRIPE_SECRET = isDevelopment ? config.stripe.secret_key_dev : config.stri
 // const OWNER_STRIPE_CHECKOUT_CANCEL_URL = isDevelopment ? config.stripe.owner_checkout_cancel_url_dev : config.stripe.owner_checkout_cancel_url_prod
 // const OWNER_PORTAL_RETURN_URL = isDevelopment ? config.stripe.owner_portal_return_dev : config.stripe.owner_portal_return_prod
 // const CUSTOMER_PORTAL_RETURN_URL = isDevelopment ? config.stripe.customer_portal_return_dev : config.stripe.customer_portal_return_prod
+const DEFAULT_DEV_INVITES = 3
+const DEFAULT_EXPLORER_INVITES = 10
 
 // const stripe = Stripe(STRIPE_SECRET)
 const isAuthed = ctx => {
@@ -48,7 +50,7 @@ exports.createUserDoc = functions.auth.user().onCreate(async user => {
     .set({
       ...userJSONData,
       hasAcceptedInvite: !!isDevelopment,
-      numInvitesLeft: 5
+      numInvitesLeft: DEFAULT_DEV_INVITES
     })
 })
 
@@ -98,7 +100,7 @@ exports.handleAnonUserConversion = functions.https.onCall(async (data, ctx) => {
     .collection('users')
     .doc(uid)
   logger.info('handleAnonUserConversion ', data)
-  await uref.update(data)
+  await uref.update({ ...data, numInvitesLeft: data.role === 'explorer' ? DEFAULT_EXPLORER_INVITES : 0 })
 })
 
 exports.handleWebhooks = functions.https.onRequest(async (req, resp) => {

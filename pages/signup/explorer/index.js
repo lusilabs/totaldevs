@@ -1,7 +1,8 @@
+import SignupComplete from '../complete'
 function Explorer () {
   return (
     <div>
-      Explorer page.
+      <SignupComplete />
     </div>
   )
 }

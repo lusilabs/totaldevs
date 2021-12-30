@@ -39,9 +39,8 @@ const pageNavigationByRole = {
     { name: 'jobs', href: '/jobs', current: false }
   ],
   explorer: [
-    { name: 'jobs', href: '/jobs', current: false }
+    { name: 'matches', href: '/matches', current: false }
   ]
-
 }
 
 const userNavigationByRole = {
@@ -56,6 +55,7 @@ const userNavigationByRole = {
   ],
   explorer: [
     { name: 'profile', href: '/profile' },
+    { name: 'invites', href: '/invites' },
     { name: 'logout', href: '/', handleClick: () => signOut(auth) }
   ]
 }
@@ -112,7 +112,7 @@ function MyApp ({ Component, pageProps }) {
   }, [])
 
   useEffect(() => {
-    console.log({ user, userDoc, Component })
+    // console.log({ user, userDoc, Component })
     if (userDoc && userDoc.role) {
       setNavigation(pageNavigationByRole[userDoc.role])
       setUserNavigation(userNavigationByRole[userDoc.role])
