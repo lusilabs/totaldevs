@@ -1,8 +1,8 @@
 import SignupComplete from '../complete'
-function Explorer () {
+function Explorer (props) {
   return (
     <div>
-      <SignupComplete />
+      <SignupComplete {...props} />
     </div>
   )
 }
