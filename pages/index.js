@@ -3,7 +3,7 @@ import { useEffect } from 'react'
 import Dashboard from './dashboard'
 import Landing from '@/components/landing'
 
-export default function Index ({ userDoc, setIsPageLoading, handleWorkWithUs, ...props }) {
+export default function Index ({ userDoc, handleWorkWithUs, ...props }) {
   useEffect(() => {
     const analytics = getAnalytics()
     logEvent(analytics, 'New visit.')
@@ -23,7 +23,7 @@ export default function Index ({ userDoc, setIsPageLoading, handleWorkWithUs, ..
     <>
       {/* {userDoc && userDoc.role === 'dev' && <Dashboard userDoc={userDoc} {...props} />} */}
       {userDoc && <Dashboard userDoc={userDoc} {...props} />}
-      {!userDoc && <Landing setIsPageLoading={setIsPageLoading} handleWorkWithUs={handleWorkWithUs} {...props} />}
+      {!userDoc && <Landing handleWorkWithUs={handleWorkWithUs} {...props} />}
     </>
   )
 }

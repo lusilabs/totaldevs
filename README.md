@@ -261,10 +261,15 @@ at /Users/carlo/firegym/.next/server/pages/_app.js:226:66 {
 type: 'ReferenceError'
 ```
 
-happens when trying to access the document on client side but nextjs is building it as a server side function (in which case `document` is not defined oo node.) Change routes to non api/ and also try dynamically importing `https://nextjs.org/docs/advanced-features/dynamic-import#with-no-ssr` the component of do 
+happens when trying to access the document on client side but nextjs is building it as a server side function (in which case `document` is not defined on nodejs.) Change routes to non api/ and also try dynamically importing `https://nextjs.org/docs/advanced-features/dynamic-import#with-no-ssr`
 
 ```
 if (typeof window !== 'undefined') {
   myClientPkg = require('some-pkg')
 }
 ```
+
+### Dev stripe accounts
+Substitute `stripeAccountID` for the following to get the desired behavior.
+
+1. complete: acct_1KCe5c2cSEZKTEoo

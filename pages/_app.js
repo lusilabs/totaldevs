@@ -33,7 +33,8 @@ const anonRoutes = [
 const pageNavigationByRole = {
   dev: [
     { name: 'projects', href: '/projects', current: false },
-    { name: 'content', href: '/content', current: false }
+    { name: 'content', href: '/content', current: false },
+    { name: 'payments', href: '/payments', current: false }
   ],
   company: [
     { name: 'jobs', href: '/jobs', current: false }

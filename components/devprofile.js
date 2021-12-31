@@ -63,8 +63,13 @@ function EditDevProfile ({ userDoc, ...props }) {
       toast.error('please upload a photo if your profile is public')
       return
     }
+    if (selectedStack.length === 0) {
+      toast.error('please select at least 1 technology')
+      return
+    }
     setSaving(true)
-    await sleep(3000)
+    await sleep(2000)
+    const profileComplete = true
     const uref = doc(db, 'users', userDoc.uid)
     await setDoc(uref, {
       displayName: data.displayName,
@@ -79,7 +84,8 @@ function EditDevProfile ({ userDoc, ...props }) {
       hasAcceptedTerms: data.hasAcceptedTerms,
       resumeURL,
       photoURL,
-      resumeName
+      resumeName,
+      profileComplete
     }, { merge: true })
     // save to /profiles
     const pref = doc(db, 'profiles', userDoc.uid)
@@ -91,7 +97,8 @@ function EditDevProfile ({ userDoc, ...props }) {
       linkedInURI: data.linkedInURI,
       websiteURL: data.websiteURL,
       visibility: data.visibility,
-      photoURL
+      photoURL,
+      profileComplete
     }, { merge: true })
     toast.success('profile saved successfully.')
     setSaving(false)
@@ -135,7 +142,6 @@ function EditDevProfile ({ userDoc, ...props }) {
     const fileRef = ref(storage, `resumes/${file.name}-${Date.now()}`)
     uploadBytes(fileRef, file).then(_ => {
       getDownloadURL(fileRef).then(url => {
-        console.log({ fileRef, url })
         setResumeURL(url)
         setResumeName(file.name)
       })
