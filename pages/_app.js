@@ -173,12 +173,12 @@ function MyApp ({ Component, pageProps }) {
       {user && userDoc && !onAnonRoutes &&
         <Layout user={user} userDoc={userDoc} navigation={navigation} userNavigation={userNavigation} {...pageProps}>
           <Component user={user} userDoc={userDoc} setIsPageLoading={setIsPageLoading} {...pageProps} />
-          <ToastContainer />
+          <ToastContainer pauseOnFocusLoss={false} autoClose={2000} />
         </Layout>}
       {onAnonRoutes &&
         <>
           <Component user={user} userDoc={userDoc} setIsPageLoading={setIsPageLoading} {...pageProps} />
-          <ToastContainer />
+          <ToastContainer pauseOnFocusLoss={false} autoClose={2000} />
         </>}
     </>
   )
