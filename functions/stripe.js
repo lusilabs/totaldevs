@@ -29,15 +29,15 @@ const isAuthed = ctx => {
   }
 }
 
-// const isAppChecked = ctx => {
-//   if (!isDevelopment && !ctx.app) {
-//     throw new functions.https.HttpsError('failed-precondition', 'The function must be called from an App Check verified app.')
-//   }
-// }
+const isAppChecked = ctx => {
+  if (!isDevelopment && !ctx.app) {
+    throw new functions.https.HttpsError('failed-precondition', 'The function must be called from an App Check verified app.')
+  }
+}
 
 const isAuthedAndAppChecked = ctx => {
   isAuthed(ctx)
-  // isAppChecked(ctx)
+  isAppChecked(ctx)
   return ctx.auth.uid
 }
 

@@ -37,15 +37,15 @@ this is dumb and possibly wrong. looks like NEXT tries to SSR
 this component (possibly from an import) and fails because `document` is not available to NODE
 maybe dynamically import {app, auth, functions...} on the components that need it?
 */
-// if (typeof window !== 'undefined') {
-//   const siteKey = process.env.NEXT_PUBLIC_RECAPTCHA_PUBLIC_KEY
-//   const recaptchaProvider = new ReCaptchaV3Provider(siteKey)
-//   initializeAppCheck(app, {
-//     provider: recaptchaProvider,
-//     // Optional argument. If true, the SDK automatically refreshes App Check
-//     // tokens as needed.
-//     isTokenAutoRefreshEnabled: true
-//   })
-// }
+if (typeof window !== 'undefined') {
+  const siteKey = process.env.NEXT_PUBLIC_RECAPTCHA_PUBLIC_KEY
+  const recaptchaProvider = new ReCaptchaV3Provider(siteKey)
+  initializeAppCheck(app, {
+    provider: recaptchaProvider,
+    // Optional argument. If true, the SDK automatically refreshes App Check
+    // tokens as needed.
+    isTokenAutoRefreshEnabled: true
+  })
+}
 
 export { app, auth, functions, db, firebaseConfig, storage }

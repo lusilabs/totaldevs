@@ -129,22 +129,24 @@ function MyApp ({ Component, pageProps }) {
   useEffect(() => {
     const awaitRedirectResults = async () => {
       try {
-        console.log('inside awaitRedirectResults')
         const result = await getRedirectResult(auth)
         if (result) {
+          setIsPageLoading(true)
           const user = result.user
           const userData = JSON.parse(JSON.stringify(user.toJSON()))
           const role = localStorage.getItem('totalDevsRole')
           // logEvent(analytics, 'getRedirectResult user converted: role ' + role + ' ' + JSON.stringify(userData))
           console.log({ userData, role })
           await handleAnonUserConversion({ ...userData, role })
-          await sleep(1000)
+          await sleep(2000)
           localStorage.removeItem('totalDevsRole')
+          setIsPageLoading(false)
           router.push('/')
         }
       } catch (err) {
         // logEvent(analytics, 'getRedirectResult error: ' + JSON.stringify(err))
         console.error(err)
+        setIsPageLoading(false)
       }
     }
     awaitRedirectResults()
@@ -158,6 +160,7 @@ function MyApp ({ Component, pageProps }) {
     <>
       <Head>
         <script type='text/javascript' src='/tawk.js' />
+        <script type='text/javascript' src='/gtag.js' />
         <link rel='icon' href='/public/logo-small.png' />
         <meta name='totaldevs' content='&nbsp;' />
         <title>totaldevs</title>

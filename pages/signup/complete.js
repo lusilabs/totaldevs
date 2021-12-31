@@ -13,16 +13,20 @@ function CompleteSignupFlow ({ userDoc, setIsPageLoading, ...props }) {
   const provider = new GoogleAuthProvider()
   const currentUser = auth.currentUser
   const analytics = getAnalytics()
-  const handleLinkWithRedirect = () => linkWithRedirect(currentUser, provider).then((result) => {
+  const handleLinkWithRedirect = () => {
+    setIsPageLoading(true)
+    linkWithRedirect(currentUser, provider).then((result) => {
     // Accounts successfully linked.
     // this never triggers for some reason. so we have to go with the
     // getRedirectResult route to link this user to a provider.
-    const credential = GoogleAuthProvider.credentialFromResult(result)
-    console.log('handleLinkWithRedirect success', { credential, user: result.user })
-  }).catch((error) => {
-    logEvent(analytics, 'handleLinkWithRedirect error: ' + JSON.stringify(error))
-    console.error(error)
-  })
+      const credential = GoogleAuthProvider.credentialFromResult(result)
+      console.log('handleLinkWithRedirect success', { credential, user: result.user })
+      setIsPageLoading(false)
+    }).catch((error) => {
+      logEvent(analytics, 'handleLinkWithRedirect error: ' + JSON.stringify(error))
+      console.error(error)
+    })
+  }
 
   // useEffect(() => {
   //   const awaitRedirectResults = async () => {

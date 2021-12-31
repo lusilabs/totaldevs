@@ -1,7 +1,6 @@
-/* This example requires Tailwind CSS v2.0+ */
 import { PaperClipIcon } from '@heroicons/react/solid'
 
-export default function DevProfileDisplay ({ userDoc, setIsEditing }) {
+export default function ExplorerProfileDisplay ({ userDoc, setIsEditing }) {
   return (
     <div className='bg-white shadow overflow-hidden sm:rounded-lg m-4'>
       <div className='px-4 py-5 sm:px-6'>
@@ -13,11 +12,11 @@ export default function DevProfileDisplay ({ userDoc, setIsEditing }) {
               {userDoc.status === 'verify' && <span className='px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800'> verify </span>}
               {userDoc.status === 'incomplete' && <span className='px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800'> incomplete </span>}
               {!userDoc.status && <span className='px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800'> unpublished </span>}
-                                       </>}
+            </>}
             {userDoc.role !== 'dev' && <>
               <h3 className='text-lg leading-6 font-medium text-gray-900'>dev information</h3>
               <p className='mt-1 max-w-2xl text-sm text-gray-500'>personal details and application.</p>
-                                       </>}
+            </>}
 
           </div>
           <div>
@@ -44,20 +43,14 @@ export default function DevProfileDisplay ({ userDoc, setIsEditing }) {
             <dt className='text-sm font-medium text-gray-500'>name</dt>
             <dd className='mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2'>{userDoc.displayName}</dd>
           </div>
-          <div className='bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6'>
-            <dt className='text-sm font-medium text-gray-500'>title</dt>
-            <dd className='mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2'>{userDoc.title}</dd>
-          </div>
-          <div className='bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6'>
-            <dt className='text-sm font-medium text-gray-500'>stack</dt>
-            <dd className='mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2'>{userDoc.stack?.join(', ')}</dd>
-          </div>
+
           <div className='bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6'>
             <dt className='text-sm font-medium text-gray-500'>bio</dt>
             <dd className='mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2'>
               {userDoc.bio}
             </dd>
           </div>
+
           <div className='bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6'>
             <dt className='text-sm font-medium text-gray-500'>resumé</dt>
             <dd className='mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2'>
@@ -77,6 +70,7 @@ export default function DevProfileDisplay ({ userDoc, setIsEditing }) {
               </ul>
             </dd>
           </div>
+
         </dl>
       </div>
     </div>
