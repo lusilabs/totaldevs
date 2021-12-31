@@ -40,7 +40,8 @@ const pageNavigationByRole = {
     { name: 'jobs', href: '/jobs', current: false }
   ],
   explorer: [
-    { name: 'matches', href: '/matches', current: false }
+    { name: 'matches', href: '/matches', current: false },
+    { name: 'payments', href: '/payments', current: false }
   ]
 }
 

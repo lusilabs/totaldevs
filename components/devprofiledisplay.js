@@ -17,22 +17,17 @@ export default function DevProfileDisplay ({ userDoc, setIsEditing }) {
     <div className='bg-white shadow overflow-hidden sm:rounded-lg m-4'>
       <div className='px-4 py-5 sm:px-6'>
         <div className='flex flex-row justify-between items-center'>
+          <img className='h-8 w-8 rounded-full' src={userDoc.photoURL} alt='' />
           <div>
-            {userDoc.role === 'dev' && <>
-              {/* stripe account standing */}
-              {userDoc.stripeVerified && <span className='px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800'> verified </span>}
-              {!userDoc.stripeVerified && <span className='px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800'> verification pending </span>}
+            {/* stripe account standing */}
+            {userDoc.stripeVerified && <span className='px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800'> verified </span>}
+            {!userDoc.stripeVerified && <span className='px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800'> verification pending </span>}
               &nbsp;
               &nbsp;
-              {/* profile standing */}
-              {userDoc.profileComplete && <span className='px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800'> complete </span>}
-              {!userDoc.profileComplete && <span className='px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800'> incomplete </span>}
-              {/* {!userDoc.status && <span className='px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800'> unpublished </span>} */}
-            </>}
-            {userDoc.role !== 'dev' && <>
-              <h3 className='text-lg leading-6 font-medium text-gray-900'>dev information</h3>
-              <p className='mt-1 max-w-2xl text-sm text-gray-500'>personal details and application.</p>
-            </>}
+            {/* profile standing */}
+            {userDoc.profileComplete && <span className='px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800'> complete </span>}
+            {!userDoc.profileComplete && <span className='px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800'> incomplete </span>}
+            {/* {!userDoc.status && <span className='px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800'> unpublished </span>} */}
 
           </div>
           <div>

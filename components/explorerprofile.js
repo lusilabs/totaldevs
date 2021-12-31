@@ -9,7 +9,7 @@ import { toast } from 'react-toastify'
 import Link from 'next/link'
 import ExplorerProfileDisplay from './explorerprofiledisplay'
 
-function EditExplorerProfile ({ userDoc, ...props }) {
+export default function EditExplorerProfile ({ userDoc, ...props }) {
   const [saving, setSaving] = useState(false)
   const [photoURL, setPhotoURL] = useState(null)
   const [isEditing, setIsEditing] = useState(false)
@@ -19,28 +19,27 @@ function EditExplorerProfile ({ userDoc, ...props }) {
   }, [])
 
   const onSubmit = async data => {
+    if (!photoURL) {
+      toast.error('please upload a photo')
+      return
+    }
     setSaving(true)
-    await sleep(3000)
+    await sleep(2000)
     const uref = doc(db, 'users', userDoc.uid)
+    const profileComplete = true
     await setDoc(uref, {
       displayName: data.displayName,
       bio: data.bio,
-      githubURI: data.githubURI,
-      linkedInURI: data.linkedInURI,
-      websiteURL: data.websiteURL,
-      visibility: data.visibility,
-      jobSearch: data.jobSearch,
       hasAcceptedTerms: data.hasAcceptedTerms,
+      profileComplete,
       photoURL
     }, { merge: true })
     // save to /profiles
     const pref = doc(db, 'profiles', userDoc.uid)
     await setDoc(pref, {
       displayName: data.displayName,
-      githubURI: data.githubURI,
-      linkedInURI: data.linkedInURI,
-      websiteURL: data.websiteURL,
-      visibility: data.visibility,
+      bio: data.bio,
+      profileComplete,
       photoURL
     }, { merge: true })
     toast.success('profile saved successfully.')
@@ -52,10 +51,7 @@ function EditExplorerProfile ({ userDoc, ...props }) {
     defaultValues: {
       displayName: userDoc.displayName,
       bio: userDoc.bio,
-      photoURL: userDoc.photoURL,
-      visibility: userDoc.visibility,
-      jobSearch: userDoc.jobSearch,
-      hasAcceptedTerms: userDoc.hasAcceptedTerms
+      photoURL: userDoc.photoURL
     }
   })
 
@@ -149,111 +145,6 @@ function EditExplorerProfile ({ userDoc, ...props }) {
                   </div>
                 </div>
 
-                <div className='col-span-6 sm:col-span-2'>
-                  <label htmlFor='company-website' className='block text-sm font-medium text-gray-700'>
-                    github profile uri
-                  </label>
-                  <div className='mt-1 flex rounded-md shadow-sm'>
-                    <span className='inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm'>
-                      https://github.com/
-                    </span>
-                    <input
-                      type='text' name='company-website' id='company-website' className='focus:ring-indigo-500 focus:border-indigo-500 flex-1 block w-full rounded-none rounded-r-md sm:text-sm border-gray-300' placeholder=''
-                      {...register('githubURI', { required: false, maxLength: 256, pattern: /^[A-Za-z0-9 ]+$/i })}
-                    />
-                  </div>
-                  {errors.price && <div className='m-2 text-sm text-red-500'>El precio necesita ser positivo</div>}
-                </div>
-
-                <div className='col-span-6 sm:col-span-3 items-center'>
-                  <label htmlFor='visibility' className='block text-sm font-medium text-gray-700 p-2'>
-                    landing page visibility
-                  </label>
-                  <div className='flex flex-col'>
-
-                    <div>
-                      <input
-                        {...register('visibility', { required: true })}
-                        id='public'
-                        name='visibility'
-                        type='radio'
-                        value='public'
-                        className='ml-1 h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded'
-                      />
-                      <label htmlFor='public' className='ml-2 text-md text-gray-700'>
-                        public
-                      </label>
-                    </div>
-
-                    <div>
-                      <input
-                        {...register('visibility', { required: true })}
-                        id='private'
-                        name='visibility'
-                        type='radio'
-                        value='private'
-                        className='ml-1 h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded'
-                      />
-                      <label htmlFor='private' className='ml-2 text-md text-gray-700'>
-                        private
-                      </label>
-                    </div>
-
-                  </div>
-
-                </div>
-
-                <div className='col-span-6 sm:col-span-3 items-center content-start'>
-                  <label htmlFor='visibility' className='block text-sm font-medium text-gray-700 p-2'>
-                    job search
-                  </label>
-                  <div className='flex flex-col'>
-
-                    <div>
-                      <input
-                        {...register('jobSearch', { required: true })}
-                        id='public'
-                        name='jobSearch'
-                        type='radio'
-                        value='public'
-                        className='ml-1 h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded'
-                      />
-                      <label htmlFor='public' className='ml-2 text-md text-gray-700'>
-                        actively looking
-                      </label>
-                    </div>
-
-                    <div>
-                      <input
-                        {...register('jobSearch', { required: true })}
-                        id='private'
-                        name='jobSearch'
-                        type='radio'
-                        value='private'
-                        className='ml-1 h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded'
-                      />
-                      <label htmlFor='private' className='ml-2 text-md text-gray-700'>
-                        open to offers
-                      </label>
-                    </div>
-
-                    <div>
-                      <input
-                        {...register('jobSearch', { required: true })}
-                        id='private'
-                        name='jobSearch'
-                        type='radio'
-                        value='private'
-                        className='ml-1 h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded'
-                      />
-                      <label htmlFor='private' className='ml-2 text-md text-gray-700'>
-                        not interested
-                      </label>
-                    </div>
-
-                  </div>
-                </div>
-
                 <div className='col-span-6 sm:col-span-6 items-center'>
                   <label htmlFor='terms' className='block text-sm font-medium text-gray-700 p-2'>
                     terms and conditions
@@ -285,9 +176,7 @@ function EditExplorerProfile ({ userDoc, ...props }) {
             </div>
           </div>
         </form>
-      </div>}
+                    </div>}
     </>
   )
 }
-
-export default EditExplorerProfile
