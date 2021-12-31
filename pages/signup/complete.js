@@ -50,7 +50,7 @@ function CompleteSignupFlow ({ userDoc, setIsPageLoading, ...props }) {
 
   return (
     <div className='flex flex-col p-4'>
-      <div className='flex items-center p-4'>
+      <div className='flex items-center justify-center p-4'>
         <img className='w-36 h-36' src='/astronaut.png' />
         <h3 className='font-extrabold tracking-tight text-indigo-600 sm:text-4xl'>
           just one more step...
