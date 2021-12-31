@@ -27,10 +27,10 @@ function Landing ({ handleWorkWithUs, profiles, ...props }) {
             <div className='items-center flex flex-wrap'>
               <div className='w-full lg:w-6/12 px-4 m-auto text-center'>
                 <h1 className='text-white font-semibold text-5xl'>
-                  totally committed to helping you.
+                  hire with total confidence
                 </h1>
                 <p className='mt-4 text-lg text-gray-300'>
-                  hire from an exclusive community of professional developers, with proven results globally.
+                  from an exclusive community of professional developers, with guaranteed results.
                 </p>
                 <button
                   className='bg-blue-800 text-white hover:bg-gray-700 text-xl font-bold px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 mt-12'
@@ -77,7 +77,7 @@ function Landing ({ handleWorkWithUs, profiles, ...props }) {
                     </div>
                     <h6 className='text-xl font-semibold'>affordable services.</h6>
                     <p className='mt-2 mb-4 text-gray-600'>
-                      save up to 50% on quality developers from Latin America without upfront costs.
+                      save up to 50% on quality developers from Latin America.
                     </p>
                   </div>
                 </div>
@@ -93,7 +93,7 @@ function Landing ({ handleWorkWithUs, profiles, ...props }) {
                       hassle free.
                     </h6>
                     <p className='mt-2 mb-4 text-gray-600'>
-                      from search to start in an instant entirely within our secure platform.
+                      go from search to start quickly within our secure platform.
                     </p>
                   </div>
                 </div>
@@ -119,21 +119,20 @@ function Landing ({ handleWorkWithUs, profiles, ...props }) {
             <div className='flex flex-wrap items-center mt-20'>
               <div className='w-full md:w-5/12 px-4 mr-auto ml-auto'>
                 <div className='flex flex-row items-center justify-center'>
-
                   <h3 className='text-3xl font-semibold'>
                     why work with us?
                   </h3>
                 </div>
                 <p className='text-lg font-light leading-relaxed mt-4 mb-4 text-gray-700'>
-                  with totaldevs you can get quality software built at a fraction of the cost by talented and qualified developers from Latin America.
+                  get quality software built at a fraction of the cost by developers from Latin America.
                 </p>
                 <p className='text-lg font-light leading-relaxed mt-0 mb-4 text-gray-700'>
-                  our talent is selected from an exclusive community and has gone through an extensive screening process plus mentorship to deliver results.
+                  our talent is selected from an exclusive community that has gone through an extensive screening process plus mentorship to deliver results.
                 </p>
               </div>
 
               <div className='w-full md:w-4/12 px-4 mr-auto ml-auto mt-8'>
-                <div className='relative flex flex-col min-w-0 break-words bg-white w-full mb-6 shadow-lg rounded-lg bg-pink-600'>
+                <div className='relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded-lg bg-pink-600'>
                   <img
                     alt='...'
                     src='https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1051&q=80'
@@ -202,48 +201,27 @@ function Landing ({ handleWorkWithUs, profiles, ...props }) {
               <div className='w-full md:w-5/12 ml-auto mr-auto px-4'>
                 <div className='md:pr-12'>
                   <div className='flex flex-row items-center justify-center p-4'>
-                    <div className='text-pink-600 p-3 text-center inline-flex items-center justify-center w-16 h-16 mt-8 shadow-lg rounded-full bg-pink-300'>
+                    <div className='text-pink-600 p-2 text-center inline-flex items-center justify-center w-16 h-12 mt-8 shadow-lg rounded-full bg-pink-300'>
                       <i className='fas fa-rocket text-xl' />
                     </div>
                     <h3 className='text-3xl font-semibold m-8'>
-                      from search to start in an instant.
+                      start in 3 quick and easy steps
                     </h3>
                   </div>
                   <ul className='list-none mt-6'>
                     <li className='py-2'>
                       <div className='flex items-center'>
-                        <div>
-                          <span className='text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-pink-600 bg-pink-200 mr-3'>
-                            <i className='fas fa-fingerprint' />
-                          </span>
-                        </div>
-                        <div>
-                          <h4 className='text-gray-600'>create your job posting</h4>
-                        </div>
+                        <h4 className='text-gray-800 text-xl'>1.&nbsp; create your free job posting</h4>
                       </div>
                     </li>
                     <li className='py-2'>
                       <div className='flex items-center'>
-                        <div>
-                          <span className='text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-pink-600 bg-pink-200 mr-3'>
-                            <i className='fab fa-html5' />
-                          </span>
-                        </div>
-                        <div>
-                          <h4 className='text-gray-600'>totaldevs will find a match and begin onboarding</h4>
-                        </div>
+                        <h4 className='text-gray-800 text-xl'>2.&nbsp; totaldevs will find a match and begin onboarding</h4>
                       </div>
                     </li>
                     <li className='py-2'>
                       <div className='flex items-center'>
-                        <div>
-                          <span className='text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-pink-600 bg-pink-200 mr-3'>
-                            <i className='far fa-paper-plane' />
-                          </span>
-                        </div>
-                        <div>
-                          <h4 className='text-gray-600'>accept and start</h4>
-                        </div>
+                        <h4 className='text-gray-800 text-xl'>3.&nbsp; accept and start</h4>
                       </div>
                     </li>
                   </ul>
@@ -310,7 +288,7 @@ function Landing ({ handleWorkWithUs, profiles, ...props }) {
                   pay until dev starts
                 </h6>
                 <p className='mt-2 mb-4 text-gray-500'>
-                  no upfront costs, save up to 50% working vs. US or Canada devs.
+                  no upfront costs, save up to 50% vs. US or Canada devs.
                 </p>
               </div>
               <div className='w-full lg:w-3/12 px-4 text-center mt-4'>
@@ -321,8 +299,8 @@ function Landing ({ handleWorkWithUs, profiles, ...props }) {
                   quick and easy
                 </h5>
                 <p className='mt-2 mb-4 text-gray-500'>
-                  we can provide a candidate within 5 business days.
-                  close a deal within 3 weeks.
+                  we provide a candidate within 5 business days.
+                  close a deal within 1-3 weeks.
                 </p>
               </div>
               <div className='w-full lg:w-3/12 px-4 text-center'>
