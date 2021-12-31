@@ -33,13 +33,15 @@ const anonRoutes = [
 const pageNavigationByRole = {
   dev: [
     { name: 'projects', href: '/projects', current: false },
-    { name: 'content', href: '/content', current: false }
+    { name: 'content', href: '/content', current: false },
+    { name: 'payments', href: '/payments', current: false }
   ],
   company: [
     { name: 'jobs', href: '/jobs', current: false }
   ],
   explorer: [
-    { name: 'matches', href: '/matches', current: false }
+    { name: 'matches', href: '/matches', current: false },
+    { name: 'payments', href: '/payments', current: false }
   ]
 }
 
@@ -171,12 +173,12 @@ function MyApp ({ Component, pageProps }) {
       {user && userDoc && !onAnonRoutes &&
         <Layout user={user} userDoc={userDoc} navigation={navigation} userNavigation={userNavigation} {...pageProps}>
           <Component user={user} userDoc={userDoc} setIsPageLoading={setIsPageLoading} {...pageProps} />
-          <ToastContainer />
+          <ToastContainer pauseOnFocusLoss={false} autoClose={2000} />
         </Layout>}
       {onAnonRoutes &&
         <>
           <Component user={user} userDoc={userDoc} setIsPageLoading={setIsPageLoading} {...pageProps} />
-          <ToastContainer />
+          <ToastContainer pauseOnFocusLoss={false} autoClose={2000} />
         </>}
     </>
   )

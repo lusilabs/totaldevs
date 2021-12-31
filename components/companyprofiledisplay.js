@@ -1,16 +1,21 @@
+/* This example requires Tailwind CSS v2.0+ */
+import { PaperClipIcon } from '@heroicons/react/solid'
+import { useEffect } from 'react'
+import { GoogleAuthProvider, signInWithPopup } from '@firebase/auth'
+import { auth, db, functions } from '@/utils/config'
+import { useRouter } from 'next/router'
+import { httpsCallable } from 'firebase/functions'
+import sleep from '@/utils/misc'
 
-export default function ExplorerProfileDisplay ({ userDoc, setIsEditing }) {
+const checkStripeAccountStanding = httpsCallable(functions, 'stripe-checkStripeAccountStanding')
+
+export default function CompanyProfileDisplay ({ userDoc, setIsEditing }) {
   return (
     <div className='bg-white shadow overflow-hidden sm:rounded-lg m-4'>
       <div className='px-4 py-5 sm:px-6'>
         <div className='flex flex-row justify-between items-center'>
           <img className='h-8 w-8 rounded-full' src={userDoc.photoURL} alt='' />
           <div>
-            {/* stripe account standing */}
-            {userDoc.stripeVerified && <span className='px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800'> verified </span>}
-            {!userDoc.stripeVerified && <span className='px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800'> verification pending </span>}
-              &nbsp;
-              &nbsp;
             {/* profile standing */}
             {userDoc.profileComplete && <span className='px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800'> complete </span>}
             {!userDoc.profileComplete && <span className='px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800'> incomplete </span>}
@@ -43,9 +48,16 @@ export default function ExplorerProfileDisplay ({ userDoc, setIsEditing }) {
           </div>
 
           <div className='bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6'>
-            <dt className='text-sm font-medium text-gray-500'>bio</dt>
+            <dt className='text-sm font-medium text-gray-500'>about us</dt>
             <dd className='mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2'>
               {userDoc.bio}
+            </dd>
+          </div>
+
+          <div className='bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6'>
+            <dt className='text-sm font-medium text-gray-500'>website</dt>
+            <dd className='mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2'>
+              <a href={`https://${userDoc.websiteURL}`}>{userDoc.websiteURL} </a>
             </dd>
           </div>
 

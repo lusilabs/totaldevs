@@ -83,7 +83,7 @@ function Header ({ user, userDoc, navigation, userNavigation, ...props }) {
                     <Menu as='div' className='ml-3 relative'>
                       <div>
                         <Menu.Button className='max-w-xs bg-gray-800 rounded-full flex items-center text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white'>
-                          <img className='h-8 w-8 rounded-full' src={mocked.img} alt='' />
+                          <img className='h-8 w-8 rounded-full' src={userDoc.photoURL ?? mocked.img} alt='' />
                         </Menu.Button>
                       </div>
                       <Transition

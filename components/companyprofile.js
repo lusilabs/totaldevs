@@ -6,41 +6,75 @@ import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 import { storage, db } from '@/utils/config'
 import { doc, setDoc } from 'firebase/firestore'
 import { toast } from 'react-toastify'
+import CompanyProfileDisplay from '@/components/companyprofiledisplay'
 import Link from 'next/link'
-import ExplorerProfileDisplay from './explorerprofiledisplay'
 
-export default function EditExplorerProfile ({ userDoc, ...props }) {
+const mergeSearchResults = (prev, names) => {
+  const prevNames = prev.map(({ value }) => value)
+  const dedupedNames = new Set([...prevNames, ...names])
+  const deduped = [...dedupedNames].map(name => ({ key: name, value: name, text: name }))
+  return deduped
+}
+
+export default function EditCompanyProfile ({ userDoc, ...props }) {
   const [saving, setSaving] = useState(false)
   const [photoURL, setPhotoURL] = useState(null)
+  const [resumeURL, setResumeURL] = useState(null)
+  const [resumeName, setResumeName] = useState(null)
+  const [searchQuery, setSearchQuery] = useState('')
+  const [selectedStack, setSelectedStack] = useState([])
+  const [dropdownOptions, setDropdownOptions] = useState([])
   const [isEditing, setIsEditing] = useState(false)
+
+  const handleSearchChange = async (e, { searchQuery: query }) => setSearchQuery(query)
+  const handleChange = (e, { value }) => {
+    setSelectedStack(value)
+  }
+  const fetchAndSetDropdownOptions = async url => {
+    const response = await fetch(url)
+    const { items } = await response.json()
+    if (items && items.length > 0) {
+      setDropdownOptions(prev => mergeSearchResults(prev, items.map(({ name }) => name)))
+    }
+  }
+
+  useEffect(() => {
+    const searchURL = `https://api.stackexchange.com/2.3/tags?pagesize=25&order=desc&sort=popular&inname=${searchQuery}&site=stackoverflow`
+    const timer = setTimeout(() => {
+      if (searchQuery !== '') fetchAndSetDropdownOptions(searchURL)
+    }, 300)
+    return () => clearTimeout(timer)
+  }, [searchQuery])
 
   useEffect(() => {
     setPhotoURL(userDoc.photoURL)
+    setSelectedStack(userDoc.stack ?? [])
+    setDropdownOptions(userDoc.stack?.map(name => ({ key: name, value: name, text: name })) ?? [])
+    setResumeName(userDoc.resumeName)
+    setResumeURL(userDoc.resumeURL)
   }, [])
 
   const onSubmit = async data => {
-    if (!photoURL) {
-      toast.error('please upload a photo')
-      return
-    }
     setSaving(true)
     await sleep(2000)
-    const uref = doc(db, 'users', userDoc.uid)
     const profileComplete = true
+    const uref = doc(db, 'users', userDoc.uid)
     await setDoc(uref, {
       displayName: data.displayName,
       bio: data.bio,
+      websiteURL: data.websiteURL,
       hasAcceptedTerms: data.hasAcceptedTerms,
-      profileComplete,
-      photoURL
+      photoURL,
+      profileComplete
     }, { merge: true })
     // save to /profiles
     const pref = doc(db, 'profiles', userDoc.uid)
     await setDoc(pref, {
       displayName: data.displayName,
       bio: data.bio,
-      profileComplete,
-      photoURL
+      websiteURL: data.websiteURL,
+      photoURL,
+      profileComplete
     }, { merge: true })
     toast.success('profile saved successfully.')
     setSaving(false)
@@ -51,7 +85,9 @@ export default function EditExplorerProfile ({ userDoc, ...props }) {
     defaultValues: {
       displayName: userDoc.displayName,
       bio: userDoc.bio,
-      photoURL: userDoc.photoURL
+      photoURL: userDoc.photoURL,
+      websiteURL: userDoc.websiteURL,
+      hasAcceptedTerms: userDoc.hasAcceptedTerms
     }
   })
 
@@ -71,7 +107,7 @@ export default function EditExplorerProfile ({ userDoc, ...props }) {
 
   return (
     <>
-      {!isEditing && <ExplorerProfileDisplay userDoc={userDoc} {...props} setIsEditing={setIsEditing} />}
+      {!isEditing && <CompanyProfileDisplay userDoc={userDoc} {...props} setIsEditing={setIsEditing} />}
       {isEditing && <div className='m-4 md:col-span-2 shadow-xl'>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className='shadow overflow-hidden rounded-lg'>
@@ -80,7 +116,7 @@ export default function EditExplorerProfile ({ userDoc, ...props }) {
 
                 <div className='col-span-6 sm:col-span-3'>
                   <label htmlFor='displayName' className='block text-sm font-medium text-gray-700'>
-                    name
+                    commpany name
                   </label>
                   <input
                     type='text'
@@ -91,11 +127,11 @@ export default function EditExplorerProfile ({ userDoc, ...props }) {
                     className='mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
                     {...register('displayName', { required: true, minLength: 3, pattern: /^[A-Za-z0-9 ]+$/i })}
                   />
-                  {errors.name && <div className='m-2 text-sm text-red-500'>at least 3 chars</div>}
+                  {errors.displayName && <div className='m-2 text-sm text-red-500'>at least 3 chars</div>}
                 </div>
 
                 <div className='col-span-6 sm:col-span-6'>
-                  <label className='block text-sm font-medium text-gray-700'>(300x300 professional profile picture) </label>
+                  <label className='block text-sm font-medium text-gray-700'>(300x300 logo) </label>
                   <div className='flex justify-center p-2'>
                     {photoURL && <img src={photoURL} alt={photoURL} className='rounded-md shadow-lg' />}
                   </div>
@@ -132,7 +168,7 @@ export default function EditExplorerProfile ({ userDoc, ...props }) {
 
                 <div className='col-span-6'>
                   <label htmlFor='bio' className='block text-sm font-medium text-gray-700'>
-                    about me
+                    about us
                   </label>
                   <div className='mt-1'>
                     <textarea
@@ -140,7 +176,22 @@ export default function EditExplorerProfile ({ userDoc, ...props }) {
                       name='bio'
                       rows={3}
                       className='shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block w-full sm:text-sm border border-gray-300 rounded-md'
-                      {...register('bio', { required: true, maxLength: 256, pattern: /^[A-Za-z0-9 ]+$/i })}
+                      {...register('bio', { required: false, maxLength: 256, pattern: /^[A-Za-z0-9 ]+$/i })}
+                    />
+                  </div>
+                </div>
+
+                <div className='col-span-6 sm:col-span-2'>
+                  <label htmlFor='company-website' className='block text-sm font-medium text-gray-700'>
+                    website url
+                  </label>
+                  <div className='mt-1 flex rounded-md shadow-sm'>
+                    <span className='inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm'>
+                      https://
+                    </span>
+                    <input
+                      type='text' name='company-website' id='company-website' className='focus:ring-indigo-500 focus:border-indigo-500 flex-1 block w-full rounded-none rounded-r-md sm:text-sm border-gray-300' placeholder='example.com'
+                      {...register('websiteURL', { required: false, maxLength: 256 })}
                     />
                   </div>
                 </div>
