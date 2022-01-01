@@ -269,6 +269,22 @@ if (typeof window !== 'undefined') {
 }
 ```
 
+#### npm ci && npm run build failing
+```
+[=   ] info  - Generating static pages (0/24)
+Error occurred prerendering page "/signup/company". Read more: https://nextjs.org/docs/messages/prerender-error
+Error: No router instance found.
+You should only use "next/router" on the client side of your app.
+```
+In my case I had a `import router from 'next/router'` and was using `router.query` , when it should be `const router = useRouter()`. Check router.push is only happening on the client side!
+
+Make sure to move any non-pages out of the pages folder
+Check for any code that assumes a prop is available, even when it might not be
+Set default values for all dynamic pages' props (avoid undefined, use null instead so it can be serialized)
+Check for any out of date modules that you might be relying on
+Make sure your component handles fallback if it is enabled in getStaticPaths. Fallback docs
+Make sure you are not trying to export (next export) pages that have server-side rendering enabled (getServerSideProps)
+
 ### Dev stripe accounts
 Substitute `stripeAccountID` for the following to get the desired behavior.
 

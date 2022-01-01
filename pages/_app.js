@@ -185,13 +185,7 @@ function MyApp ({ Component, pageProps }) {
 
   return (
     <>
-      <Head>
-        <script type='text/javascript' src='/tawk.js' />
-        <script type='text/javascript' src='/gtag.js' />
-        <link rel='icon' href='/public/logo-small.png' />
-        <meta name='totaldevs' content='&nbsp;' />
-        <title>totaldevs</title>
-      </Head>
+
       {(isUserLoading || isPageLoading) && <Spinner />}
       {error && <Error title='Error while retrieving user' statusCode={500} />}
       {!user && !isUserLoading && !onAnonRoutes && <Landing profiles={profiles} setIsPageLoading={setIsPageLoading} handleWorkWithUs={handleWorkWithUs} />}

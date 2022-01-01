@@ -1,14 +1,3 @@
-/* This example requires Tailwind CSS v2.0+ */
-import { PaperClipIcon } from '@heroicons/react/solid'
-import { useEffect } from 'react'
-import { GoogleAuthProvider, signInWithPopup } from '@firebase/auth'
-import { auth, db, functions } from '@/utils/config'
-import { useRouter } from 'next/router'
-import { httpsCallable } from 'firebase/functions'
-import sleep from '@/utils/misc'
-
-const checkStripeAccountStanding = httpsCallable(functions, 'stripe-checkStripeAccountStanding')
-
 export default function CompanyProfileDisplay ({ userDoc, setIsEditing }) {
   return (
     <div className='bg-white shadow overflow-hidden sm:rounded-lg m-4'>

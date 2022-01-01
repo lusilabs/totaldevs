@@ -5,6 +5,11 @@ class MyDocument extends Document {
     return (
       <Html>
         <Head>
+          <title>totaldevs</title>
+          <meta name='totaldevs' content='&nbsp;' />
+          <script type='text/javascript' src='/tawk.js' />
+          <script type='text/javascript' src='/gtag.js' />
+          <link rel='icon' href='/public/logo-small.png' />
           <meta name='application-name' content='totaldevs' />
           <meta name='apple-mobile-web-app-capable' content='yes' />
           <meta name='apple-mobile-web-app-status-bar-style' content='default' />

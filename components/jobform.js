@@ -5,8 +5,8 @@ import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 import { storage, db } from '@/utils/config'
 import { doc, setDoc, addDoc, collection, getDoc } from 'firebase/firestore'
 import { toast } from 'react-toastify'
-import router from 'next/router'
 import sleep from '@/utils/misc'
+import { useRouter } from 'next/router'
 
 const mergeSearchResults = (prev, names) => {
   const prevNames = prev.map(({ value }) => value)
@@ -16,6 +16,7 @@ const mergeSearchResults = (prev, names) => {
 }
 
 function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
+  const router = useRouter()
   const [saving, setSaving] = useState(false)
   const [pdfURL, setPdfURL] = useState('')
   const [pdfName, setPdfName] = useState('')
@@ -65,10 +66,6 @@ function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
     const { url } = await fetch(unsplashURL)
     setPhotoURL(url)
     return url
-  }
-
-  const handleSkip = async () => {
-    router.push('/jobs')
   }
 
   const onSubmit = async data => {

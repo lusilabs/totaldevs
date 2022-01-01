@@ -21,30 +21,6 @@ function CompleteSignupFlow ({ userDoc, setIsPageLoading, ...props }) {
     })
   }
 
-  // useEffect(() => {
-  //   const awaitRedirectResults = async () => {
-  //     try {
-  //       console.log('inside awaitRedirectResults')
-  //       const result = await getRedirectResult(auth)
-  //       if (result) {
-  //         const user = result.user
-  //         const userData = JSON.parse(JSON.stringify(user.toJSON()))
-  //         const role = localStorage.getItem('totalDevsRole')
-  //         logEvent(analytics, 'getRedirectResult user converted: role ' + role + ' ' + JSON.stringify(userData))
-  //         console.log({ userData, role })
-  //         await handleAnonUserConversion({ ...userData, role })
-  //         await sleep(2000)
-  //         localStorage.removeItem('totalDevsRole')
-  //         router.push('/')
-  //       }
-  //     } catch (err) {
-  //       logEvent(analytics, 'getRedirectResult error: ' + JSON.stringify(err))
-  //       console.error(err)
-  //     }
-  //   }
-  //   awaitRedirectResults()
-  // }, [userDoc])
-
   return (
     <div className='flex flex-col p-4'>
       <div className='flex items-center justify-center p-4'>

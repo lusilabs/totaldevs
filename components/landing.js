@@ -2,7 +2,6 @@ import Nav from '@/components/nav.js'
 import Footer from '@/components/footer.js'
 import '@fortawesome/fontawesome-free/css/all.css'
 import { Label } from 'semantic-ui-react'
-import Link from 'next/link'
 
 function Landing ({ handleWorkWithUs, profiles, ...props }) {
   return (
@@ -352,7 +351,7 @@ export function Profile (props) {
               <a className='text-white' href={`https://github.com/${props.githubURI}`}>
                 <i className='fab fa-github text-center' />
               </a>
-                                </button>}
+            </button>}
 
             {props.linkedInURI &&
               <button
@@ -371,7 +370,7 @@ export function Profile (props) {
               <a className='text-white' href={`https://${props.websiteURL}`}>
                 <i className='fas fa-link' />
               </a>
-                                 </button>}
+            </button>}
           </div>
 
         </div>
