@@ -1,13 +1,8 @@
 import { GoogleAuthProvider, linkWithRedirect, getRedirectResult, signInWithPopup } from 'firebase/auth'
-import { Button, Dropdown } from 'semantic-ui-react'
 import { auth, db, functions } from '@/utils/config'
-import { httpsCallable } from 'firebase/functions'
 import { getAnalytics, logEvent } from 'firebase/analytics'
-import { useRouter } from 'next/router'
-import sleep from '@/utils/misc'
 import LoginForm from '@/components/loginform'
 import Link from 'next/link'
-import { useEffect } from 'react'
 
 function CompleteSignupFlow ({ userDoc, setIsPageLoading, ...props }) {
   const provider = new GoogleAuthProvider()
