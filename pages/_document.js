@@ -6,11 +6,12 @@ class MyDocument extends Document {
       <Html>
         <Head />
         <body>
-          <noscript><iframe
-            src='https://www.googletagmanager.com/ns.html?id=GTM-KZ29H25'
-            height='0' width='0' style={{ display: 'none', visibility: 'hidden' }}
-                    />
-          </noscript>
+          {process.env.NODE_ENV === 'production' &&
+            <noscript><iframe
+              src='https://www.googletagmanager.com/ns.html?id=GTM-KZ29H25'
+              height='0' width='0' style={{ display: 'none', visibility: 'hidden' }}
+                      />
+            </noscript>}
           <Main />
           <NextScript />
         </body>
