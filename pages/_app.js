@@ -18,6 +18,7 @@ import Landing from '@/components/landing'
 import Spinner from '@/components/spinner'
 import InvitationRequired from './invitationRequired'
 import sleep from '@/utils/misc'
+import { getAnalytics, logEvent } from 'firebase/analytics'
 
 Router.events.on('routeChangeStart', NProgress.start)
 Router.events.on('routeChangeComplete', NProgress.done)
@@ -90,6 +91,7 @@ function MyApp ({ Component, pageProps }) {
   const onAdminRoutes = router.pathname.includes('admin')
   const [isPageLoading, setIsPageLoading] = useState(false)
   const [profiles, setProfiles] = useState([])
+  let analytics
 
   useEffect(() => {
     let unsubscribe = () => {}
@@ -141,9 +143,11 @@ function MyApp ({ Component, pageProps }) {
 
   const handleWorkWithUs = async () => {
     // sign in as Anon, at the end of the flow we prompt for optional login.
+    analytics = getAnalytics()
     setIsPageLoading(true)
     await signInAnonymously(auth)
     router.push('/signup')
+    logEvent(analytics, 'signing up')
     setIsPageLoading(false)
   }
   useEffect(() => {
