@@ -30,8 +30,8 @@ function Header ({ user, userDoc, navigation, userNavigation, ...props }) {
       <Disclosure as='nav' className='bg-gray-800'>
         {({ open }) => (
           <>
-            <div className='max-w-full mx-auto px-2 sm:px-4 lg:px-8'>
-              <div className='flex items-center justify-between h-16'>
+            <div className='max-w-full mx-auto px-2 sm:px-4 lg:px-8 p-2'>
+              <div className='flex items-center justify-between h-auto'>
                 <div className='flex items-center'>
                   <Link href='/' passRef>
                     <div className='flex-shrink-0'>
@@ -43,7 +43,7 @@ function Header ({ user, userDoc, navigation, userNavigation, ...props }) {
                     </div>
                   </Link>
                   <div className='block md:block'>
-                    <div className='ml-4 flex items-baseline space-x-4'>
+                    <div className='ml-4 flex flex-wrap'>
                       {navigation.map((item, ix) => {
                         const active = item.href === activeTab
                         // console.log(active, item.href, activeTab)
@@ -83,7 +83,7 @@ function Header ({ user, userDoc, navigation, userNavigation, ...props }) {
                     <Menu as='div' className='ml-3 relative'>
                       <div>
                         <Menu.Button className='max-w-xs bg-gray-800 rounded-full flex items-center text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white'>
-                          <img className='h-8 w-8 rounded-full' src={userDoc.photoURL ?? mocked.img} alt='' />
+                          <img className='h-8 w-8 min-w-full max-w-xs rounded-full' src={userDoc.photoURL ?? mocked.img} alt='' />
                         </Menu.Button>
                       </div>
                       <Transition
