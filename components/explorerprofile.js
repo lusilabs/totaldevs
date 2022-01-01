@@ -176,7 +176,7 @@ export default function EditExplorerProfile ({ userDoc, ...props }) {
             </div>
           </div>
         </form>
-                    </div>}
+      </div>}
     </>
   )
 }

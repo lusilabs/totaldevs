@@ -62,6 +62,17 @@ const userNavigationByRole = {
   ]
 }
 
+const adminNavigation = [
+  { name: 'devs', href: '/admin/devs' },
+  { name: 'exs', href: '/admin/explorers' },
+  { name: 'comps', href: '/admin/companies' }
+
+]
+
+const adminUserNavigation = [
+  { name: 'success', href: '/admin/success' }
+]
+
 const anonNavigation = []
 const anonUserNavigation = [
   { name: 'logout', href: '/', handleClick: () => signOut(auth) }
@@ -76,6 +87,7 @@ function MyApp ({ Component, pageProps }) {
   const [userNavigation, setUserNavigation] = useState(anonUserNavigation)
   const router = useRouter()
   const onAnonRoutes = anonRoutes.includes(router.pathname)
+  const onAdminRoutes = router.pathname.includes('admin')
   const [isPageLoading, setIsPageLoading] = useState(false)
   const [profiles, setProfiles] = useState([])
 
@@ -101,7 +113,7 @@ function MyApp ({ Component, pageProps }) {
         where('stack', '!=', []),
         // where('rating', '>', 3),
         // orderBy('rating'),
-        limit(6)
+        limit(20)
       )
       const querySnapshot = await getDocs(q)
       const snaps = []
@@ -116,10 +128,16 @@ function MyApp ({ Component, pageProps }) {
   useEffect(() => {
     // console.log({ user, userDoc, Component })
     if (userDoc && userDoc.role) {
-      setNavigation(pageNavigationByRole[userDoc.role])
-      setUserNavigation(userNavigationByRole[userDoc.role])
+      let nav = pageNavigationByRole[userDoc.role]
+      let userNav = userNavigationByRole[userDoc.role]
+      if (userDoc.isAdmin) {
+        nav = [...nav, ...adminNavigation]
+        userNav = [...userNav, ...adminUserNavigation]
+      }
+      setNavigation(nav)
+      setUserNavigation(userNav)
     }
-  })
+  }, [userDoc])
 
   const handleWorkWithUs = async () => {
     // sign in as Anon, at the end of the flow we prompt for optional login.
@@ -157,6 +175,7 @@ function MyApp ({ Component, pageProps }) {
   if (user && userDoc && userDoc.role === 'dev' && !userDoc.hasAcceptedInvite) {
     return <InvitationRequired userDoc={userDoc} {...pageProps} />
   }
+  if (onAdminRoutes && !userDoc?.isAdmin) return null
 
   return (
     <>

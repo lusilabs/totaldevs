@@ -98,6 +98,8 @@ function EditDevProfile ({ userDoc, ...props }) {
       websiteURL: data.websiteURL,
       visibility: data.visibility,
       photoURL,
+      resumeURL,
+      email: userDoc.email,
       profileComplete
     }, { merge: true })
     toast.success('profile saved successfully.')
