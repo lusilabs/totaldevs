@@ -6,7 +6,7 @@ import Landing from '@/components/landing'
 export default function Index ({ userDoc, handleWorkWithUs, ...props }) {
   useEffect(() => {
     const analytics = getAnalytics()
-    logEvent(analytics, 'New visit.')
+    logEvent(analytics, 'New visit v2.')
   }, [])
 
   // this doesn't work for popUp login, I think I needed to do 'loginWithRedirect', not using for now.
