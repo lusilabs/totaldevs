@@ -2,7 +2,7 @@ import { useDocuments } from '@/utils/hooks'
 import { PaperClipIcon } from '@heroicons/react/solid'
 
 export default function Devs () {
-  const documents = useDocuments({ docs: 'profiles' })
+  const documents = useDocuments({ docs: 'users' })
   return (
     <div className='flex flex-col m-2 md:m-8 xl:m-16 '>
       <div className='-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8'>
@@ -64,7 +64,9 @@ export default function Devs () {
                     <td className='px-6 py-4 whitespace-nowrap'>
                       <div className='flex items-center'>
                         <div className='flex-shrink-0 h-10 w-10'>
-                          <img className='h-10 w-10 rounded-full' src={doc.photoURL} alt='' />
+                          <a href={doc.photoURL}>
+                            <img className='h-10 w-10 rounded-full' src={doc.photoURL} alt='' />
+                          </a>
                         </div>
                         <div className='ml-4'>
                           <div className='text-sm font-medium text-gray-900'>{doc.displayName}</div>
@@ -85,7 +87,7 @@ export default function Devs () {
                     </td>
 
                     <td className='px-6 py-4 whitespace-nowrap'>
-                      <div className='text-sm text-gray-900'>{doc.stack}</div>
+                      <div className='text-sm text-gray-900'>{doc.stack?.join(' ')}</div>
                     </td>
 
                     <td className='px-6 py-4 whitespace-nowrap'>
