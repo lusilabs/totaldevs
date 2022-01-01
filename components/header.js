@@ -4,13 +4,10 @@ import { auth } from '@/utils/config'
 import { Fragment, useState, useEffect } from 'react'
 import { Disclosure, Menu, Transition } from '@headlessui/react'
 import { BellIcon, MenuIcon, XIcon } from '@heroicons/react/outline'
-import { mockProducts } from '@/utils/mocker'
 
 function classNames (...classes) {
   return classes.filter(Boolean).join(' ')
 }
-
-const mocked = mockProducts(1)[0]
 
 function Header ({ user, userDoc, navigation, userNavigation, ...props }) {
   const [activeTab, setActiveTab] = useState('/')
@@ -83,7 +80,7 @@ function Header ({ user, userDoc, navigation, userNavigation, ...props }) {
                     <Menu as='div' className='ml-3 relative'>
                       <div>
                         <Menu.Button className='max-w-xs bg-gray-800 rounded-full flex items-center text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white'>
-                          <img className='h-8 w-8 min-w-full max-w-xs rounded-full' src={userDoc.photoURL ?? mocked.img} alt='' />
+                          <img className='h-8 w-8 min-w-full max-w-xs rounded-full' src={userDoc.photoURL} alt='' />
                         </Menu.Button>
                       </div>
                       <Transition

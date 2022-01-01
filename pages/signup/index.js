@@ -27,7 +27,7 @@ function SignUpFlow () {
 
       <div className='flex flex-col md:flex-row m-2'>
 
-        <div className='flex flex-col text-center items-center max-w-sm p-4 m-2 rounded-lg shadow-lg' onClick={() => handleClickOnRole('company')}>
+        <div className='flex flex-col text-center items-center max-w-sm p-8 m-4 rounded-lg shadow-lg' onClick={() => handleClickOnRole('company')}>
           <h3 className='text-indigo-400'>company</h3>
           <OfficeBuildingIcon className='h-24 w-24 text-indigo-400 m-4' />
           <h4 className='text-gray-500'>

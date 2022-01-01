@@ -1,8 +1,12 @@
 import { useDocuments } from '@/utils/hooks'
 import { PaperClipIcon } from '@heroicons/react/solid'
+import { collection, query, where, getDocs, orderBy, limit, doc, getDoc } from 'firebase/firestore'
 
 export default function Devs () {
-  const documents = useDocuments({ docs: 'users' })
+  const queryConstraints = [
+    where('role', '==', 'dev')
+  ]
+  const documents = useDocuments({ docs: 'users', queryConstraints })
   return (
     <div className='flex flex-col m-2 md:m-8 xl:m-16 '>
       <div className='-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8'>
