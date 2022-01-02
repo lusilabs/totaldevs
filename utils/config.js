@@ -4,7 +4,8 @@ import { getFunctions, connectFunctionsEmulator } from 'firebase/functions'
 import { getAuth, connectAuthEmulator } from 'firebase/auth'
 import { getStorage, connectStorageEmulator } from 'firebase/storage'
 import { getAnalytics } from 'firebase/analytics'
-import dynamic from 'next/dynamic'
+// anothr method of getting things only on the client
+// import dynamic from 'next/dynamic'
 const { initializeAppCheck, ReCaptchaV3Provider } = require('firebase/app-check')
 
 const firebaseConfig = {
@@ -22,8 +23,9 @@ const auth = getAuth(app)
 const functions = getFunctions(app)
 const db = getFirestore(app)
 const storage = getStorage()
+let analytics
 if (typeof window !== 'undefined') {
-  const analytics = getAnalytics(app)
+  analytics = getAnalytics(app)
 }
 
 if (process.env.NODE_ENV !== 'production') {
@@ -33,7 +35,7 @@ if (process.env.NODE_ENV !== 'production') {
   connectFirestoreEmulator(db, 'localhost', 8080)
 }
 /*
-this is dumb and possibly wrong. looks like NEXT tries to SSR
+this is a workaround for nextjs. because it tries to SSR
 this component (possibly from an import) and fails because `document` is not available to NODE
 maybe dynamically import {app, auth, functions...} on the components that need it?
 */
@@ -48,4 +50,4 @@ if (typeof window !== 'undefined') {
   })
 }
 
-export { app, auth, functions, db, firebaseConfig, storage }
+export { app, auth, functions, db, firebaseConfig, storage, analytics }

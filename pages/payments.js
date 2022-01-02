@@ -1,10 +1,5 @@
-import { GoogleAuthProvider, signInWithPopup } from '@firebase/auth'
-import { auth, db, functions } from '@/utils/config'
-import { useRouter } from 'next/router'
+import { functions } from '@/utils/config'
 import { httpsCallable } from 'firebase/functions'
-import sleep from '@/utils/misc'
-import LoginForm from '@/components/loginform'
-import { useEffect } from 'react'
 import Banner from '@/components/banner'
 
 const generateExpressDashboardLink = httpsCallable(functions, 'stripe-generateExpressDashboardLink')

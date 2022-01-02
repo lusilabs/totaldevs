@@ -1,11 +1,7 @@
-/* This example requires Tailwind CSS v2.0+ */
 import { PaperClipIcon } from '@heroicons/react/solid'
 import { useEffect } from 'react'
-import { GoogleAuthProvider, signInWithPopup } from '@firebase/auth'
-import { auth, db, functions } from '@/utils/config'
-import { useRouter } from 'next/router'
+import { functions } from '@/utils/config'
 import { httpsCallable } from 'firebase/functions'
-import sleep from '@/utils/misc'
 
 const checkStripeAccountStanding = httpsCallable(functions, 'stripe-checkStripeAccountStanding')
 

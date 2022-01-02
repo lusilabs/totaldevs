@@ -2,7 +2,7 @@ import 'tailwindcss/tailwind.css'
 import 'semantic-ui-css/semantic.min.css'
 import 'react-toastify/dist/ReactToastify.css'
 import 'nprogress/nprogress.css'
-import { auth, db, functions } from '@/utils/config'
+import { auth, db, functions, analytics } from '@/utils/config'
 import Head from 'next/head'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import { httpsCallable } from 'firebase/functions'
@@ -18,7 +18,7 @@ import Landing from '@/components/landing'
 import Spinner from '@/components/spinner'
 import InvitationRequired from './invitationRequired'
 import sleep from '@/utils/misc'
-import { getAnalytics, logEvent } from 'firebase/analytics'
+import { logEvent } from 'firebase/analytics'
 
 Router.events.on('routeChangeStart', NProgress.start)
 Router.events.on('routeChangeComplete', NProgress.done)
@@ -27,6 +27,10 @@ NProgress.configure({ showSpinner: false })
 
 const anonRoutes = [
   '/login',
+  '/signup/company',
+  '/signup/explorer',
+  '/signup/complete',
+  '/signup',
   '/terms',
   '/privacy'
 ]
@@ -91,7 +95,6 @@ function MyApp ({ Component, pageProps }) {
   const onAdminRoutes = router.pathname.includes('admin')
   const [isPageLoading, setIsPageLoading] = useState(false)
   const [profiles, setProfiles] = useState([])
-  let analytics
 
   useEffect(() => {
     let unsubscribe = () => {}
@@ -143,7 +146,6 @@ function MyApp ({ Component, pageProps }) {
 
   const handleWorkWithUs = async () => {
     // sign in as Anon, at the end of the flow we prompt for optional login.
-    analytics = getAnalytics()
     setIsPageLoading(true)
     await signInAnonymously(auth)
     router.push('/signup')
@@ -159,7 +161,7 @@ function MyApp ({ Component, pageProps }) {
           const user = result.user
           const userData = JSON.parse(JSON.stringify(user.toJSON()))
           const role = localStorage.getItem('totalDevsRole')
-          // logEvent(analytics, 'getRedirectResult user converted: role ' + role + ' ' + JSON.stringify(userData))
+          logEvent(analytics, 'getRedirectResult user converted: role ' + role + ' ' + JSON.stringify(userData))
           console.log({ userData, role })
           await handleAnonUserConversion({ ...userData, role })
           await sleep(2000)
@@ -168,7 +170,7 @@ function MyApp ({ Component, pageProps }) {
           router.push('/')
         }
       } catch (err) {
-        // logEvent(analytics, 'getRedirectResult error: ' + JSON.stringify(err))
+        logEvent(analytics, 'getRedirectResult error: ' + JSON.stringify(err))
         console.error(err)
         setIsPageLoading(false)
       }
@@ -183,13 +185,7 @@ function MyApp ({ Component, pageProps }) {
 
   return (
     <>
-      <Head>
-        <script type='text/javascript' src='/tawk.js' />
-        <script type='text/javascript' src='/gtag.js' />
-        <link rel='icon' href='/public/logo-small.png' />
-        <meta name='totaldevs' content='&nbsp;' />
-        <title>totaldevs</title>
-      </Head>
+
       {(isUserLoading || isPageLoading) && <Spinner />}
       {error && <Error title='Error while retrieving user' statusCode={500} />}
       {!user && !isUserLoading && !onAnonRoutes && <Landing profiles={profiles} setIsPageLoading={setIsPageLoading} handleWorkWithUs={handleWorkWithUs} />}

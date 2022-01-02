@@ -1,15 +1,16 @@
-import { getAnalytics, logEvent } from 'firebase/analytics'
+import { logEvent } from 'firebase/analytics'
 import { useEffect } from 'react'
 import Dashboard from './dashboard'
 import Landing from '@/components/landing'
+import { analytics } from '@/utils/config'
 
 export default function Index ({ userDoc, handleWorkWithUs, ...props }) {
   useEffect(() => {
-    const analytics = getAnalytics()
     logEvent(analytics, 'New visit v2.')
   }, [])
 
   // this doesn't work for popUp login, I think I needed to do 'loginWithRedirect', not using for now.
+  // this may be only for email login.
   // const checkUserCreate = async () => {
   //   const result = await getRedirectResult(auth)
   //   console.log('useEffect landing')

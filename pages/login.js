@@ -21,7 +21,6 @@ export default function Login ({ setIsPageLoading }) {
     }
     setIsPageLoading(false)
   }
-
   return (
     <main>
       <section className='absolute w-full h-full'>
