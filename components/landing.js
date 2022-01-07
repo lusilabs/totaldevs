@@ -3,7 +3,7 @@ import Footer from '@/components/footer.js'
 import '@fortawesome/fontawesome-free/css/all.css'
 import { Label } from 'semantic-ui-react'
 
-function Landing ({ handleWorkWithUs, profiles, ...props }) {
+function Landing ({ handleCreateJobPosting, profiles, ...props }) {
   return (
     <>
       <Nav />
@@ -35,9 +35,9 @@ function Landing ({ handleWorkWithUs, profiles, ...props }) {
                   className='bg-blue-800 text-white hover:bg-gray-700 text-xl font-bold px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 mt-12'
                   type='button'
                   style={{ transition: 'all .50s ease' }}
-                  onClick={handleWorkWithUs}
+                  onClick={handleCreateJobPosting}
                 >
-                  work with us &nbsp;
+                  create a free job posting &nbsp;
                   <i className='fas fa-arrow-alt-circle-right' />
                 </button>
               </div>

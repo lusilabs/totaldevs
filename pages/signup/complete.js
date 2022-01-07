@@ -12,11 +12,11 @@ function CompleteSignupFlow ({ userDoc, setIsPageLoading, ...props }) {
       // Accounts successfully linked.
       // this never triggers for some reason. I think it only happens on email/pwd login so we have to go with the
       // getRedirectResult route to link this user to a provider.
-      const credential = GoogleAuthProvider.credentialFromResult(result)
+      // const credential = GoogleAuthProvider.credentialFromResult(result)
       logEvent(analytics, 'handleLinkWithRedirect success')
       setIsPageLoading(false)
     }).catch((error) => {
-      logEvent(analytics, 'handleLinkWithRedirect error: ' + JSON.stringify(error))
+      logEvent(analytics, 'handleLinkWithRedirect error')
       console.error(error)
     })
   }

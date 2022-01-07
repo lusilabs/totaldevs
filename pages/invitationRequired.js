@@ -1,7 +1,15 @@
 import { signOut } from '@firebase/auth'
-import { db, auth } from '@/utils/config'
+import { auth, db, functions } from '@/utils/config'
+import { httpsCallable } from 'firebase/functions'
 
-function InvitationRequired () {
+const convertToExplorer = httpsCallable(functions, 'stripe-handleConvertToExplorer')
+
+function InvitationRequired ({ setIsPageLoading }) {
+  const handleConvertToExplorer = async () => {
+    setIsPageLoading(true)
+    await convertToExplorer()
+    setIsPageLoading(false)
+  }
   return (
     <>
       <div className='max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:py-16 lg:px-8 lg:flex lg:items-center lg:justify-between'>
@@ -18,10 +26,16 @@ function InvitationRequired () {
         <div className='mt-8 lg:mt-0 lg:flex-shrink-0'>
           <div className='inline-flex rounded-md'>
             <button
-              className='bg-indigo-800 text-white hover:bg-gray-700 text-xl font-bold uppercase px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 mt-12'
+              className='bg-yellow-600 text-white hover:bg-gray-700 text-xl font-bold uppercase px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 mt-12'
               onClick={() => signOut(auth)}
             >Sign out
               <i className='fas fa-arrow-alt-circle-right' />
+            </button>
+            <button
+              className='bg-indigo-800 text-white hover:bg-gray-700 text-xl font-bold uppercase px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 mt-12'
+              onClick={handleConvertToExplorer}
+            >I'm an explorer
+              <i className='fas fa-arrow-alt-circle-up' />
             </button>
           </div>
 

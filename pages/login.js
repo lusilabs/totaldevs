@@ -4,19 +4,24 @@ import { useRouter } from 'next/router'
 import { httpsCallable } from 'firebase/functions'
 import sleep from '@/utils/misc'
 import LoginForm from '@/components/loginform'
+import { useEffect, useState } from 'react'
 
 const handleUserLogin = httpsCallable(functions, 'stripe-handleUserLogin')
 
 export default function Login ({ setIsPageLoading }) {
   const provider = new GoogleAuthProvider()
   const router = useRouter()
+  const [selectedRole, setSelectedRole] = useState('dev')
+  useEffect(() => {
+    const { role = 'dev' } = router.query
+    setSelectedRole(role)
+  })
   const handleLogin = async () => {
     setIsPageLoading(true)
     const result = await signInWithPopup(auth, provider)
     if (result.user && result.user.uid) {
-      await sleep(3000)
-      const role = localStorage.getItem('totalDevsRole') ?? 'dev'
-      await handleUserLogin({ role })
+      await handleUserLogin({ role: selectedRole })
+      await sleep(2000)
       router.push('/')
     }
     setIsPageLoading(false)

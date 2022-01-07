@@ -52,10 +52,23 @@ exports.createUserDoc = functions.auth.user().onCreate(async user => {
     .doc(user.uid)
     .set({
       ...userJSONData,
-      hasAcceptedInvite: !!isDevelopment,
+      hasAcceptedInvite: !!isDevelopment || wasUserInvited(user.email),
       numInvitesLeft: DEFAULT_DEV_INVITES
     })
 })
+
+const wasUserInvited = async email => {
+  const iref = await admin
+    .firestore()
+    .collection('invites')
+    .doc(email)
+    .get()
+  if (iref.exists) {
+    const { redeemed } = iref.data()
+    return redeemed
+  }
+  return false
+}
 
 exports.handleUserLogin = functions.https.onCall(async (data, ctx) => {
   const uid = isAuthedAndAppChecked(ctx)
@@ -65,35 +78,33 @@ exports.handleUserLogin = functions.https.onCall(async (data, ctx) => {
     .doc(uid)
     .get()
   const { role, email, hasAcceptedInvite } = uref.data()
-  const uref2 = await admin
+  const uref2 = admin
     .firestore()
     .collection('users')
     .doc(uid)
   if (role) {
-    if (role === 'dev' && !hasAcceptedInvite) {
-      // try redeeming any invites automatically
-      const iref = await admin
+    if (!hasAcceptedInvite && wasUserInvited(email)) {
+      const iref = admin
         .firestore()
         .collection('invites')
         .doc(email)
-        .get()
-      if (iref.exists) {
-        const { redeemed } = iref.data()
-        if (!redeemed) {
-          const iref2 = await admin
-            .firestore()
-            .collection('invites')
-            .doc(email)
-          uref2.update({ hasAcceptedInvite: true })
-          iref2.update({ redeemed: true, redeemedAt: new Date().toISOString() })
-        }
-      }
+      uref2.update({ hasAcceptedInvite: true })
+      iref.update({ redeemed: true, redeemedAt: new Date().toISOString() })
     }
     // if we have a role, just return. don't update any data as the user is already set.
     return
   }
-  // first time logging in
+  // first time logging in, set the data + the role
   await uref2.update(data)
+})
+
+exports.handleConvertToExplorer = functions.https.onCall(async (_, ctx) => {
+  const uid = isAuthedAndAppChecked(ctx)
+  const uref = admin
+    .firestore()
+    .collection('users')
+    .doc(uid)
+  await uref.update({ role: 'explorer' })
 })
 
 exports.handleAnonUserConversion = functions.https.onCall(async (data, ctx) => {

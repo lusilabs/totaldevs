@@ -28,7 +28,7 @@ export default function DevProfileDisplay ({ userDoc, setIsEditing }) {
           </div>
           <div>
             <button
-              className='text-gray-500 px-4 w-auto h-6 bg-gray-400 rounded-full hover:bg-gray-700 active:shadow-lg mouse shadow transition ease-in duration-200 focus:outline-none'
+              className='text-gray-500 px-4 w-auto h-6 bg-indigo-400 rounded-full hover:bg-indigo-700 active:shadow-lg mouse shadow transition ease-in duration-200 focus:outline-none'
               onClick={() => setIsEditing(true)}
             >
               <svg viewBox='0 0 20 20' enableBackground='new 0 0 20 20' className='w-3 h-3 inline-block mr-2'>

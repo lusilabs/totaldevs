@@ -3,7 +3,6 @@ import 'semantic-ui-css/semantic.min.css'
 import 'react-toastify/dist/ReactToastify.css'
 import 'nprogress/nprogress.css'
 import { auth, db, functions, analytics } from '@/utils/config'
-import Head from 'next/head'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import { httpsCallable } from 'firebase/functions'
 import { useState, useEffect } from 'react'
@@ -19,6 +18,8 @@ import Spinner from '@/components/spinner'
 import InvitationRequired from './invitationRequired'
 import sleep from '@/utils/misc'
 import { logEvent } from 'firebase/analytics'
+import LogRocket from 'logrocket'
+LogRocket.init('h3lsgb/totaldevs')
 
 Router.events.on('routeChangeStart', NProgress.start)
 Router.events.on('routeChangeComplete', NProgress.done)
@@ -27,12 +28,16 @@ NProgress.configure({ showSpinner: false })
 
 const anonRoutes = [
   '/login',
+  '/login?role=dev',
+  '/login?role=explorer',
+  '/login?role=company',
   '/signup/company',
   '/signup/explorer',
   '/signup/complete',
   '/signup',
   '/terms',
-  '/privacy'
+  '/privacy',
+  '/jobs/add?signup=true'
 ]
 
 const pageNavigationByRole = {
@@ -80,6 +85,7 @@ const adminUserNavigation = [
 
 const anonNavigation = []
 const anonUserNavigation = [
+  { name: 'register', href: '/login?role=company' },
   { name: 'logout', href: '/', handleClick: () => signOut(auth) }
 ]
 
@@ -91,7 +97,7 @@ function MyApp ({ Component, pageProps }) {
   const [navigation, setNavigation] = useState(anonNavigation)
   const [userNavigation, setUserNavigation] = useState(anonUserNavigation)
   const router = useRouter()
-  const onAnonRoutes = anonRoutes.includes(router.pathname)
+  const onAnonRoutes = anonRoutes.includes(router.asPath)
   const onAdminRoutes = router.pathname.includes('admin')
   const [isPageLoading, setIsPageLoading] = useState(false)
   const [profiles, setProfiles] = useState([])
@@ -116,8 +122,6 @@ function MyApp ({ Component, pageProps }) {
         collection(db, 'profiles'),
         where('visibility', '==', 'public'),
         where('stack', '!=', []),
-        // where('rating', '>', 3),
-        // orderBy('rating'),
         limit(20)
       )
       const querySnapshot = await getDocs(q)
@@ -131,7 +135,6 @@ function MyApp ({ Component, pageProps }) {
   }, [])
 
   useEffect(() => {
-    // console.log({ user, userDoc, Component })
     if (userDoc && userDoc.role) {
       let nav = pageNavigationByRole[userDoc.role]
       let userNav = userNavigationByRole[userDoc.role]
@@ -144,14 +147,15 @@ function MyApp ({ Component, pageProps }) {
     }
   }, [userDoc])
 
-  const handleWorkWithUs = async () => {
-    // sign in as Anon, at the end of the flow we prompt for optional login.
+  const handleCreateJobPosting = async () => {
     setIsPageLoading(true)
     await signInAnonymously(auth)
-    router.push('/signup')
-    logEvent(analytics, 'signing up')
+    await sleep(2000)
+    router.push('/jobs/add?signup=true')
+    logEvent(analytics, 'new company signup')
     setIsPageLoading(false)
   }
+
   useEffect(() => {
     const awaitRedirectResults = async () => {
       try {
@@ -160,17 +164,14 @@ function MyApp ({ Component, pageProps }) {
           setIsPageLoading(true)
           const user = result.user
           const userData = JSON.parse(JSON.stringify(user.toJSON()))
-          const role = localStorage.getItem('totalDevsRole')
-          logEvent(analytics, 'getRedirectResult user converted: role ' + role + ' ' + JSON.stringify(userData))
-          console.log({ userData, role })
-          await handleAnonUserConversion({ ...userData, role })
+          // logEvent(analytics, 'getRedirectResult user converted: role ' + role + ' ' + JSON.stringify(userData))
+          await handleAnonUserConversion({ ...userData, role: 'company' })
           await sleep(2000)
-          localStorage.removeItem('totalDevsRole')
           setIsPageLoading(false)
-          router.push('/')
+          router.push('/jobs?created=true')
         }
       } catch (err) {
-        logEvent(analytics, 'getRedirectResult error: ' + JSON.stringify(err))
+        // logEvent(analytics, 'getRedirectResult error: ' + JSON.stringify(err))
         console.error(err)
         setIsPageLoading(false)
       }
@@ -179,16 +180,17 @@ function MyApp ({ Component, pageProps }) {
   }, [userDoc])
 
   if (user && userDoc && userDoc.role === 'dev' && !userDoc.hasAcceptedInvite) {
-    return <InvitationRequired userDoc={userDoc} {...pageProps} />
+    return <InvitationRequired userDoc={userDoc} setIsPageLoading={setIsPageLoading} {...pageProps} />
   }
+
   if (onAdminRoutes && !userDoc?.isAdmin) return null
 
   return (
     <>
 
       {(isUserLoading || isPageLoading) && <Spinner />}
-      {error && <Error title='Error while retrieving user' statusCode={500} />}
-      {!user && !isUserLoading && !onAnonRoutes && <Landing profiles={profiles} setIsPageLoading={setIsPageLoading} handleWorkWithUs={handleWorkWithUs} />}
+      {error && <Error title='error while retrieving user' statusCode={500} />}
+      {!user && !isUserLoading && !onAnonRoutes && <Landing profiles={profiles} setIsPageLoading={setIsPageLoading} handleCreateJobPosting={handleCreateJobPosting} />}
       {user && userDoc && !onAnonRoutes &&
         <Layout user={user} userDoc={userDoc} navigation={navigation} userNavigation={userNavigation} {...pageProps}>
           <Component user={user} userDoc={userDoc} setIsPageLoading={setIsPageLoading} {...pageProps} />
@@ -196,7 +198,7 @@ function MyApp ({ Component, pageProps }) {
         </Layout>}
       {onAnonRoutes &&
         <>
-          <Component user={user} userDoc={userDoc} setIsPageLoading={setIsPageLoading} {...pageProps} />
+          <Component user={user} userDoc={userDoc} setIsPageLoading={setIsPageLoading} handleCreateJobPosting={handleCreateJobPosting} {...pageProps} />
           <ToastContainer pauseOnFocusLoss={false} autoClose={2000} />
         </>}
     </>
