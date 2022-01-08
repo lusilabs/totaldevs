@@ -21,7 +21,7 @@ export default function Login ({ setIsPageLoading }) {
     const result = await signInWithPopup(auth, provider)
     if (result.user && result.user.uid) {
       await handleUserLogin({ role: selectedRole })
-      await sleep(2000)
+      await sleep(4000)
       router.push('/')
     }
     setIsPageLoading(false)
