@@ -18,13 +18,14 @@ function SignUpFlow ({ handleCreateJobPosting, ...props }) {
 
       <div className='flex flex-col md:flex-row m-2'>
 
-        <div className='flex flex-col cursor-pointer text-center items-center max-w-sm p-8 m-4 rounded-lg shadow-lg' onClick={() => handleClickOnRole('dev')}>
-          <h3 className='text-indigo-400'>dev</h3>
-          <UserIcon className='h-24 w-24 text-indigo-400 m-4' />
-          <h4 className='text-gray-500'>
-            I am a professional developer.
-          </h4>
-        </div>
+        {!convert &&
+          <div className='flex flex-col cursor-pointer text-center items-center max-w-sm p-8 m-4 rounded-lg shadow-lg' onClick={() => handleClickOnRole('dev')}>
+            <h3 className='text-indigo-400'>dev</h3>
+            <UserIcon className='h-24 w-24 text-indigo-400 m-4' />
+            <h4 className='text-gray-500'>
+              I am a professional developer.
+            </h4>
+          </div>}
 
         <div className='flex flex-col text-center items-center cursor-pointer max-w-sm p-8 m-4 rounded-lg shadow-lg' onClick={() => handleClickOnRole('explorer')}>
           <h3 className='text-indigo-400'>explorer</h3>
