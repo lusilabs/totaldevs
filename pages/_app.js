@@ -27,17 +27,22 @@ Router.events.on('routeChangeError', NProgress.done)
 NProgress.configure({ showSpinner: false })
 
 const anonRoutes = [
+  // these routes are hard-matches and allow anon users to visit sensitive pages so add with care.
+  '/terms',
+  '/privacy',
   '/login',
   '/login?role=dev',
   '/login?role=explorer',
   '/login?role=company',
+  '/signup',
+  '/signup?convert=true',
   '/signup/company',
   '/signup/explorer',
   '/signup/complete',
-  '/signup',
-  '/terms',
-  '/privacy',
-  '/jobs/add?signup=true'
+  '/signup/complete?convert=true',
+  '/jobs/add?signup=true',
+  '/jobs/add?signup=true&convert=true',
+  '/jobs/add?signup=true&convert=false'
 ]
 
 const pageNavigationByRole = {
@@ -89,7 +94,7 @@ const anonUserNavigation = [
   { name: 'logout', href: '/', handleClick: () => signOut(auth) }
 ]
 
-const handleAnonUserConversion = httpsCallable(functions, 'stripe-handleAnonUserConversion')
+const handleAnonUserConversion = httpsCallable(functions, 'handleAnonUserConversion')
 
 function MyApp ({ Component, pageProps }) {
   const [user, isUserLoading, error] = useAuthState(auth)
@@ -147,11 +152,11 @@ function MyApp ({ Component, pageProps }) {
     }
   }, [userDoc])
 
-  const handleCreateJobPosting = async () => {
+  const handleCreateJobPosting = async ({ convert }) => {
     setIsPageLoading(true)
-    await signInAnonymously(auth)
+    if (!convert) await signInAnonymously(auth)
     await sleep(2000)
-    router.push('/jobs/add?signup=true')
+    router.push(`/jobs/add?signup=true&convert=${convert}`)
     logEvent(analytics, 'new company signup')
     setIsPageLoading(false)
   }
@@ -179,7 +184,7 @@ function MyApp ({ Component, pageProps }) {
     awaitRedirectResults()
   }, [userDoc])
 
-  if (user && userDoc && userDoc.role === 'dev' && !userDoc.hasAcceptedInvite) {
+  if (!onAnonRoutes && user && userDoc && userDoc.role === 'dev' && !userDoc.hasAcceptedInvite) {
     return <InvitationRequired userDoc={userDoc} setIsPageLoading={setIsPageLoading} {...pageProps} />
   }
 

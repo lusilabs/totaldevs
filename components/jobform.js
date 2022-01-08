@@ -108,7 +108,6 @@ function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
     }
     setSaving(false)
     if (onSaveRoute) {
-      router.push(onSaveRoute)
       return
     }
     if (jobID) router.push('/jobs/?edited=true')

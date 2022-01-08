@@ -6,22 +6,24 @@ import sleep from '@/utils/misc'
 import LoginForm from '@/components/loginform'
 import { useEffect, useState } from 'react'
 
-const handleUserLogin = httpsCallable(functions, 'stripe-handleUserLogin')
+const handleUserLogin = httpsCallable(functions, 'handleUserLogin')
 
 export default function Login ({ setIsPageLoading }) {
   const provider = new GoogleAuthProvider()
   const router = useRouter()
   const [selectedRole, setSelectedRole] = useState('dev')
+  const [isConverting, setIsConverting] = useState(false)
   useEffect(() => {
-    const { role = 'dev' } = router.query
+    const { role = 'dev', convert = false } = router.query
     setSelectedRole(role)
+    setIsConverting(convert)
   })
   const handleLogin = async () => {
     setIsPageLoading(true)
     const result = await signInWithPopup(auth, provider)
     if (result.user && result.user.uid) {
-      await handleUserLogin({ role: selectedRole })
-      await sleep(4000)
+      await sleep(3000)// give time to firestore for the userDoc to be populated
+      await handleUserLogin({ role: selectedRole, convert: isConverting })
       router.push('/')
     }
     setIsPageLoading(false)

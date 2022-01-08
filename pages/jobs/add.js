@@ -5,10 +5,10 @@ import { useEffect, useState } from 'react'
 function AddJob (props) {
   const router = useRouter()
   const [onSaveRoute, setOnSaveRoute] = useState('')
+  const { signup = '', convert = false } = router.query
   useEffect(() => {
-    const { signup = '' } = router.query
-    if (signup) setOnSaveRoute('/signup/complete')
-  }, [])
+    if (signup) setOnSaveRoute(`/signup/complete?convert=${convert}`)
+  }, [signup, convert])
   return (
     <JobForm onSaveRoute={onSaveRoute} {...props} />
   )

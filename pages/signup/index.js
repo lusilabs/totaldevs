@@ -5,8 +5,10 @@ import { useEffect, useState } from 'react'
 function SignUpFlow ({ handleCreateJobPosting, ...props }) {
   const router = useRouter()
 
+  const { convert = false } = router.query
+
   const handleClickOnRole = async role => {
-    router.push(`/login?role=${role}`)
+    router.push(`/login?role=${role}&convert=${convert}`)
   }
 
   return (
@@ -32,7 +34,7 @@ function SignUpFlow ({ handleCreateJobPosting, ...props }) {
           </h4>
         </div>
 
-        <div className='flex flex-col text-center items-center cursor-pointer max-w-sm p-8 m-4 rounded-lg shadow-lg' onClick={handleCreateJobPosting}>
+        <div className='flex flex-col text-center items-center cursor-pointer max-w-sm p-8 m-4 rounded-lg shadow-lg' onClick={() => handleCreateJobPosting({ convert })}>
           <h3 className='text-indigo-400'>company</h3>
           <OfficeBuildingIcon className='h-24 w-24 text-indigo-400 m-4' />
           <h4 className='text-gray-500'>
