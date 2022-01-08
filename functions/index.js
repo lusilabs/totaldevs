@@ -26,11 +26,13 @@ const isAuthedAndAppChecked = ctx => {
 }
 
 const wasUserInvitedAndReclaimInvitation = async email => {
+  logger.info({ email })
   const iref = await admin
     .firestore()
     .collection('invites')
     .doc(email)
     .get()
+  logger.info({ exists: iref.exists })
   if (!iref.exists) return false
   const iref2 = admin
     .firestore()
@@ -61,12 +63,12 @@ exports.updateUserDoc = functions.firestore.document('users/{uid}').onUpdate(asy
     .get()
   const userDoc = uref.data()
   if (userDoc.email) {
-    const hasAcceptedInvite = await wasUserInvitedAndReclaimInvitation(userDoc.email) || !!isDevelopment
+    const hasAcceptedInvite = await wasUserInvitedAndReclaimInvitation(userDoc.email)
     await admin
       .firestore()
       .collection('users')
       .doc(uid)
-      .update({ hasAcceptedInvite: false })
+      .update({ hasAcceptedInvite })
   }
 })
 
@@ -84,6 +86,13 @@ exports.handleUserLogin = functions.https.onCall(async (data, ctx) => {
       .collection('users')
       .doc(uid)
     await uref2.update(data)
+  } else {
+  // try redeeming invites by updating the user doc
+    const uref2 = admin
+      .firestore()
+      .collection('users')
+      .doc(uid)
+    await uref2.update({ lastLogin: new Date().toISOString() })
   }
 })
 
