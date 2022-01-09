@@ -2,7 +2,6 @@
 const functions = require('firebase-functions')
 const admin = require('firebase-admin')
 const Stripe = require('stripe')
-admin.initializeApp()
 const logger = functions.logger
 const config = functions.config()
 const adminConfig = JSON.parse(process.env.FIREBASE_CONFIG)

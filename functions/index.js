@@ -6,6 +6,7 @@ const config = functions.config()
 const adminConfig = JSON.parse(process.env.FIREBASE_CONFIG)
 const isDevelopment = process.env.FUNCTIONS_EMULATOR
 const NUM_DEFAULT_INVITES = 3
+exports.stripe = require('./stripe')
 
 const isAuthed = ctx => {
   if (!ctx.auth) {
