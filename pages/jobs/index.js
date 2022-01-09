@@ -24,11 +24,12 @@ function JobList ({ userDoc, ...props }) {
       querySnapshot.forEach(doc => {
         snaps.push({ id: doc.id, ...doc.data() })
       })
+      console.log({ snaps })
       setJobs(snaps)
       setIsLoading(false)
     }
-    retrieveJobs()
-  }, [])
+    if (userDoc && userDoc.uid) retrieveJobs()
+  }, [userDoc])
   return (
     <div className='max-w-2xl mx-auto py-4 px-4 sm:py-8 sm:px-6 lg:max-w-7xl lg:px-8'>
       <div className='mt-8 grid grid-cols-2 gap-y-2 gap-x-6 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8'>

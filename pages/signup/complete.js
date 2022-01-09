@@ -29,7 +29,6 @@ function CompleteSignupFlow ({ userDoc, setIsPageLoading, ...props }) {
 
   useEffect(() => {
     const handleConvertDevToCompany = async () => {
-      console.log({ convert, signup })
       if (convert === 'true') {
         setIsPageLoading(true)
         await handleUserLogin({ role: 'company', convert })
