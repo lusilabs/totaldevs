@@ -35,8 +35,8 @@ function JobList ({ userDoc, ...props }) {
     <div className='max-w-2xl mx-auto py-4 px-4 sm:py-8 sm:px-6 lg:max-w-7xl lg:px-8'>
       <div className='mt-8 grid grid-cols-2 gap-y-2 gap-x-6 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8'>
         {isLoading && <SuspensePlaceholders />}
-        {/* {!isLoading && jobs && jobs.length > 0 && jobs.map((s, ix) => <Job key={ix} job={s} {...props} />)}
-        {!isLoading && jobs && jobs.length === 0 && <div className='text-md text-gray-600'>no jobs posted yet.</div>} */}
+        {!isLoading && jobs && jobs.length > 0 && jobs.map((s, ix) => <Job key={ix} job={s} {...props} />)}
+        {!isLoading && jobs && jobs.length === 0 && <div className='text-md text-gray-600'>no jobs posted yet.</div>}
         <div className='fixed top-16 right-8 lg:bottom-8 lg:right-4 text-md' onClick={() => router.push('/jobs/add')}> <CreateButton /> </div>
       </div>
     </div>

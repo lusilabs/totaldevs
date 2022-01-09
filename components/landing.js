@@ -2,8 +2,31 @@ import Nav from '@/components/nav.js'
 import Footer from '@/components/footer.js'
 import '@fortawesome/fontawesome-free/css/all.css'
 import { Label } from 'semantic-ui-react'
+import { auth, db, functions, analytics } from '@/utils/config'
+import { useAuthState } from 'react-firebase-hooks/auth'
+import { httpsCallable } from 'firebase/functions'
+import { useState, useEffect } from 'react'
+import { doc, onSnapshot, where, orderBy, limit, query, collection, getDocs } from 'firebase/firestore'
 
-function Landing ({ handleCreateJobPosting, profiles = [], ...props }) {
+function Landing ({ handleCreateJobPosting, ...props }) {
+  const [profiles, setProfiles] = useState([])
+  useEffect(() => {
+    const retrievePublicProfiles = async () => {
+      const q = query(
+        collection(db, 'profiles'),
+        where('visibility', '==', 'public'),
+        where('stack', '!=', []),
+        limit(20)
+      )
+      const querySnapshot = await getDocs(q)
+      const snaps = []
+      querySnapshot.forEach(doc => {
+        snaps.push({ id: doc.id, ...doc.data() })
+      })
+      setProfiles(snaps)
+    }
+    retrievePublicProfiles()
+  }, [])
   return (
     <>
       <Nav />
@@ -243,8 +266,8 @@ function Landing ({ handleCreateJobPosting, profiles = [], ...props }) {
               </div>
             </div>
             <div className='flex flex-wrap justify-center'>
-              {/* {profiles.length > 0 && profiles.map((p, ix) => <Profile key={ix} {...p} />)}
-              {profiles.length === 0 && <h3 className='text-gray text-xl'>(no devs available atm)</h3>} */}
+              {profiles && profiles.length > 0 && profiles.map((p, ix) => <Profile key={ix} {...p} />)}
+              {profiles && profiles.length === 0 && <h3 className='text-gray text-xl'>(no devs available atm)</h3>}
             </div>
           </div>
         </section>

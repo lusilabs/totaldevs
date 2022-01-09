@@ -124,24 +124,6 @@ function MyApp ({ Component, pageProps }) {
   }, [user])
 
   useEffect(() => {
-    const retrievePublicProfiles = async () => {
-      const q = query(
-        collection(db, 'profiles'),
-        where('visibility', '==', 'public'),
-        where('stack', '!=', []),
-        limit(20)
-      )
-      const querySnapshot = await getDocs(q)
-      const snaps = []
-      querySnapshot.forEach(doc => {
-        snaps.push({ id: doc.id, ...doc.data() })
-      })
-      setProfiles(snaps)
-    }
-    retrievePublicProfiles()
-  }, [])
-
-  useEffect(() => {
     if (userDoc && userDoc.role) {
       let nav = pageNavigationByRole[userDoc.role]
       let userNav = userNavigationByRole[userDoc.role]
