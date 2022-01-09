@@ -11,7 +11,6 @@ export function useDocuments ({ userDoc, docs, queryConstraints = [], ...props }
     querySnapshot.forEach(doc => {
       snaps.push({ id: doc.id, ...doc.data() })
     })
-    console.log(snaps)
     setDocuments(snaps)
   }
 

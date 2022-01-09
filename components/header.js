@@ -1,15 +1,14 @@
 import { useRouter } from 'next/router'
 import Link from 'next/link'
-import { auth } from '@/utils/config'
 import { Fragment, useState, useEffect } from 'react'
 import { Disclosure, Menu, Transition } from '@headlessui/react'
-import { BellIcon, MenuIcon, XIcon } from '@heroicons/react/outline'
+import { BellIcon } from '@heroicons/react/outline'
 
 function classNames (...classes) {
   return classes.filter(Boolean).join(' ')
 }
 
-function Header ({ user, userDoc, navigation, userNavigation, ...props }) {
+function Header ({ user, userDoc, navigation, userNavigation, logoHref = '/', ...props }) {
   const [activeTab, setActiveTab] = useState('/')
   const router = useRouter()
   const handleSelectRoute = href => {
@@ -24,16 +23,16 @@ function Header ({ user, userDoc, navigation, userNavigation, ...props }) {
   })
   return (
     <>
-      <Disclosure as='nav' className='bg-gray-800'>
+      <Disclosure as='nav' className='bg-gray-900'>
         {({ open }) => (
           <>
             <div className='max-w-full mx-auto px-2 sm:px-4 lg:px-8 p-2'>
               <div className='flex items-center justify-between h-auto'>
                 <div className='flex items-center'>
-                  <Link href='/' passRef>
+                  <Link href={logoHref} passRef>
                     <div className='flex-shrink-0'>
                       <img
-                        className='h-8 w-8'
+                        className='h-8 w-8 rounded-full'
                         src='/logo-small.png'
                         alt='logo'
                       />
@@ -68,13 +67,13 @@ function Header ({ user, userDoc, navigation, userNavigation, ...props }) {
                 </div>
                 <div className='block md:block'>
                   <div className='ml-4 flex items-center md:ml-6'>
-                    <button
+                    {/* <button
                       type='button'
                       className='bg-gray-800 p-1 rounded-full text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white'
                     >
                       <span className='sr-only'>View notifications</span>
                       <BellIcon className='h-6 w-6' aria-hidden='true' />
-                    </button>
+                    </button> */}
 
                     {/* Profile dropdown */}
                     <Menu as='div' className='ml-3 relative'>

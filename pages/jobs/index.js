@@ -11,13 +11,14 @@ import CreateButton from '@/components/createbutton'
 function JobList ({ userDoc, ...props }) {
   const router = useRouter()
   const [jobs, setJobs] = useState([])
-  const [isLoading, setIsLoading] = useState(true)
+  const [isLoading, setIsLoading] = useState(false)
   const { created, edited } = router.query
 
   useEffect(() => {
     if (created) toast.success('job posting created successfully.')
     if (edited) toast.success('job posting edited successfully.')
     const retrieveJobs = async () => {
+      setIsLoading(true)
       const q = query(collection(db, 'jobs'), where('uid', '==', userDoc.uid), orderBy('createdAt'))
       const querySnapshot = await getDocs(q)
       const snaps = []
@@ -27,15 +28,15 @@ function JobList ({ userDoc, ...props }) {
       setJobs(snaps)
       setIsLoading(false)
     }
-    retrieveJobs()
-  }, [])
+    if (userDoc && userDoc.uid) retrieveJobs()
+  }, [userDoc])
   return (
     <div className='max-w-2xl mx-auto py-4 px-4 sm:py-8 sm:px-6 lg:max-w-7xl lg:px-8'>
-      <div className='mt-6 grid grid-cols-2 gap-y-2 gap-x-6 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8'>
+      <div className='mt-8 grid grid-cols-2 gap-y-2 gap-x-6 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8'>
         {isLoading && <SuspensePlaceholders />}
-        {!isLoading && jobs.length > 0 && jobs.map((s, ix) => <Job key={ix} job={s} {...props} />)}
-        {!isLoading && jobs.length === 0 && <div className='text-md text-gray-600'>no jobs posted yet.</div>}
-        <div className='fixed bottom-16 right-8 lg:bottom-8 lg:right-4 text-md' onClick={() => router.push('/jobs/add')}> <CreateButton /> </div>
+        {!isLoading && jobs && jobs.length > 0 && jobs.map((s, ix) => <Job key={ix} job={s} {...props} />)}
+        {!isLoading && jobs && jobs.length === 0 && <div className='text-md text-gray-600'>no jobs posted yet.</div>}
+        <div className='fixed top-16 right-8 lg:bottom-8 lg:right-4 text-md' onClick={() => router.push('/jobs/add')}> <CreateButton /> </div>
       </div>
     </div>
   )

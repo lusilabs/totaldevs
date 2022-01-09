@@ -4,9 +4,9 @@ import Dashboard from './dashboard'
 import Landing from '@/components/landing'
 import { analytics } from '@/utils/config'
 
-export default function Index ({ userDoc, handleWorkWithUs, ...props }) {
+export default function Index ({ userDoc, handleCreateJobPosting, ...props }) {
   useEffect(() => {
-    logEvent(analytics, 'New visit v2.')
+    logEvent(analytics, 'New visit v2. how do I log more data?')
   }, [])
 
   // this doesn't work for popUp login, I think I needed to do 'loginWithRedirect', not using for now.
@@ -24,7 +24,7 @@ export default function Index ({ userDoc, handleWorkWithUs, ...props }) {
     <>
       {/* {userDoc && userDoc.role === 'dev' && <Dashboard userDoc={userDoc} {...props} />} */}
       {userDoc && <Dashboard userDoc={userDoc} {...props} />}
-      {!userDoc && <Landing handleWorkWithUs={handleWorkWithUs} {...props} />}
+      {!userDoc && <Landing handleCreateJobPosting={handleCreateJobPosting} {...props} />}
     </>
   )
 }

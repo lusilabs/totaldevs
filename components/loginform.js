@@ -21,7 +21,7 @@ function LoginForm ({ handleLogin, allowRecovery }) {
                     className='w-5 mr-1'
                     src='/github.svg'
                   />
-                  Github
+                  github
                 </button>
                 <button
                   className='bg-white active:bg-gray-100 text-gray-800 px-4 py-2 rounded outline-none focus:outline-none mr-1 mb-1 uppercase shadow hover:shadow-md inline-flex items-center font-bold text-xs'
@@ -34,14 +34,14 @@ function LoginForm ({ handleLogin, allowRecovery }) {
                     className='w-5 mr-1'
                     src='/google.svg'
                   />
-                  Google
+                  google
                 </button>
               </div>
               <hr className='mt-6 border-b-1 border-gray-400' />
             </div>
             <div className='flex-auto px-4 lg:px-10 py-10 pt-0'>
               <div className='text-gray-500 text-center mb-3 font-bold'>
-                <small>Or with credentials</small>
+                <small>or with credentials</small>
               </div>
               <form>
                 <div className='relative w-full mb-3'>
@@ -49,7 +49,7 @@ function LoginForm ({ handleLogin, allowRecovery }) {
                     className='block uppercase text-gray-700 text-xs font-bold mb-2'
                     htmlFor='grid-password'
                   >
-                    Email
+                    email
                   </label>
                   <input
                     type='email'
@@ -64,7 +64,7 @@ function LoginForm ({ handleLogin, allowRecovery }) {
                     className='block uppercase text-gray-700 text-xs font-bold mb-2'
                     htmlFor='grid-password'
                   >
-                    Password
+                    password
                   </label>
                   <input
                     type='password'
@@ -82,7 +82,7 @@ function LoginForm ({ handleLogin, allowRecovery }) {
                       style={{ transition: 'all .15s ease' }}
                     />
                     <span className='ml-2 text-sm font-semibold text-gray-700'>
-                      Remember me
+                      remember me
                     </span>
                   </label>
                 </div>
@@ -93,7 +93,7 @@ function LoginForm ({ handleLogin, allowRecovery }) {
                     type='button'
                     style={{ transition: 'all .15s ease' }}
                   >
-                    Login
+                    login
                   </button>
                 </div>
               </form>
@@ -106,7 +106,7 @@ function LoginForm ({ handleLogin, allowRecovery }) {
                   onClick={e => e.preventDefault()}
                   className='text-gray-300'
                 >
-                  <small>Forgot password?</small>
+                  <small>forgot password?</small>
                 </a>
               </div>
               <div className='w-1/2 text-right'>
@@ -114,7 +114,7 @@ function LoginForm ({ handleLogin, allowRecovery }) {
                   onClick={e => e.preventDefault()}
                   className='text-gray-300'
                 >
-                  <small>Create new account</small>
+                  <small>create new account</small>
                 </a>
               </div>
             </div>}
