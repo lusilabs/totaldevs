@@ -40,8 +40,6 @@ function CompleteSignupFlow ({ userDoc, setIsPageLoading, ...props }) {
     handleConvertDevToCompany()
   }, [convert])
 
-  const email = 'test2@gmail.com'
-  const password = 'mypwdeee'
   const handleEmailPasswordLogin = async (email, password) => {
     const credential = EmailAuthProvider.credential(email, password)
     setIsPageLoading(true)

@@ -38,7 +38,6 @@ export default function Login ({ setIsPageLoading }) {
     if (allowRecovery) {
       try {
         const userCredential = await signInWithEmailAndPassword(auth, email, password)
-        console.log(userCredential.user.toJSON())
         await handleUserLogin({ email })
         router.push('/')
         setIsPageLoading(false)
@@ -50,7 +49,6 @@ export default function Login ({ setIsPageLoading }) {
     } else {
       try {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password)
-        console.log(userCredential.user.toJSON())
         // const userData = JSON.parse(JSON.stringify(user.toJSON()))
         await sleep(3000)
         await handleUserLogin({ role: selectedRole, convert: isConverting, email })
