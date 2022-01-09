@@ -3,7 +3,7 @@ import Footer from '@/components/footer.js'
 import '@fortawesome/fontawesome-free/css/all.css'
 import { Label } from 'semantic-ui-react'
 
-function Landing ({ handleCreateJobPosting, profiles, ...props }) {
+function Landing ({ handleCreateJobPosting, profiles = [], ...props }) {
   return (
     <>
       <Nav />
@@ -243,8 +243,8 @@ function Landing ({ handleCreateJobPosting, profiles, ...props }) {
               </div>
             </div>
             <div className='flex flex-wrap justify-center'>
-              {profiles.length > 0 && profiles.map((p, ix) => <Profile key={ix} {...p} />)}
-              {profiles.length === 0 && <h3 className='text-gray text-xl'>(no devs available atm)</h3>}
+              {/* {profiles.length > 0 && profiles.map((p, ix) => <Profile key={ix} {...p} />)}
+              {profiles.length === 0 && <h3 className='text-gray text-xl'>(no devs available atm)</h3>} */}
             </div>
           </div>
         </section>
