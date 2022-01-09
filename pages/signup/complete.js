@@ -11,7 +11,7 @@ function CompleteSignupFlow ({ userDoc, setIsPageLoading, ...props }) {
   const provider = new GoogleAuthProvider()
   const currentUser = auth.currentUser
   const router = useRouter()
-  const { convert = false } = router.query
+  const { convert = false, signup } = router.query
   const handleLinkWithRedirect = () => {
     setIsPageLoading(true)
     linkWithRedirect(currentUser, provider).then((result) => {
@@ -29,7 +29,8 @@ function CompleteSignupFlow ({ userDoc, setIsPageLoading, ...props }) {
 
   useEffect(() => {
     const handleConvertDevToCompany = async () => {
-      if (convert) {
+      console.log({ convert, signup })
+      if (convert === 'true') {
         setIsPageLoading(true)
         await handleUserLogin({ role: 'company', convert })
         router.push('/')

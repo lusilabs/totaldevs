@@ -41,6 +41,7 @@ const anonRoutes = [
   '/signup/explorer',
   '/signup/complete',
   '/signup/complete?convert=true',
+  '/signup/complete?convert=undefined',
   '/jobs/add?signup=true',
   '/jobs/add?signup=true&convert=true',
   '/jobs/add?signup=true&convert=false'
