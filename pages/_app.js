@@ -35,6 +35,7 @@ const anonRoutes = [
   '/login?role=explorer',
   '/login?role=company',
   '/login?role=explorer&convert=true',
+  '/login?role=explorer&convert=false',
   '/signup',
   '/signup?convert=true',
   '/signup/company',

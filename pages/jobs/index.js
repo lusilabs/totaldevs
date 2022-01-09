@@ -25,7 +25,6 @@ function JobList ({ userDoc, ...props }) {
       querySnapshot.forEach(doc => {
         snaps.push({ id: doc.id, ...doc.data() })
       })
-      console.log({ snaps })
       setJobs(snaps)
       setIsLoading(false)
     }
