@@ -18,8 +18,8 @@ import Spinner from '@/components/spinner'
 import InvitationRequired from './invitationRequired'
 import sleep from '@/utils/misc'
 import { logEvent } from 'firebase/analytics'
-// import LogRocket from 'logrocket'
-// LogRocket.init('h3lsgb/totaldevs')
+import LogRocket from 'logrocket'
+LogRocket.init('h3lsgb/totaldevs')
 
 Router.events.on('routeChangeStart', NProgress.start)
 Router.events.on('routeChangeComplete', NProgress.done)
