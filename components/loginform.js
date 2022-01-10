@@ -1,4 +1,9 @@
-function LoginForm ({ handleLogin, allowRecovery }) {
+import { useForm } from 'react-hook-form'
+function LoginForm ({ handleProviderLogin, allowRecovery, handleEmailPasswordLogin }) {
+  const { register, handleSubmit, watch, formState: { errors }, reset } = useForm()
+  const onSubmit = (data) => {
+    handleEmailPasswordLogin(data.email, data.password)
+  }
   return (
     <div className='container mx-auto px-4 h-full'>
       <div className='flex content-center items-center justify-center h-full'>
@@ -6,9 +11,9 @@ function LoginForm ({ handleLogin, allowRecovery }) {
           <div className='relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded-lg bg-gray-300 border-0'>
             <div className='rounded-t mb-0 px-6 py-6'>
               <div className='text-center mb-3'>
-                {/* <h6 className='text-gray-600 text-sm font-bold'>
+                <h6 className='text-gray-600 text-sm font-bold'>
                   with
-                </h6> */}
+                </h6>
               </div>
               <div className='btn-wrapper text-center'>
                 <button
@@ -27,7 +32,7 @@ function LoginForm ({ handleLogin, allowRecovery }) {
                   className='bg-white active:bg-gray-100 text-gray-800 px-4 py-2 rounded outline-none focus:outline-none mr-1 mb-1 uppercase shadow hover:shadow-md inline-flex items-center font-bold text-xs'
                   type='button'
                   style={{ transition: 'all .15s ease' }}
-                  onClick={handleLogin}
+                  onClick={handleProviderLogin}
                 >
                   <img
                     alt='...'
@@ -43,7 +48,7 @@ function LoginForm ({ handleLogin, allowRecovery }) {
               <div className='text-gray-500 text-center mb-3 font-bold'>
                 <small>or with credentials</small>
               </div>
-              <form>
+              <form onSubmit={handleSubmit(onSubmit)}>
                 <div className='relative w-full mb-3'>
                   <label
                     className='block uppercase text-gray-700 text-xs font-bold mb-2'
@@ -54,9 +59,11 @@ function LoginForm ({ handleLogin, allowRecovery }) {
                   <input
                     type='email'
                     className='border-0 px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full'
-                    placeholder='Email'
+                    placeholder='email'
                     style={{ transition: 'all .15s ease' }}
+                    {...register('email', { required: true, minLength: 3, pattern: /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/i })}
                   />
+                  {errors.email && <div className='m-2 text-sm text-red-500'>enter a valid email</div>}
                 </div>
 
                 <div className='relative w-full mb-3'>
@@ -69,28 +76,17 @@ function LoginForm ({ handleLogin, allowRecovery }) {
                   <input
                     type='password'
                     className='border-0 px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full'
-                    placeholder='Password'
+                    placeholder='password'
                     style={{ transition: 'all .15s ease' }}
+                    {...register('password', { required: true, minLength: 6 })}
                   />
-                </div>
-                <div>
-                  <label className='inline-flex items-center cursor-pointer'>
-                    <input
-                      id='customCheckLogin'
-                      type='checkbox'
-                      className='form-checkbox border-0 rounded text-gray-800 ml-1 w-5 h-5'
-                      style={{ transition: 'all .15s ease' }}
-                    />
-                    <span className='ml-2 text-sm font-semibold text-gray-700'>
-                      remember me
-                    </span>
-                  </label>
+                  {errors.password && <div className='m-2 text-sm text-red-500'>6+ characters required</div>}
                 </div>
 
                 <div className='text-center mt-6'>
                   <button
                     className='bg-gray-900 text-white active:bg-gray-700 text-sm font-bold uppercase px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 w-full'
-                    type='button'
+                    type='submit'
                     style={{ transition: 'all .15s ease' }}
                   >
                     login
@@ -107,14 +103,6 @@ function LoginForm ({ handleLogin, allowRecovery }) {
                   className='text-gray-300'
                 >
                   <small>forgot password?</small>
-                </a>
-              </div>
-              <div className='w-1/2 text-right'>
-                <a
-                  onClick={e => e.preventDefault()}
-                  className='text-gray-300'
-                >
-                  <small>create new account</small>
                 </a>
               </div>
             </div>}

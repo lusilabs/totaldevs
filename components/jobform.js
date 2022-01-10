@@ -108,7 +108,6 @@ function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
     }
     setSaving(false)
     if (onSaveRoute) {
-      console.log({ onSaveRoute })
       router.push(onSaveRoute)
       return
     }

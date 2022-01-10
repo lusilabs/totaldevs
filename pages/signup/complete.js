@@ -1,10 +1,11 @@
-import { GoogleAuthProvider, linkWithRedirect, getRedirectResult, signInWithPopup } from 'firebase/auth'
+import { GoogleAuthProvider, linkWithRedirect, getRedirectResult, signInWithPopup, createUserWithEmailAndPassword, EmailAuthProvider, linkWithCredential } from 'firebase/auth'
 import { auth, db, functions, analytics } from '@/utils/config'
 import { logEvent } from 'firebase/analytics'
 import LoginForm from '@/components/loginform'
 import { useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { httpsCallable } from 'firebase/functions'
+import sleep from '@/utils/misc'
 
 const handleUserLogin = httpsCallable(functions, 'handleUserLogin')
 function CompleteSignupFlow ({ userDoc, setIsPageLoading, ...props }) {
@@ -39,6 +40,22 @@ function CompleteSignupFlow ({ userDoc, setIsPageLoading, ...props }) {
     handleConvertDevToCompany()
   }, [convert])
 
+  const handleEmailPasswordLogin = async (email, password) => {
+    const credential = EmailAuthProvider.credential(email, password)
+    setIsPageLoading(true)
+    linkWithCredential(auth.currentUser, credential)
+      .then(async (userCredential) => {
+        await sleep(3000)
+        await handleUserLogin({ role: 'company', convert, email })
+        router.push('/jobs?created=true')
+        setIsPageLoading(false)
+      })
+      .catch((error) => {
+        console.error(error)
+        setIsPageLoading(false)
+      })
+  }
+
   return (
     <div className='flex flex-col p-4'>
       <div className='flex items-center justify-center p-4'>
@@ -48,7 +65,7 @@ function CompleteSignupFlow ({ userDoc, setIsPageLoading, ...props }) {
           &nbsp;
         </h3>
       </div>
-      <LoginForm handleLogin={handleLinkWithRedirect} />
+      <LoginForm handleLogin={handleLinkWithRedirect} handleEmailPasswordLogin={handleEmailPasswordLogin} />
     </div>
   )
 }

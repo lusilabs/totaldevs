@@ -64,7 +64,7 @@ exports.updateUserDoc = functions.firestore.document('users/{uid}').onUpdate(asy
     .get()
   const userDoc = uref.data()
   if (userDoc.email) {
-    const hasAcceptedInvite = await wasUserInvitedAndReclaimInvitation(userDoc.email) || !!isDevelopment
+    const hasAcceptedInvite = await wasUserInvitedAndReclaimInvitation(userDoc.email)
     await admin
       .firestore()
       .collection('users')
