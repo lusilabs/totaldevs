@@ -362,12 +362,12 @@ export function Profile (props) {
           <p className='text-lg text-gray-500 font-bold'>
             {props.title}
           </p>
-          <div className='m-2 flex flex-row items-center justify-center'>
-            {props.stack.map((s, ix) => <Label key={ix}>{s}</Label>)}
+          <div className='m-2 flex flex-row items-center justify-center flex-wrap'>
+            {props.stack.slice(0, 4).map((s, ix) => <Label key={ix}>{s}</Label>)}
           </div>
 
           <div className='mt-4'>
-            {props.githubURI && <button
+            {/* {props.githubURI && <button
               className='bg-gray-600 text-white w-8 h-8 rounded-full outline-none focus:outline-none m-1 mb-1'
               type='button'
                                 >
@@ -393,7 +393,7 @@ export function Profile (props) {
               <a className='text-white' href={`https://${props.websiteURL}`}>
                 <i className='fas fa-link' />
               </a>
-            </button>}
+            </button>} */}
           </div>
 
         </div>
