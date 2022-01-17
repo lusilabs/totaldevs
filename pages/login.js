@@ -1,4 +1,4 @@
-import { GoogleAuthProvider, signInWithPopup } from '@firebase/auth'
+import { GoogleAuthProvider, signInWithPopup, GithubAuthProvider, FacebookAuthProvider } from '@firebase/auth'
 import { auth, functions } from '@/utils/config'
 import { useRouter } from 'next/router'
 import { httpsCallable } from 'firebase/functions'
@@ -10,8 +10,8 @@ import { toast } from 'react-toastify'
 
 const handleUserLogin = httpsCallable(functions, 'handleUserLogin')
 
+const SUPPORTED_PROVIDERS = { google: GoogleAuthProvider, github: GithubAuthProvider, facebook: FacebookAuthProvider }
 export default function Login ({ setIsPageLoading }) {
-  const provider = new GoogleAuthProvider()
   const router = useRouter()
   const [selectedRole, setSelectedRole] = useState('dev')
   const [isConverting, setIsConverting] = useState(false)
@@ -22,9 +22,10 @@ export default function Login ({ setIsPageLoading }) {
     setIsConverting(convert)
     setIsAllowRecovery(!router.asPath.includes('role')) // if there is a role we are on the signup, shouldn't need a recovery code.
   })
-  const handleProviderLogin = async () => {
+  const handleProviderLogin = async provider => {
+    const providerInstance = new SUPPORTED_PROVIDERS[provider]()
     setIsPageLoading(true)
-    const result = await signInWithPopup(auth, provider)
+    const result = await signInWithPopup(auth, providerInstance)
     if (result.user && result.user.uid) {
       await sleep(3000)// give time to firestore for the userDoc to be populated
       await handleUserLogin({ role: selectedRole, convert: isConverting })
