@@ -2,8 +2,10 @@ import { useForm } from 'react-hook-form'
 import { Button, Dropdown } from 'semantic-ui-react'
 import React, { useState, useEffect } from 'react'
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
+import Assignments from '@/components/matches/assignments'
 import { storage, db } from '@/utils/config'
-import { doc, setDoc, addDoc, collection, getDoc } from 'firebase/firestore'
+import { useDocuments } from '@/utils/hooks'
+import { doc, setDoc, addDoc, collection, getDoc, where } from 'firebase/firestore'
 import { toast } from 'react-toastify'
 import sleep from '@/utils/misc'
 import { useRouter } from 'next/router'
@@ -28,6 +30,12 @@ function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
 
   const { jobID } = router.query
   const { register, handleSubmit, watch, formState: { errors }, reset } = useForm({ defaultValues: jobDoc })
+  const [assignments, ] = useDocuments({
+    docs: "assignments", 
+    queryConstraints: [
+      where('job', '==', jobID), 
+      where('status', '==', 'dev_interested')
+  ]})
 
   useEffect(() => {
     if (Object.keys(jobDoc).length > 0) {
@@ -154,8 +162,8 @@ function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
         <div className='shadow overflow-hidden rounded-lg'>
           <div className='px-4 py-5 bg-white sm:p-6'>
             <div className='grid grid-cols-6 gap-6'>
-
               <div className='col-span-6 sm:col-span-3'>
+                <Assignments assignments={assignments}/>
                 <label htmlFor='title' className='block text-sm font-medium text-gray-700'>
                   job title
                 </label>
