@@ -105,3 +105,15 @@ exports.handleAnonUserConversion = functions.https.onCall(async (data, ctx) => {
     .doc(uid)
   await uref.update({ ...data })
 })
+
+exports.sendMessage = functions.https.onCall(async ({ text, fcmToken }, ctx) => {
+  if (!fcmToken) return { success: true }
+  const payload = { data: text, notification: { title: text, body: text }, token: fcmToken }
+  console.log(payload)
+  return await admin.messaging().send(payload).then((response) => {
+    console.log('message sent', response)
+    return { success: true }
+  }).catch((error) => {
+    return { error: error.code }
+  })
+})
