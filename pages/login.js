@@ -11,6 +11,7 @@ import { toast } from 'react-toastify'
 const handleUserLogin = httpsCallable(functions, 'handleUserLogin')
 
 const SUPPORTED_PROVIDERS = { google: GoogleAuthProvider, github: GithubAuthProvider, facebook: FacebookAuthProvider }
+
 export default function Login ({ setIsPageLoading }) {
   const router = useRouter()
   const [selectedRole, setSelectedRole] = useState('dev')
