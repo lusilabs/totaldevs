@@ -167,12 +167,29 @@ function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
                   className={`mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-gray-700 ${props.sid ? 'bg-gray-100' : ''}`}
                   {...register('title', { required: false })}
                 >
-                  <option value='front-dev'>frontend dev</option>
-                  <option value='front-eng'>frontend engineer</option>
-                  <option value='back-dev'>backend dev</option>
-                  <option value='back-eng'>backend engineer</option>
-                  <option value='full-dev'>full stack dev</option>
-                  <option value='full-eng'>full stack engineer</option>
+                  <option value='frontend developer'>frontend developer</option>
+                  <option value='frontend engineer'>frontend engineer</option>
+                  <option value='backend developer'>backend developer</option>
+                  <option value='backend engineer'>backend engineer</option>
+                  <option value='full stack developer'>full stack developer</option>
+                  <option value='full stack engineer'>full stack engineer</option>
+                  <option value='software architect'>software architect</option>
+                  <option value='tech lead'>tech lead</option>
+
+                  <option value='mobile developer'>mobile developer</option>
+                  <option value='android developer'>android developer</option>
+                  <option value='ios developer'>ios developer</option>
+
+                  <option value='designer'>designer</option>
+                  <option value='ui/ux engineer'>ui/ux engineer</option>
+
+                  <option value='machine learning engineer'>machine learning engineer</option>
+                  <option value='data engineer'>data engineer</option>
+                  <option value='data scientist'>data scientist</option>
+
+                  <option value='qa engineer'>qa engineer</option>
+                  <option value='security engineer'>security engineer</option>
+                  <option value='dev ops'>dev ops</option>
                 </select>
               </div>
 
@@ -384,7 +401,7 @@ function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
                   <div className='w-0 flex-1 flex items-center'>
                     {pdfName && <> <svg className='flex-shrink-0 h-5 w-5 text-gray-400' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='currentColor' aria-hidden='true'>
                       <path fillRule='evenodd' d='M8 4a3 3 0 00-3 3v4a5 5 0 0010 0V7a1 1 0 112 0v4a7 7 0 11-14 0V7a5 5 0 0110 0v4a3 3 0 11-6 0V7a1 1 0 012 0v4a1 1 0 102 0V7a3 3 0 00-3-3z' clipRule='evenodd' />
-                                   </svg>
+                    </svg>
                       <span className='ml-2 flex-1 w-0 truncate'>
                         {pdfName}
                       </span>
@@ -394,7 +411,7 @@ function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
                           download
                         </a>
                       </div>
-                                </>}
+                    </>}
                   </div>
                 </div>
                 <div className='mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md'>
