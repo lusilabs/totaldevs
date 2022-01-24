@@ -62,7 +62,7 @@ function CompleteSignupFlow ({ userDoc, setIsPageLoading, ...props }) {
       <div className='flex items-center justify-center p-4'>
         <img className='w-36 h-36' src='/astronaut.png' />
         <h3 className='font-extrabold tracking-tight text-indigo-600 sm:text-4xl'>
-          let's get in touch.
+          let's keep in touch.
           &nbsp;
         </h3>
       </div>
