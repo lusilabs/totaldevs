@@ -174,10 +174,10 @@ function Invites ({ userDoc, ...props }) {
             </div>
           </div>
           {userDoc.numInvitesLeft > 0 && <div className='fixed top-16 right-8 lg:bottom-8 lg:right-4 text-md' onClick={() => router.push('invites/add/dev')}>
-            <CreateButton text='dev' color='green' />
+            <CreateButton text='dev' extraClasses='bg-green-500' />
           </div>}
           <div className='fixed top-16 right-32 lg:bottom-8 lg:right-32 text-md' onClick={() => router.push('invites/add/company')}>
-            <CreateButton text='company' />
+            <CreateButton text='company' extraClasses='bg-indigo-500' />
           </div>
         </div>
       </div>}
