@@ -179,7 +179,6 @@ function Invites ({ userDoc, ...props }) {
           <div className='fixed top-16 right-32 lg:bottom-8 lg:right-32 text-md' onClick={() => router.push('invites/add/company')}>
             <CreateButton text='company' />
           </div>
-
         </div>
       </div>}
     </>
