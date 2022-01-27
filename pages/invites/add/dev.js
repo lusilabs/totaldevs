@@ -11,16 +11,17 @@ function AddInvite ({ userDoc, ...props }) {
 
   const onSubmit = async data => {
     setSaving(true)
-    const ref = doc(db, 'invites', data.email)
+    const ref = doc(db, 'invites', `${data.email}:dev`)
     const d = await getDoc(ref)
     if (d.exists()) {
-      toast.error('That user has already been invited')
+      toast.error('that email has already been invited')
       setSaving(false)
       return
     }
     await setDoc(ref, {
       text: data.inviteText,
       referrer: userDoc.email,
+      referrerID: userDoc.uid,
       redeemed: false,
       createdAt: new Date().toISOString()
     }, { merge: true })
@@ -28,7 +29,7 @@ function AddInvite ({ userDoc, ...props }) {
     await addDoc(mref, {
       message: {
         text: data.inviteText,
-        subject: 'Welcome to totaldevs.com'
+        subject: 'Congratulations! 🎉🎉 you have been invited to join totaldevs.com'
       },
       to: [data.email],
       createdAt: new Date().toISOString()
@@ -36,7 +37,11 @@ function AddInvite ({ userDoc, ...props }) {
     await setDoc(ref, {
       text: data.inviteText,
       referrer: userDoc.email,
+      referrerID: userDoc.uid,
+      isActive: false,
+      role: 'dev',
       redeemed: false,
+      usd: 0,
       createdAt: new Date().toISOString()
     }, { merge: true })
     const uref = doc(db, 'users', userDoc.uid)
@@ -49,7 +54,7 @@ function AddInvite ({ userDoc, ...props }) {
 
   const { register, handleSubmit, watch, formState: { errors } } = useForm({
     defaultValues: {
-      inviteText: 'Join totaldevs.com with me and and shoot for the stars together.'
+      inviteText: 'Join totaldevs.com with me and we will shoot for the stars together.'
     }
   })
 
