@@ -54,7 +54,7 @@ function AddInvite ({ userDoc, ...props }) {
 
   const { register, handleSubmit, watch, formState: { errors } } = useForm({
     defaultValues: {
-      inviteText: 'Join totaldevs.com with me and we will shoot for the stars together.'
+      inviteText: 'join https://totaldevs.com with me and we will shoot for the stars together! 🚀 the easiest way to get a developer job at an international company.'
     }
   })
 
