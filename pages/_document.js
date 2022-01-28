@@ -10,11 +10,11 @@ class MyDocument extends Document {
           <script type='text/javascript' src='/tawk.js' />
           <script type='text/javascript' src='/gtag.js' />
           <link rel='icon' href='/logo-small.png' />
-          <meta name='application-name' content='totaldevs' />
+          <meta name='application-name' content='totaldevs.com' />
           <meta name='apple-mobile-web-app-capable' content='yes' />
           <meta name='apple-mobile-web-app-status-bar-style' content='default' />
           <meta name='apple-mobile-web-app-title' content='totaldevs' />
-          <meta name='description' content='totaldevs' />
+          <meta name='description' content='hire talent from Latin America' />
           <meta name='format-detection' content='telephone=no' />
           <meta name='mobile-web-app-capable' content='yes' />
           <meta name='msapplication-config' content='/icons/browserconfig.xml' />
@@ -41,9 +41,9 @@ class MyDocument extends Document {
           <meta name='twitter:image' content='https://totaldevs.com/icons/android-chrome-192x192.png' />
           <meta name='twitter:creator' content='@totaldevs' />
           <meta property='og:type' content='website' />
-          <meta property='og:title' content='totaldevs' />
-          <meta property='og:description' content='totaldevs' />
-          <meta property='og:site_name' content='totaldevs' />
+          <meta property='og:title' content='totaldevs title' />
+          <meta property='og:description' content='totaldevs description' />
+          <meta property='og:site_name' content='totaldevs sitename' />
           <meta property='og:url' content='https://totaldevs.com' />
           <meta property='og:image' content='https://totaldevs.com/icons/apple-touch-icon.png' />
 
