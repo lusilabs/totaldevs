@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { storage, db } from '@/utils/config'
 import { collection, query, where, getDocs, orderBy, limit, doc, getDoc } from 'firebase/firestore'
 
-export function useDocuments ({ userDoc, docs, queryConstraints = [], ...props }) {
+export function useDocuments ({ userDoc, docs, queryConstraints = [], ...props }, dependencies = []) {
   const [documents, setDocuments] = useState([])
   const [documentsLoaded, setDocumentsLoaded] = useState(false)
   const retrieveDocuments = async () => {
@@ -17,8 +17,8 @@ export function useDocuments ({ userDoc, docs, queryConstraints = [], ...props }
   }
 
   useEffect(() => {
-    if (!documentsLoaded) retrieveDocuments()
-  }, [documentsLoaded])
+    if (!documentsLoaded && dependencies.every(Boolean)) retrieveDocuments()
+  }, [documentsLoaded, dependencies])
 
   const refresh = () => {
     setDocumentsLoaded(false)
