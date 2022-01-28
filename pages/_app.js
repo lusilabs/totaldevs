@@ -19,6 +19,8 @@ import InvitationRequired from './invitationRequired'
 import sleep from '@/utils/misc'
 import { logEvent } from 'firebase/analytics'
 import LogRocket from 'logrocket'
+import { BellIcon, CurrencyDollarIcon } from '@heroicons/react/outline'
+
 LogRocket.init('h3lsgb/totaldevs')
 
 Router.events.on('routeChangeStart', NProgress.start)
@@ -53,21 +55,22 @@ const pageNavigationByRole = {
   dev: [
     { name: 'projects', href: '/projects', current: false },
     { name: 'content', href: '/content', current: false },
-    { name: 'payments', href: '/payments', current: false }
+    { name: 'payments', href: '/payments', current: false },
+    { name: 'invites', href: '/invites', current: false, Icon: <CurrencyDollarIcon className='w-4 h-4 text-green-400' /> }
   ],
   company: [
     { name: 'jobs', href: '/jobs', current: false }
   ],
   explorer: [
     { name: 'matches', href: '/matches', current: false },
-    { name: 'payments', href: '/payments', current: false }
+    { name: 'payments', href: '/payments', current: false },
+    { name: 'invites', href: '/invites', current: false, Icon: <CurrencyDollarIcon className='w-4 h-4 text-green-400' /> }
   ]
 }
 
 const userNavigationByRole = {
   dev: [
     { name: 'profile', href: '/profile' },
-    { name: 'invites', href: '/invites' },
     { name: 'logout', href: '/', handleClick: () => signOut(auth) }
   ],
   company: [
@@ -76,7 +79,6 @@ const userNavigationByRole = {
   ],
   explorer: [
     { name: 'profile', href: '/profile' },
-    { name: 'invites', href: '/invites' },
     { name: 'logout', href: '/', handleClick: () => signOut(auth) }
   ]
 }
