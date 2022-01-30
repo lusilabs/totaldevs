@@ -15,28 +15,30 @@ function JobList ({ userDoc, ...props }) {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(true)
   const [assignmentMap, setAssignmentMap] = useState({})
-  const [jobs, jobsLoaded] = useDocuments({docs: "jobs", queryConstraints: [where('uid', '==', userDoc?.uid)]})
-  const [assignments, ] = useDocuments({
-    docs: "assignments", 
+  const [jobs, jobsLoaded] = useDocuments({ docs: 'jobs', queryConstraints: [where('uid', '==', userDoc?.uid)] })
+  const [assignments] = useDocuments({
+    docs: 'assignments',
     queryConstraints: [
-      where('company', '==', userDoc?.uid), 
+      where('company', '==', userDoc?.uid),
       where('status', '==', 'dev_interested')
-    ]})
+    ]
+  })
   const { created, edited } = router.query
 
   useEffect(() => {
     if (created) toast.success('job posting created successfully.')
     if (edited) toast.success('job posting edited successfully.')
-    setIsLoading(!jobsLoaded);
+    setIsLoading(!jobsLoaded)
   }, [jobsLoaded])
 
   useEffect(() => {
-    if (assignments) 
-    setAssignmentMap(
-      assignments.reduce(
-        (map, assignment) => ({...map, [assignment.job]: (map[assignment.job] || 0)  + 1 }), {}
+    if (assignments) {
+      setAssignmentMap(
+        assignments.reduce(
+          (map, assignment) => ({ ...map, [assignment.job]: (map[assignment.job] || 0) + 1 }), {}
+        )
       )
-    )
+    }
   }, [assignments])
 
   return (
@@ -51,13 +53,11 @@ function JobList ({ userDoc, ...props }) {
   )
 }
 
-
-
 function Job ({ job, pendingRequests, ...props }) {
   return (
     <Link href={`/jobs/${job.id}`}>
       <div className='group relative'>
-        <TopCornerBadge count={pendingRequests}/>
+        <TopCornerBadge count={pendingRequests} />
         <div className='w-full min-h-80 bg-gray-200 aspect-w-1 aspect-h-1 rounded-md overflow-hidden group-hover:opacity-75 lg:h-80 lg:aspect-none'>
           <img src={job.photoURL} alt={job.photoURL} className='w-full h-full object-center object-cover lg:w-full lg:h-full' />
         </div>

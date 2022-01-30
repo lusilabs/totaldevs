@@ -1,7 +1,7 @@
-import { JobsToMatch } from "@/components/matches/match";
+import { JobsToMatch } from '@/components/matches/match'
 
-const Matches = ({userDoc}) => {
-    return  <JobsToMatch userDoc={userDoc} />
+const Matches = ({ userDoc }) => {
+  return <JobsToMatch userDoc={userDoc} />
 }
 
-export default Matches;
+export default Matches
