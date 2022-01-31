@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "export NODE_OPTIONS=--openssl-legacy-provider; next dev",
+    "dev": "next dev",
     "all": "next dev & npm run emulators & npm run stripe",
     "_emulators": "lsof -ti:5000,5001,9099,8080,9000,8085,9199,9200 | xargs kill && firebase emulators:start --import=./.firebase/emulators --export-on-exit",
     "emulators": "npm run _emulators",

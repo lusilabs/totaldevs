@@ -14,7 +14,7 @@ export default function JobDisplay ({ jobDoc, matches, setIsEditing }) {
     <>
       <h3 className='text-gray-500'>matches</h3>
 
-      <div className='flex flex-col'>
+      <div className='flex flex-col m-4'>
         {matches.length === 0 && <h4 className='text-sm text-gray'>no matches...yet</h4>}
         {matches.length > 0 && matches.map((m, ix) =>
           <Link key={m.dev ?? ix} href={`/matches/${m.id}`}>

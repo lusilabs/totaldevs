@@ -3,27 +3,55 @@ import { Button, Dropdown } from 'semantic-ui-react'
 import { useState, useEffect } from 'react'
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 import { storage, db } from '@/utils/config'
-import { useDocuments } from '@/utils/hooks'
+import { useDocuments, useDocument } from '@/utils/hooks'
 import { doc, setDoc, addDoc, collection, getDoc, where } from 'firebase/firestore'
 import { toast } from 'react-toastify'
 import sleep from '@/utils/misc'
 import { useRouter } from 'next/router'
 
-
+import DevProfileDisplay from '@/components/devprofiledisplay'
+import { SuspensePlaceholders } from '@/components/suspense'
 
 export default function MatchView ({ userDoc, ...props }) {
   const router = useRouter()
-//   const [saving, setSaving] = useState(false)
-//   const [pdfURL, setPdfURL] = useState('')
-//   const [pdfName, setPdfName] = useState('')
-//   const [searchQuery, setSearchQuery] = useState('')
-//   const [stack, setStack] = useState([])
-//   const [dropdownOptions, setDropdownOptions] = useState([])
-//   const [jobDoc, setJobDoc] = useState({})
-//   const [photoURL, setPhotoURL] = useState(null)
-//   const [isEditing, setIsEditing] = useState(false)
+  const [routerMatchID, setRouterMatchID] = useState()
+  const [saving, setSaving] = useState()
 
-  const { matchID } = router.query
-  console.log({matchID})
-  return (<h2>exito</h2>)
+const [matchDoc, matchLoaded, _dr] = useDocument({ collection: 'matches', docID: routerMatchID })
+  useEffect(() => {
+    const { matchID } = router.query
+    setRouterMatchID(matchID)
+  })
+
+  const [profileDoc, profileLoaded, _pr] = useDocument({ collection: 'profiles', docID: matchDoc?.dev }, [matchDoc])
+
+  const handleAcceptMatch = () => {}
+  const handleDeclineMatch = () => {}
+
+  return (
+    <>
+    {!(matchLoaded && profileLoaded) && <SuspensePlaceholders />}
+    {(matchLoaded && profileLoaded) && 
+    <div className='m-4'>
+      <h3 className='text-gray-500'>dev profile</h3>
+      <DevProfileDisplay userDoc={profileDoc} readOnly />
+      <h3 className='text-gray-500'>book a meeting</h3>
+      <div className='bg-white shadow overflow-hidden sm:rounded-lg m-4'>
+        Dev Calendly goes here
+      </div>
+      <div className='m-4'>
+        <Button disabled={saving} loading={saving} onClick={handleAcceptMatch} color='green' fluid>
+          {saving && <span>sending...</span>}
+          {!saving && <span>accept application</span>}
+        </Button>
+      </div>
+      <div className='m-4'>
+        <Button disabled={saving} loading={saving} onClick={handleDeclineMatch} color='red' fluid>
+          {saving && <span>sending...</span>}
+          {!saving && <span>decline application</span>}
+        </Button>
+      </div>
+    </div>}
+    </>
+  )
 }

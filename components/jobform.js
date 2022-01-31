@@ -169,7 +169,7 @@ function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
   return (
     <div className='m-4 md:col-span-2'>
       {!isEditing && <JobDisplay userDoc={userDoc} jobDoc={jobDoc} matches={matches} {...props} setIsEditing={setIsEditing} />}
-      {isEditing && <><h3 className='text-gray-500'>{jobID && <span>re</span>}post your open position for free 🚀! </h3>
+      {isEditing && <><h3 className='text-gray-500'>{jobID && <span>re</span>}post your open position for free 🚀  ! </h3>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className='shadow overflow-hidden rounded-lg'>
             <div className='px-4 py-5 bg-white sm:p-6'>
