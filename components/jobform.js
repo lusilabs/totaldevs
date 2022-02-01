@@ -340,7 +340,7 @@ function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
 
                 <div className='col-span-6 sm:col-span-6'>
                   <label htmlFor='salary' className='block text-sm font-medium text-gray-700'>
-                    (min monthly salary or payment)
+                    min monthly salary or payment
                   </label>
                   <div className='mt-1 relative rounded-md shadow-sm'>
                     <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none'>
@@ -362,7 +362,7 @@ function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
 
                 <div className='col-span-6 sm:col-span-6'>
                   <label htmlFor='salary' className='block text-sm font-medium text-gray-700'>
-                    max monthly salary or payment
+                    (max monthly salary or payment)
                   </label>
                   <div className='mt-1 relative rounded-md shadow-sm'>
                     <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none'>
