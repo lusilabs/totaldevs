@@ -117,3 +117,32 @@ exports.handleAnonUserConversion = functions.https.onCall(async (data, ctx) => {
     .doc(uid)
   await uref.update({ ...data })
 })
+
+exports.getAssignments = functions.https.onCall(async (data, ctx) => {
+  const db = admin.firestore()
+  const uid = ctx.auth.uid
+  const assignments = await db.collection('assignments').where('dev', '==', uid)
+    .get().then((querySnapshot) => {
+      return querySnapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }))
+    })
+  const actors = await db.collection('users')
+    .where('uid', 'in',
+      [...new Set(assignments.reduce((result, assignment) => [...result, assignment.explorer, assignment.company], []))]
+    )
+    .get().then((querySnapshot) => {
+      return querySnapshot.docs.reduce((result, doc) => ({ ...result, [doc.id]: doc.data() }), {})
+    })
+  const jobs = await db.collection('jobs')
+    .where('__name__', 'in', assignments.map((assignment) => assignment.job))
+    .get().then((querySnapshot) => {
+      return querySnapshot.docs.reduce((result, doc) => ({ ...result, [doc.id]: doc.data() }), {})
+    })
+
+  return assignments.map((assignment) => (
+    {
+      ...assignment,
+      explorer: actors[assignment.explorer],
+      company: actors[assignment.company],
+      job: jobs[assignment.job]
+    }))
+})

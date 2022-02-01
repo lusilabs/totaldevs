@@ -1,59 +1,77 @@
-import { useState } from 'react'
-import { useDocuments } from '@/utils/hooks'
-import { storage, db } from '@/utils/config'
-import { where } from 'firebase/firestore'
-import { doc, setDoc, addDoc, collection, getDoc } from 'firebase/firestore'
+import { useEffect, useState } from 'react'
+import { toast } from 'react-toastify'
+import { db, functions } from '@/utils/config'
+import { doc, setDoc } from 'firebase/firestore'
+import { httpsCallable } from 'firebase/functions'
+import { Table } from '@/components/base/table'
+import { Button } from 'semantic-ui-react'
 
-const AssignmentCard = ({explorer, job, dev, status, onClick, selected}) => {
-    return (<div onClick={onClick}>
-        {selected && ">>>>"} {dev} {explorer} {job} {status}
-    </div>)
-}
+const getAssignments = httpsCallable(functions, 'getAssignments')
 
-const ConfirmAvailability = ({userDoc, selectedAssignment, refreshAssignments}) => {
-    if (!selectedAssignment) {
-        return null;
-    }
-    const updateAssignment = (status) => () => {
-        const assignment = doc(db, "assignments", `${selectedAssignment.dev}:${selectedAssignment.job}`)
-        setDoc(assignment, {
-            status
-        }, {merge: true})
-        refreshAssignments()
-    }
-    return <div>
-        <button type="button" 
-                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" 
-                onClick={updateAssignment("dev_interested")}>
-                    Available, can schedule meeting with client
-        </button>
-        <button type="button" 
-                className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded" 
-                onClick={updateAssignment("dev_unavailable")}>
-                    Not available at the moment
-        </button>
+const ConfirmAvailability = ({ userDoc, selectedAssignment, refreshAssignments }) => {
+  if (!selectedAssignment) {
+    return null
+  }
+  const updateAssignment = (status, notifyee) => () => {
+    const assignment = doc(db, 'assignments', `${selectedAssignment.id}`)
+    setDoc(assignment, {
+      status
+    }, { merge: true })
+    toast.success(`${notifyee} has been notified.`)
+    refreshAssignments(status)
+  }
+  return (
+    <div className='py-5'>
+      <Button
+        type='button' color='green' className='text-md'
+        onClick={updateAssignment('dev_interested', selectedAssignment.company.providerData[0].displayName)}
+      >
+        Available, can schedule meeting with client
+      </Button>
+      <Button
+        type='button' color='red' className='text-md'
+        onClick={updateAssignment('dev_unavailable', selectedAssignment.explorer.displayName)}
+      >
+        Not available at the moment
+      </Button>
     </div>
+  )
 }
 
-export const ProjectsToCheck = ( {userDoc} ) => {
-    const [assigments, , refreshAssignments] = useDocuments({docs: "assignments", queryConstraints: [where('dev', '==', userDoc.uid)]})
-    const [selectedAssignment, setSelectedAssignment] = useState(null)
+export const ProjectsToCheck = ({ userDoc }) => {
+  const [assignments, setAssignments] = useState([])
+  const [selectedAssignment, setSelectedAssignment] = useState(null)
 
-    return (<div>
-        <div>
-            <span>Projects</span>
-            {
-                assigments.map((assignment) => 
-                    <AssignmentCard key={assignment.id} 
-                        selected={selectedAssignment?.id === assignment.id} 
-                        onClick={() => setSelectedAssignment(
-                            selectedAssignment?.id !== assignment.id ? assignment : null)}
-                        {...assignment}/>
-                )
-            }
-        </div>
-        {selectedAssignment &&
-            <ConfirmAvailability {...{userDoc, selectedAssignment, refreshAssignments  }}/>
-        }
-    </div>)
+  useEffect(async () => {
+    const { data } = await getAssignments()
+    setAssignments(data)
+  }, [])
+
+  const tableProps = {
+    columns: ['title', 'salary', 'company name', 'current status', 'explorer name'],
+    type: 'assignments',
+    data: assignments,
+    onSelect: setSelectedAssignment,
+    getterMapping: {
+      'explorer name': (row) => row.explorer.displayName,
+      title: (row) => row.job.title,
+      salary: (row) => row.job.salary,
+      'company name': (row) => row.company.providerData[0].displayName,
+      'current status': (row) => row.status
+    }
+  }
+
+  const refreshAssignments = (status) => {
+    return setAssignments(assignments.map((assignment) => assignment.id !== selectedAssignment.id
+      ? assignment
+      : { ...assignment, status }))
+  }
+
+  return (
+    <div className='px-4 py-5'>
+      <Table {...tableProps} />
+      {selectedAssignment &&
+        <ConfirmAvailability {...{ userDoc, assignments, selectedAssignment, refreshAssignments }} />}
+    </div>
+  )
 }

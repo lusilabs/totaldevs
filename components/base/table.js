@@ -31,16 +31,16 @@ export const Table = ({ columns, data, renderMapping = {}, getterMapping = {}, o
       <thead className='bg-gray-50'>
         <tr>
           {
-                        columns.map((name) => (
-                          <th
-                            key={name}
-                            scope='col'
-                            className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'
-                          >
-                            {name}
-                          </th>
-                        ))
-                    }
+            columns.map((name) => (
+              <th
+                key={name}
+                scope='col'
+                className='px-6 py-3 max-w-md text-left text-xs font-medium text-gray-500 uppercase tracking-wider'
+              >
+                {name}
+              </th>
+            ))
+           }
         </tr>
       </thead>
       <tbody className='bg-white divide-y divide-gray-200'>
@@ -52,19 +52,21 @@ export const Table = ({ columns, data, renderMapping = {}, getterMapping = {}, o
                 setSelectedRow(row)
               }
             }}
-            className={row.id === selectedRow?.id ? 'bg-gray-300' : 'cursor-pointer hover:bg-gray-100'}
+            className={`${onSelect ? 'cursor-pointer' : ''} ${row.id === selectedRow?.id ? 'bg-gray-300' : ''}`}
           >
             {
-                            columns.map((name) => (<td className='px-6 py-4' key={name}>
-                              <div className='ml-4'>
-                                <div className='text-sm font-medium text-gray-900'>
-                                  {
-                                                renderField(row, name)
-                                            }
-                                </div>
-                              </div>
-                                                   </td>))
-                        }
+            columns.map((name) => (
+              <td className='px-6 py-4' key={name}>
+                <div className='ml-4'>
+                  <div className='text-sm font-medium text-gray-900'>
+                    {
+                    renderField(row, name)
+                  }
+                  </div>
+                </div>
+              </td>)
+            )
+            }
           </tr>
         ))}
       </tbody>

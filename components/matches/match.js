@@ -26,7 +26,6 @@ const RecommendRole = ({ userDoc, selectedDev, selectedJob }) => {
   if (!selectedDev || !selectedJob) {
     return null
   }
-  console.log({ selectedDev })
   const createAssignment = () => {
     const assignment = doc(db, 'matches', `${selectedDev.id}:${selectedJob.id}`)
     setDoc(assignment, {
@@ -59,25 +58,7 @@ export const JobsToMatch = ({ userDoc }) => {
   const [start, setStart] = useState('Dev')
   const [next, setNext] = useState('Position')
 
-  const messaging = getMessaging()
-  useEffect(() => {
-    getToken(messaging, { vapidKey: 'BG_67u9DP6hm1El1fX73jbf3yTwK92Rp0dwnFyP6IM6WEcuUBIJp7WpLsH7gnn39gDy28Bf8Nps-U5ycerlsykU' }).then((currentToken) => {
-      if (currentToken) {
-        // Send the token to your server and update the UI if necessary
-        // ...
-        console.log(currentToken)
-      } else {
-        // Show permission request UI
-        console.log('No registration token available. Request permission to generate one.')
-        // ...
-      }
-    }).catch((err) => {
-      console.log('An error occurred while retrieving token. ', err)
-      // ...
-    })
-  }, [])
-
-  const companyNameMap = Object.fromEntries(companies.map((company) => [company.id, company.displayName]))
+  const companyNameMap = Object.fromEntries(companies.map((company) => [company.id, company.providerData[0].displayName]))
   const getterMapping = {
     company: (row) => companyNameMap[row.uid],
     stack: (row) => row.stack?.join(', '),
@@ -86,7 +67,7 @@ export const JobsToMatch = ({ userDoc }) => {
       const targetStack = start === 'Dev' ? row.stack : selectedJob?.stack
 
       if (availableStack && targetStack) {
-        return (targetStack.reduce((acc, tech) => acc + availableStack.indexOf(tech) !== -1, 0) /
+        return (targetStack?.reduce((accumulated, tech) => accumulated + availableStack.indexOf(tech) !== -1, 0) /
                     targetStack.length) * 100
       } else {
         return ''
