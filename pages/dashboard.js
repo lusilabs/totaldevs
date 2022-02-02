@@ -24,7 +24,7 @@ function Dashboard ({ userDoc, setIsPageLoading, ...props }) {
   const handleClickOnAction = action => {
     // const aref = doc(db, 'actions', action.id)
     // setDoc(aref, { seen: true }, { merge: true })
-    router.push(action.url)
+    if (!action.noop) router.push(action.url)
   }
 
   const handleDevStripeOnboarding = async userDoc => {
@@ -72,30 +72,45 @@ const EmptyDashboardView = () => {
 
 const ActionView = ({ actions, handleClickOnAction }) => {
   return (
-    <div class='w-10/12 md:w-7/12 lg:6/12 mx-auto relative py-6'>
+    <>
       <h1 class='text-lg text-center font-bold text-indigo-400'>notifications</h1>
-      <div class='border-l-2 mt-6'>
-        {actions.map((a, aix) => <ActionCard action={a} key={aix} />)}
+      <div class='w-11/12 md:w-7/12 lg:6/12 mx-auto relative mt-2 p-6 shadow-lg rounded-md'>
+        <div class='border-l-2 mt-6'>
+          {actions.map((a, aix) => <ActionCard action={a} key={aix} handleClickOnAction={handleClickOnAction} />)}
+        </div>
       </div>
-    </div>
+    </>
   )
 }
 
 const ActionCard = ({ action, handleClickOnAction }) => {
-  const textColor = `text-${action.color}-700` || 'text-yellow-800'
-  const cardColor = `bg-${action.color}-200` || 'bg-yellow-200'
-  const iconColor = `bg-${action.color}-400` || 'bg-yellow-400'
+  const colorMaps = {
+    // we have to do this instead of building css classes dynamically because purgeCSS will just remove them. see README
+    red: 'bg-red-200',
+    green: 'bg-green-200',
+    amber: 'bg-green-200',
+    indigo: 'bg-indigo-200'
+  }
+  const textColorMap = {
+    red: 'text-red-700',
+    green: 'text-green-700',
+    amber: 'text-green-700',
+    indigo: 'text-indigo-700'
+  }
+
+  const textColor = textColorMap[action.color] || 'text-yellow-700'
+  const cardColor = colorMaps[action.color] || 'bg-yellow-200'
   return (
     <div className={'transform transition cursor-pointer hover:-translate-y-2 ml-10 relative flex items-center px-4 py-2 rounded mb-8 flex-col md:flex-row space-y-4 md:space-y-0 ' + cardColor} onClick={() => handleClickOnAction(action)}>
 
-      <div className='w-5 h-5  absolute -left-10 transform -translate-x-2/4 rounded-full z-10 mt-2 md:mt-0'>
+      <div className='w-5 h-5 absolute -left-10 transform -translate-x-2/4 rounded-full z-10 mt-2 md:mt-0'>
         {action.icon === 'times' && <i className={'fas fa-times-circle fa-lg ' + textColor} />}
         {(action.icon === 'warning' || action.icon === 'alert') && <i className={'fas fa-exclamation-triangle fa-lg ' + textColor} />}
         {action.icon === 'check' && <i className={'fas fa-check-square fa-lg ' + textColor} />}
         {(action.icon === 'info' || !action.icon) && <i className={'fas fa-info-circle fa-lg ' + textColor} />}
       </div>
 
-      <div className={'w-8 h-1 absolute -left-8 z-0 ' + cardColor} />
+      <div className='w-8 h-1 absolute -left-8 z-0 bg-gray-200' />
 
       <div className='flex justify-evenly min-w-full'>
         <p className={'text-sm font-bold ' + textColor}>{action.text}</p>

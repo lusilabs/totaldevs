@@ -269,6 +269,21 @@ if (typeof window !== 'undefined') {
 }
 ```
 
+#### Dynamic css classes not applying
+https://github.com/tailwindlabs/tailwindcss/discussions/2963
+
+You can still dynamically generate your classes. The regex used is deliberately naive. As long as a class appears somewhere in your source code it won't be purged. You just have to make sure the class appears in its entirety.
+
+See https://regex101.com/r/ACVBNg/1 for an example.
+
+The important thing is not to try and construct a class by building from substrings. E.g.
+
+const bgColor = 'white'
+return <div className={`bg-${bgColor}`} />
+As bg-white never appears in its entirety it will be purged.
+
+In my case this was not the problem. It seemed to be a problem with the glob selector
+
 #### npm ci && npm run build failing
 ```
 [=   ] info  - Generating static pages (0/24)
