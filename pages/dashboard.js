@@ -8,7 +8,7 @@ import { useDocuments } from '@/utils/hooks'
 import { getDoc, setDoc, getDocs, collection, doc, query, limit, where, orderBy } from '@firebase/firestore'
 import { SuspensePlaceholders } from '@/components/suspense'
 import Link from 'next/link'
-import { InformationCircleIcon, ArrowNarrowRightIcon } from '@heroicons/react/outline'
+import { SpeakerphoneIcon } from '@heroicons/react/outline'
 // import DashboardActions from '@/components/dashboardactions'
 
 const generateOnboardingURL = httpsCallable(functions, 'stripe-generateOnboardingURL')
@@ -73,7 +73,10 @@ const EmptyDashboardView = () => {
 const ActionView = ({ actions, handleClickOnAction }) => {
   return (
     <>
-      <h1 class='text-lg text-center font-bold text-indigo-400'>notifications</h1>
+      <div className='flex items-center mt-4 p-4'>
+        <SpeakerphoneIcon className='h-6 w-6 text-indigo-400' aria-hidden='true' />
+        <p class='ml-4 text-lg font-bold text-indigo-400'>notifications</p>
+      </div>
       <div class='w-11/12 md:w-7/12 lg:6/12 mx-auto relative mt-2 p-6 shadow-lg rounded-md'>
         <div class='border-l-2 mt-6'>
           {actions.map((a, aix) => <ActionCard action={a} key={aix} handleClickOnAction={handleClickOnAction} />)}
@@ -119,23 +122,5 @@ const ActionCard = ({ action, handleClickOnAction }) => {
     </div>
   )
 }
-
-// const ActionView = ({ action, handleClickOnAction, ...props }) => {
-//   return (
-
-//     <section className='px-0 py-12 mx-auto max-w-7xl sm:px-4 hover:-translate-y-2' onClick={() => handleClickOnAction(action)}>
-//       <div className='flex rounded-md bg-gradient-to-b from-red-100 to-red-300 text-red-700'>
-//         {/* <img src={action.photoURL} alt={action.photoURL} className='w-12 h-12 rounded-full' /> */}
-//         <InformationCircleIcon className='h-4' />
-//         <div className='flex flex-col items-center justify-between px-1 py-4 lg:flex-row sm:py-3 sm:px-3'>
-//           <p className='mb-6 text-base font-semibold lg:mb-0 overflow-hidden'>{action.text}</p>
-//           <p className='text-red-800'>{action.buttonText}</p>
-//           <ArrowNarrowRightIcon className='h-4' />
-//         </div>
-//       </div>
-//     </section>
-
-//   )
-// }
 
 export default Dashboard
