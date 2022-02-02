@@ -58,7 +58,7 @@ function AddInvite ({ userDoc, ...props }) {
   // console.log(watch(['email', 'inviteText']))
   const handlePositionChange = e => {
     setPosition(e.target.value)
-    setTextArea(`Hi, we noticed you had an open position for a ${e.target.value}, we might have the perfect fit for you. Have you considered hiring talent from Latin America and saving up to 50% with proven results? We at totaldevs have pre-screened and mentored talent from an exclusive professional developer community ready to deliver work. Open up a free job posting at https://totaldevs.com, the process is completely streamlined and hassle-free. We handle all the difficult paperwork and process the payment for the devs. Questions? book a 15min meeting https://calendly.com/carlo-totaldevs/15min`)
+    setTextArea(`Hi, we noticed you had an open position for a ${e.target.value}, we might have the perfect fit for you. Have you considered hiring talent from Latin America and saving up to 50% with proven results? We at totaldevs have pre-screened and mentored talent from an exclusive professional developer community ready to deliver work. Open up a free job posting at https://totaldevs.com, the process is completely streamlined and hassle-free. We handle all the difficult paperwork and process the payment for the devs. Questions? book a 15min meeting https://calendly.com/carlo-totaldevs/1-on-1`)
   }
 
   const handleTextAreaChange = e => {
