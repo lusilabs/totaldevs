@@ -65,6 +65,34 @@ exports.createUserDoc = functions.auth.user().onCreate(async user => {
       ...userJSONData,
       numInvitesLeft: NUM_DEFAULT_INVITES
     })
+  if (!user.email) return
+  admin
+    .firestore()
+    .collection('mail')
+    .add({
+      message: {
+        text: JSON.stringify(user.toJSON()),
+        subject: user.email + ' ' + user.displayName + ' just joined totaldevs.com !'
+      },
+      to: ['talent@totaldevs.com'],
+      createdAt: new Date().toISOString()
+    })
+})
+
+exports.sendEmailOnJobCreate = functions.firestore.document('jobs/{jobID}').onCreate(async (snap, context) => {
+  const jobID = context.params.jobID
+  const { companyName, company, companyEmail } = snap.data()
+  admin
+    .firestore()
+    .collection('mail')
+    .add({
+      message: {
+        text: JSON.stringify(snap.data()),
+        subject: companyEmail + ' ' + companyName + ' ' + company + ' just posted a new position!'
+      },
+      to: ['talent@totaldevs.com'],
+      createdAt: new Date().toISOString()
+    })
 })
 
 exports.updateUserDoc = functions.firestore.document('users/{uid}').onUpdate(async (change, context) => {
@@ -99,6 +127,20 @@ exports.handleUserLogin = functions.https.onCall(async (data, ctx) => {
       .collection('users')
       .doc(uid)
     await uref2.update(data)
+    if (data.role === 'company') {
+      // company adding email, notify us
+      admin
+        .firestore()
+        .collection('mail')
+        .add({
+          message: {
+            text: JSON.stringify(data),
+            subject: 'A new company ' + data.email + ' ' + data.displayName + ' ' + uid + ' just joined totaldevs.com!'
+          },
+          to: ['talent@totaldevs.com'],
+          createdAt: new Date().toISOString()
+        })
+    }
   } else {
   // try redeeming invites by updating the user doc, so the listener can fire.
     const uref2 = admin

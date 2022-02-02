@@ -85,6 +85,8 @@ function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
         pdfURL,
         pdfName,
         photoURL: url,
+        companyName: userDoc.displayName,
+        companyEmail: userDoc.email,
         editedAt: new Date().toISOString()
       }, { merge: true })
     } else {
@@ -101,7 +103,10 @@ function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
         pdfName,
         photoURL: url,
         uid: userDoc.uid,
-        status: 'seeking',
+        status: 'matching',
+        companyName: userDoc.displayName,
+        companyEmail: userDoc.email,
+        company: userDoc.uid,
         hasAcceptedTerms: data.hasAcceptedTerms,
         createdAt: new Date().toISOString()
       })
