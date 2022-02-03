@@ -1,36 +1,34 @@
 import { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 import { db, functions } from '@/utils/config'
-import { doc, setDoc } from 'firebase/firestore'
-import { httpsCallable } from 'firebase/functions'
+import { doc, setDoc, where } from 'firebase/firestore'
 import { Table } from '@/components/base/table'
 import { Button } from 'semantic-ui-react'
+import { useDocuments } from '@/utils/hooks'
 
-const getAssignments = httpsCallable(functions, 'getAssignments')
-
-const ConfirmAvailability = ({ userDoc, selectedAssignment, refreshAssignments }) => {
-  if (!selectedAssignment) {
+const ConfirmAvailability = ({ userDoc, selectedMatch, refreshMatches }) => {
+  if (!selectedMatch) {
     return null
   }
-  const updateAssignment = (status, notifyee) => () => {
-    const assignment = doc(db, 'assignments', `${selectedAssignment.id}`)
-    setDoc(assignment, {
+  const updateMatch = (status, notifyee) => () => {
+    const match = doc(db, 'matches', `${selectedMatch.id}`)
+    setDoc(match, {
       status
     }, { merge: true })
     toast.success(`${notifyee} has been notified.`)
-    refreshAssignments(status)
+    refreshMatches(status)
   }
   return (
     <div className='py-5'>
       <Button
         type='button' color='green' className='text-md'
-        onClick={updateAssignment('dev_interested', selectedAssignment.company.providerData[0].displayName)}
+        onClick={updateMatch('dev_interested', selectedMatch.companyName)}
       >
         Available, can schedule meeting with client
       </Button>
       <Button
         type='button' color='red' className='text-md'
-        onClick={updateAssignment('dev_unavailable', selectedAssignment.explorer.displayName)}
+        onClick={updateMatch('dev_unavailable', selectedMatch.explorerName)}
       >
         Not available at the moment
       </Button>
@@ -39,39 +37,35 @@ const ConfirmAvailability = ({ userDoc, selectedAssignment, refreshAssignments }
 }
 
 export const ProjectsToCheck = ({ userDoc }) => {
-  const [assignments, setAssignments] = useState([])
-  const [selectedAssignment, setSelectedAssignment] = useState(null)
-
-  useEffect(async () => {
-    const { data } = await getAssignments()
-    setAssignments(data)
-  }, [])
+  const [matches, _ml, _rm, setMatchesState] = useDocuments({ docs: 'matches', queryConstraints: [where('dev', '==', userDoc.uid)] })
+  const [selectedMatch, setSelectedMatch] = useState(null)
 
   const tableProps = {
-    columns: ['title', 'salary', 'company name', 'current status', 'explorer name'],
-    type: 'assignments',
-    data: assignments,
-    onSelect: setSelectedAssignment,
+    columns: ['title', 'min_salary', 'max_salary', 'company name', 'current status', 'explorer name'],
+    type: 'matches',
+    data: matches,
+    onSelect: setSelectedMatch,
     getterMapping: {
-      'explorer name': (row) => row.explorer.displayName,
-      title: (row) => row.job.title,
-      salary: (row) => row.job.salary,
-      'company name': (row) => row.company.providerData[0].displayName,
+      'explorer name': (row) => row.explorerName,
+      title: (row) => row.jobData.title,
+      min_salary: (row) => row.jobData.salaryMin,
+      max_salary: (row) => row.jobData.salaryMax,
+      'company name': (row) => row.companyName,
       'current status': (row) => row.status
     }
   }
 
-  const refreshAssignments = (status) => {
-    return setAssignments(assignments.map((assignment) => assignment.id !== selectedAssignment.id
-      ? assignment
-      : { ...assignment, status }))
+  const refreshMatches = (status) => {
+    return setMatchesState(matches.map((match) => match.id !== selectedMatch.id
+      ? match
+      : { ...match, status }))
   }
 
   return (
     <div className='px-4 py-5'>
       <Table {...tableProps} />
-      {selectedAssignment &&
-        <ConfirmAvailability {...{ userDoc, assignments, selectedAssignment, refreshAssignments }} />}
+      {selectedMatch &&
+        <ConfirmAvailability {...{ userDoc, matches, selectedMatch, refreshMatches }} />}
     </div>
   )
 }

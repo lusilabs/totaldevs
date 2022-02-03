@@ -121,7 +121,7 @@ exports.handleAnonUserConversion = functions.https.onCall(async (data, ctx) => {
 exports.getAssignments = functions.https.onCall(async (data, ctx) => {
   const db = admin.firestore()
   const uid = ctx.auth.uid
-  const assignments = await db.collection('assignments').where('dev', '==', uid)
+  const assignments = await db.collection('matches').where('dev', '==', uid)
     .get().then((querySnapshot) => {
       return querySnapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }))
     })
@@ -145,4 +145,21 @@ exports.getAssignments = functions.https.onCall(async (data, ctx) => {
       company: actors[assignment.company],
       job: jobs[assignment.job]
     }))
+})
+
+const triggerOnUpdate = ({ document, fieldToSearch, valueToSearch, destinationField, latestObject }) => {
+  const db = admin.firestore()
+  return db.collection(document).where(fieldToSearch, '==', valueToSearch)
+    .get().then((querySnapshot) => {
+      querySnapshot.docs.forEach(doc => (doc.ref.update({ [destinationField]: latestObject })))
+    })
+}
+
+exports.updateJob = functions.firestore.document('jobs/{id}').onUpdate(async (change, context) => {
+  const jobid = context.params.id
+  const job = change.after.data()
+  const triggerList = [
+    { document: 'matches', fieldToSearch: 'job', valueToSearch: jobid, destinationField: 'jobData', latestObject: job }
+  ]
+  triggerList.forEach(triggerOnUpdate)
 })

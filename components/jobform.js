@@ -122,8 +122,10 @@ function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
         pdfName,
         photoURL: photoURL ?? url,
         uid: userDoc.uid,
-        status: 'seeking',
+        status: 'matching',
         hasAcceptedTerms: data.hasAcceptedTerms,
+        companyName: userDoc.displayName,
+        companyEmail: userDoc.email,
         createdAt: new Date().toISOString()
       })
     }
