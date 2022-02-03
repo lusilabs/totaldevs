@@ -3,6 +3,7 @@
 .firebase
 todo*
 firebase-export-*
+/emulators
 
 # dependencies
 /node_modules
