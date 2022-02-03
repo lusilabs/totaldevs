@@ -211,7 +211,6 @@ function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
                     <option value='dev ops'>dev ops</option>
                   </select>
                 </div>
-
                 <div className='col-span-6'>
                   <label htmlFor='description' className='block text-sm font-medium text-gray-700'>
                     (description)
