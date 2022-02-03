@@ -1,7 +1,11 @@
 import { useDocuments } from '@/utils/hooks'
 import { PaperClipIcon } from '@heroicons/react/solid'
+import { httpsCallable } from 'firebase/functions'
+import { functions } from '@/utils/config'
 
 import { collection, query, where, getDocs, orderBy, limit, doc, getDoc } from 'firebase/firestore'
+
+const sendMessage = httpsCallable(functions, 'sendMessage')
 
 export default function Explorers () {
   const queryConstraints = [
@@ -85,6 +89,7 @@ export default function Explorers () {
                     </td> */}
 
                     <td className='px-6 py-4 whitespace-nowrap text-sm text-gray-500'>{(Number(doc.amount_received) / 100).toFixed(2)}</td>
+                    <td> <button onClick={() => sendMessage({ text: 'this is a ping', fcmToken: doc.fcmToken })}>Send ping</button></td>
                   </tr>
                 ))}
               </tbody>
