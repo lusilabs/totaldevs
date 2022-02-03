@@ -1,8 +1,9 @@
 
-export default function CreateButton ({ text = 'new' }) {
+export default function CreateButton ({ text = 'new', extraClasses = '' }) {
+  if (!extraClasses) extraClasses = ' bg-indigo-500 hover:bg-indigo-700 '
   return (
     <button
-      className='text-white px-4 w-auto h-12 bg-indigo-500 rounded-full hover:bg-indigo-700 active:shadow-lg mouse shadow transition ease-in duration-200 focus:outline-none'
+      className={'text-white px-4 rounded-full w-auto h-12 active:shadow-lg mouse shadow transition ease-in duration-200 focus:outline-none ' + extraClasses}
     >
       <svg viewBox='0 0 20 20' enableBackground='new 0 0 20 20' className='w-4 h-4 inline-block mr-2'>
         <path

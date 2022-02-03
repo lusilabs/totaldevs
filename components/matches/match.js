@@ -11,13 +11,12 @@ import { db } from '@/utils/config'
 const DetailedView = ({ entity, detailProps }) => {
   return (
     <div>
-      {
-            detailProps.map((propName) =>
-              <div key={propName}>
-                <Label htmlFor={propName} title={propName} />
-                {entity[propName]}
-              </div>)
-        }
+      {detailProps.map((propName) => (
+        <div key={propName}>
+          <Label htmlFor={propName} title={propName} />
+          {entity[propName]}
+        </div>
+      ))}
     </div>
   )
 }
@@ -27,12 +26,20 @@ const RecommendRole = ({ userDoc, selectedDev, selectedJob }) => {
     return null
   }
   const createAssignment = () => {
-    const assignment = doc(db, 'assignments', `${selectedDev.id}:${selectedJob.id}`)
+    const assignment = doc(db, 'matches', `${selectedDev.id}:${selectedJob.id}`)
     setDoc(assignment, {
       dev: selectedDev.id,
       job: selectedJob.id,
       company: selectedJob.uid,
+      companyName: selectedJob.companyName,
+      companyEmail: selectedJob.companyEmail,
       explorer: userDoc.uid,
+      explorerName: userDoc.displayName,
+      explorerEmail: userDoc.email,
+      devName: selectedDev.displayName,
+      devEmail: selectedDev.email,
+      devPhotoURL: selectedDev.photoURL,
+      jobData: selectedJob,
       status: 'requesting_dev_status'
     }, { merge: true })
     toast.success(`${selectedDev.displayName} has been notified.`)
@@ -48,17 +55,14 @@ const RecommendRole = ({ userDoc, selectedDev, selectedJob }) => {
 }
 
 export const JobsToMatch = ({ userDoc }) => {
-  const [jobs] = useDocuments({ docs: 'jobs' })
-  const [devs] = useDocuments({ docs: 'users', queryConstraints: [where('role', '==', 'dev'), where('profileComplete', '==', true)] })
-  const [companies] = useDocuments({ docs: 'users', queryConstraints: [where('role', '==', 'company')] })
+  const [jobs, jobsLoaded, _jr] = useDocuments({ docs: 'jobs' })
+  const [devs, devsLoaded, _dr] = useDocuments({ docs: 'users', queryConstraints: [where('role', '==', 'dev'), where('profileComplete', '==', true)] })
   const [selectedJob, setSelectedJob] = useState(null)
   const [selectedDev, setSelectedDev] = useState(null)
   const [start, setStart] = useState('Dev')
   const [next, setNext] = useState('Position')
 
-  const companyNameMap = Object.fromEntries(companies.map((company) => [company.id, company.providerData[0].displayName]))
   const getterMapping = {
-    company: (row) => companyNameMap[row.uid],
     stack: (row) => row.stack?.join(', '),
     compatibility: (row) => {
       const availableStack = start === 'Dev' ? selectedDev?.stack : row.stack
@@ -90,7 +94,7 @@ export const JobsToMatch = ({ userDoc }) => {
     },
     Position: {
       tableProps: {
-        columns: ['company', 'position', 'salary', 'title', 'stack'],
+        columns: ['companyName', 'position', 'salaryMin', 'salaryMax', 'title', 'stack'],
         data: jobs,
         onSelect: setSelectedJob,
         type: 'Position'
@@ -113,46 +117,35 @@ export const JobsToMatch = ({ userDoc }) => {
             setSelectedDev(null)
           }}
         />
-        {
-                startTable.entity &&
-                  <Button
-                    type='button' color='blue' className='text-md'
-                    onClick={() => {
-                      startTable.tableProps.onSelect(null)
-                      nextTable.tableProps.onSelect(null)
-                    }}
-                  >
-                    Want to select other {startTable.tableProps.type}?
-                  </Button>
-            }
-        {
-                selectedJob && selectedDev && <RecommendRole {...{ userDoc, selectedJob, selectedDev }} />
-            }
+        {startTable.entity && <Button
+          type='button' color='blue' className='text-md'
+          onClick={() => {
+            startTable.tableProps.onSelect(null)
+            nextTable.tableProps.onSelect(null)
+          }}
+                              >
+          select another {startTable.tableProps.type}?
+        </Button>}
+        {selectedJob && selectedDev && <RecommendRole {...{ userDoc, selectedJob, selectedDev }} />}
       </div>
-      {
-            !startTable.entity &&
-              <Table {...{ ...startTable.tableProps, getterMapping, renderMapping }} />
-        }
-      {
-            startTable.entity &&
-              <>
-                <Table {...{ ...startTable.tableProps, getterMapping, renderMapping }} data={[startTable.entity]} onSelect={null} />
-                <div className='grid grid-cols-6 gap-6'>
-                  <div className={`col-span-6 sm:col-span-${nextTable.entity ? '3' : '6'}`}>
-                    <Table
-                      {...{ ...nextTable.tableProps, getterMapping, renderMapping }}
-                      columns={['compatibility', ...nextTable.tableProps.columns]} orderBy='-compatibility'
-                    />
-                  </div>
-                  {
-                        nextTable.entity &&
-                          <div className='col-span-6 sm:col-span-3 '>
-                            <DetailedView {...{ ...nextTable }} />
-                          </div>
-                  }
-                </div>
-              </>
-        }
+      {!startTable.entity && <Table {...{ ...startTable.tableProps, getterMapping, renderMapping }} />}
+      {startTable.entity &&
+        <>
+          <Table {...{ ...startTable.tableProps, getterMapping, renderMapping }} data={[startTable.entity]} onSelect={null} />
+          <div className='grid grid-cols-6 gap-6'>
+            <div className={`col-span-6 sm:col-span-${nextTable.entity ? '3' : '6'}`}>
+              <Table
+                {...{ ...nextTable.tableProps, getterMapping, renderMapping }}
+                columns={['compatibility', ...nextTable.tableProps.columns]} orderBy='-compatibility'
+              />
+            </div>
+            {
+                            nextTable.entity && <div className='col-span-6 sm:col-span-3 '>
+                              <DetailedView {...{ ...nextTable }} />
+                                                </div>
+                        }
+          </div>
+        </>}
     </div>
   )
 }

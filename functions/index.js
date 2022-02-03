@@ -26,20 +26,32 @@ const isAuthedAndAppChecked = ctx => {
   return ctx.auth.uid
 }
 
-const wasUserInvitedAndReclaimInvitation = async email => {
-  logger.info({ email })
+const wasUserInvitedAndReclaimInvitation = async ({ email, role }) => {
   const iref = await admin
     .firestore()
     .collection('invites')
-    .doc(email)
+    .doc(`${email}:${role}`)
     .get()
-  logger.info({ exists: iref.exists })
   if (!iref.exists) return false
+  const inviteDoc = iref.data()
+  if (inviteDoc.redeemed) return true
   const iref2 = admin
     .firestore()
     .collection('invites')
-    .doc(email)
+    .doc(`${email}:${role}`)
   await iref2.update({ redeemed: true, redeemedAt: new Date().toISOString() })
+  const iref3 = await admin
+    .firestore()
+    .collection('invites')
+    .doc(`${email}:${role}`)
+    .get()
+  const { referrerID } = iref3.data()
+  const uref = admin
+    .firestore()
+    .collection('users')
+    .doc(referrerID)
+  const increment = admin.firestore.FieldValue.increment(1)
+  await uref.update({ numInvitesLeft: increment })
   return true
 }
 
@@ -64,7 +76,7 @@ exports.updateUserDoc = functions.firestore.document('users/{uid}').onUpdate(asy
     .get()
   const userDoc = uref.data()
   if (userDoc.email) {
-    const hasAcceptedInvite = await wasUserInvitedAndReclaimInvitation(userDoc.email) || !!isDevelopment
+    const hasAcceptedInvite = await wasUserInvitedAndReclaimInvitation(userDoc) || !!isDevelopment
     await admin
       .firestore()
       .collection('users')
@@ -88,7 +100,7 @@ exports.handleUserLogin = functions.https.onCall(async (data, ctx) => {
       .doc(uid)
     await uref2.update(data)
   } else {
-  // try redeeming invites by updating the user doc
+  // try redeeming invites by updating the user doc, so the listener can fire.
     const uref2 = admin
       .firestore()
       .collection('users')
@@ -109,7 +121,7 @@ exports.handleAnonUserConversion = functions.https.onCall(async (data, ctx) => {
 exports.getAssignments = functions.https.onCall(async (data, ctx) => {
   const db = admin.firestore()
   const uid = ctx.auth.uid
-  const assignments = await db.collection('assignments').where('dev', '==', uid)
+  const assignments = await db.collection('matches').where('dev', '==', uid)
     .get().then((querySnapshot) => {
       return querySnapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }))
     })
@@ -133,4 +145,21 @@ exports.getAssignments = functions.https.onCall(async (data, ctx) => {
       company: actors[assignment.company],
       job: jobs[assignment.job]
     }))
+})
+
+const triggerOnUpdate = ({ document, fieldToSearch, valueToSearch, destinationField, latestObject }) => {
+  const db = admin.firestore()
+  return db.collection(document).where(fieldToSearch, '==', valueToSearch)
+    .get().then((querySnapshot) => {
+      querySnapshot.docs.forEach(doc => (doc.ref.update({ [destinationField]: latestObject })))
+    })
+}
+
+exports.updateJob = functions.firestore.document('jobs/{id}').onUpdate(async (change, context) => {
+  const jobid = context.params.id
+  const job = change.after.data()
+  const triggerList = [
+    { document: 'matches', fieldToSearch: 'job', valueToSearch: jobid, destinationField: 'jobData', latestObject: job }
+  ]
+  triggerList.forEach(triggerOnUpdate)
 })
