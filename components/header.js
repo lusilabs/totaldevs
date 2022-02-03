@@ -2,7 +2,7 @@ import { useRouter } from 'next/router'
 import Link from 'next/link'
 import { Fragment, useState, useEffect } from 'react'
 import { Disclosure, Menu, Transition } from '@headlessui/react'
-import { BellIcon } from '@heroicons/react/outline'
+import { BellIcon, CurrencyDollarIcon } from '@heroicons/react/outline'
 
 function classNames (...classes) {
   return classes.filter(Boolean).join(' ')
@@ -45,19 +45,22 @@ function Header ({ user, userDoc, navigation, userNavigation, logoHref = '/', ..
                         // console.log(active, item.href, activeTab)
                         return (
                           <Link href={item.href} key={ix}>
-                            <a
-                              onClick={() => handleSelectRoute(item.href)}
-                              key={item.name}
-                              className={classNames(
-                                active
-                                  ? 'bg-gray-900 text-white'
-                                  : 'text-gray-300 hover:bg-gray-700 hover:text-white',
-                                'px-3 py-2 rounded-md text-sm font-medium'
-                              )}
-                              aria-current={active ? 'page' : undefined}
-                            >
-                              {item.name}
-                            </a>
+                            <div className='flex items-center'>
+                              <a
+                                onClick={() => handleSelectRoute(item.href)}
+                                key={item.name}
+                                className={classNames(
+                                  active
+                                    ? 'bg-gray-900 text-white flex items-center'
+                                    : 'text-gray-300 hover:bg-gray-700 hover:text-white',
+                                  'px-3 py-2 rounded-md text-sm font-medium flex items-center'
+                                )}
+                                aria-current={active ? 'page' : undefined}
+                              >
+                                {item.name}
+                                {item.Icon}
+                              </a>
+                            </div>
                           </Link>
                         )
                       }
@@ -91,19 +94,22 @@ function Header ({ user, userDoc, navigation, userNavigation, logoHref = '/', ..
                         leaveFrom='transform opacity-100 scale-100'
                         leaveTo='transform opacity-0 scale-95'
                       >
-                        <Menu.Items className='z-50 origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none'>
+                        <Menu.Items className='z-50 origin-top-right absolute right-0 mt-2 w-36 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none'>
                           {userNavigation.map((item) => (
                             <Menu.Item key={item.name}>
                               {({ active }) => (
-                                <a
-                                  onClick={() => handleUserNavigation(item)}
-                                  className={classNames(
-                                    active ? 'bg-gray-100' : '',
-                                    'block px-4 py-2 text-sm text-gray-700'
-                                  )}
-                                >
-                                  {item.name}
-                                </a>
+                                <div className='flex items-center'>
+                                  <a
+                                    onClick={() => handleUserNavigation(item)}
+                                    className={classNames(
+                                      active ? 'bg-gray-100' : '',
+                                      'px-4 py-2 text-sm text-gray-700'
+                                    )}
+                                  >
+                                    {item.name}
+                                  </a>
+                                  {item.Icon}
+                                </div>
                               )}
                             </Menu.Item>
                           ))}
