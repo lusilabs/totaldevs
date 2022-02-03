@@ -53,13 +53,14 @@ const anonRoutes = [
 
 const pageNavigationByRole = {
   dev: [
-    { name: 'projects', href: '/projects', current: false },
+    { name: 'matches', href: '/projects', current: false },
     { name: 'content', href: '/content', current: false },
     { name: 'payments', href: '/payments', current: false },
     { name: 'invites', href: '/invites', current: false, Icon: <CurrencyDollarIcon className='w-4 h-4 text-green-400' /> }
   ],
   company: [
-    { name: 'jobs', href: '/jobs', current: false }
+    { name: 'jobs', href: '/jobs', current: false },
+    { name: 'payments', href: '/payments', current: false }
   ],
   explorer: [
     { name: 'matches', href: '/matches', current: false },

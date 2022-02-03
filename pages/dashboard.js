@@ -13,17 +13,22 @@ import { SpeakerphoneIcon } from '@heroicons/react/outline'
 
 const generateOnboardingURL = httpsCallable(functions, 'stripe-generateOnboardingURL')
 
-const queryConstraints = [where('seen', '==', false), orderBy('priority', 'desc'), limit(10)]
-
 function Dashboard ({ userDoc, setIsPageLoading, ...props }) {
+  const queryConstraints = [
+    where('uid', '==', userDoc.uid),
+    where('seen', '==', false),
+    // orderBy('priority', 'desc'),
+    limit(20)
+  ]
+
   const router = useRouter()
   const [isStripeBannerActive, setIsStripeBannerActive] = useState(true)
   const [isInviteBannerActive, setIsInviteBannerActive] = useState(true)
   const [isProfileBannerActive, setIsProfileBannerActive] = useState(true)
   const [actions, actionsLoaded, _ar] = useDocuments({ userDoc, docs: 'actions', queryConstraints })
   const handleClickOnAction = action => {
-    // const aref = doc(db, 'actions', action.id)
-    // setDoc(aref, { seen: true }, { merge: true })
+    const aref = doc(db, 'actions', action.id)
+    setDoc(aref, { seen: true }, { merge: true })
     if (!action.noop) router.push(action.url)
   }
 
@@ -77,7 +82,7 @@ const ActionView = ({ actions, handleClickOnAction }) => {
         <SpeakerphoneIcon className='h-6 w-6 text-indigo-400' aria-hidden='true' />
         <p class='ml-4 text-lg font-bold text-indigo-400'>notifications</p>
       </div>
-      <div class='w-11/12 md:w-7/12 lg:6/12 mx-auto relative mt-2 p-6 shadow-lg rounded-md'>
+      <div class='w-11/12 lg:10/12 mx-auto relative mt-2 p-6'>
         <div class='border-l-2 mt-6'>
           {actions.map((a, aix) => <ActionCard action={a} key={aix} handleClickOnAction={handleClickOnAction} />)}
         </div>

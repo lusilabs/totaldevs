@@ -79,7 +79,42 @@ exports.createUserDoc = functions.auth.user().onCreate(async user => {
     })
 })
 
-exports.sendEmailOnJobCreate = functions.firestore.document('jobs/{jobID}').onCreate(async (snap, context) => {
+exports.handleMatchUpdate = functions.firestore.document('matches/{matchID}').onUpdate(async (change, context) => {
+  const matchID = context.params.matchID
+  const curr = change.after.data()
+  const prev = change.before.data()
+
+  const devMapping = { 
+    'position_offered': 'dev'
+  }
+  if (curr.status !== prev.status) {
+    admin
+      .firestore()
+      .collection('actions')
+      .add({
+        uid: curr[devMapping[curr.status]],
+        seen: false,
+        color: 'amber',
+        text: curr.text,
+        url: ''
+      // url: `/jobs/${jobID}`
+      })
+    admin
+      .firestore()
+      .collection('mail')
+      .add({
+        message: {
+          text: curr.text,
+          subject: 
+          // subject: companyEmail + ' ' + companyName + ' ' + company + ' just posted a new position!'
+        },
+        to: [curr.companyEmail],
+        createdAt: new Date().toISOString()
+      })
+  }
+})
+
+exports.sendEmailOnJobCreate = functions.firestore.document('jobs/{jobID}').onCreate(async (change, context) => {
   const jobID = context.params.jobID
   const { companyName, company, companyEmail } = snap.data()
   admin
