@@ -127,6 +127,10 @@ function EditDevProfile ({ userDoc, ...props }) {
       visibility: userDoc.visibility,
       jobSearch: userDoc.jobSearch,
       resumeURL: userDoc.resumeURL,
+      phone: userDoc.phone,
+      englishLevel: userDoc.englishLevel,
+      experienceYears: userDoc.experienceYears,
+      remoteExperienceYears: userDoc.remoteExperienceYears,
       hasAcceptedTerms: userDoc.hasAcceptedTerms
     }
   })

@@ -1,5 +1,6 @@
 
 export default function CreateButton ({ text = 'new', extraClasses = '' }) {
+  if (!extraClasses) extraClasses = ' bg-indigo-500 hover:bg-indigo-700 '
   return (
     <button
       className={'text-white px-4 rounded-full w-auto h-12 active:shadow-lg mouse shadow transition ease-in duration-200 focus:outline-none ' + extraClasses}
