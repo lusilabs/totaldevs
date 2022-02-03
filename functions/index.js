@@ -118,6 +118,52 @@ exports.handleAnonUserConversion = functions.https.onCall(async (data, ctx) => {
   await uref.update({ ...data })
 })
 
+exports.getAssignments = functions.https.onCall(async (data, ctx) => {
+  const db = admin.firestore()
+  const uid = ctx.auth.uid
+  const assignments = await db.collection('matches').where('dev', '==', uid)
+    .get().then((querySnapshot) => {
+      return querySnapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }))
+    })
+  const actors = await db.collection('users')
+    .where('uid', 'in',
+      [...new Set(assignments.reduce((result, assignment) => [...result, assignment.explorer, assignment.company], []))]
+    )
+    .get().then((querySnapshot) => {
+      return querySnapshot.docs.reduce((result, doc) => ({ ...result, [doc.id]: doc.data() }), {})
+    })
+  const jobs = await db.collection('jobs')
+    .where('__name__', 'in', assignments.map((assignment) => assignment.job))
+    .get().then((querySnapshot) => {
+      return querySnapshot.docs.reduce((result, doc) => ({ ...result, [doc.id]: doc.data() }), {})
+    })
+
+  return assignments.map((assignment) => (
+    {
+      ...assignment,
+      explorer: actors[assignment.explorer],
+      company: actors[assignment.company],
+      job: jobs[assignment.job]
+    }))
+})
+
+const triggerOnUpdate = ({ document, fieldToSearch, valueToSearch, destinationField, latestObject }) => {
+  const db = admin.firestore()
+  return db.collection(document).where(fieldToSearch, '==', valueToSearch)
+    .get().then((querySnapshot) => {
+      querySnapshot.docs.forEach(doc => (doc.ref.update({ [destinationField]: latestObject })))
+    })
+}
+
+exports.updateJob = functions.firestore.document('jobs/{id}').onUpdate(async (change, context) => {
+  const jobid = context.params.id
+  const job = change.after.data()
+  const triggerList = [
+    { document: 'matches', fieldToSearch: 'job', valueToSearch: jobid, destinationField: 'jobData', latestObject: job }
+  ]
+  triggerList.forEach(triggerOnUpdate)
+
+
 exports.sendMessage = functions.https.onCall(async ({ text, fcmToken }, ctx) => {
   if (!fcmToken) return { success: true }
   const payload = { data: text, notification: { title: text, body: text }, token: fcmToken }

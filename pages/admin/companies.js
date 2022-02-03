@@ -7,7 +7,7 @@ export default function Companies () {
   const queryConstraints = [
     where('role', '==', 'company')
   ]
-  const documents = useDocuments({ docs: 'users', queryConstraints })
+  const [documents] = useDocuments({ docs: 'users', queryConstraints })
   return (
     <div className='flex flex-col m-2 md:m-8 xl:m-16 '>
       <div className='-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8'>
