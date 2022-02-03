@@ -26,20 +26,32 @@ const isAuthedAndAppChecked = ctx => {
   return ctx.auth.uid
 }
 
-const wasUserInvitedAndReclaimInvitation = async email => {
-  logger.info({ email })
+const wasUserInvitedAndReclaimInvitation = async ({ email, role }) => {
   const iref = await admin
     .firestore()
     .collection('invites')
-    .doc(email)
+    .doc(`${email}:${role}`)
     .get()
-  logger.info({ exists: iref.exists })
   if (!iref.exists) return false
+  const inviteDoc = iref.data()
+  if (inviteDoc.redeemed) return true
   const iref2 = admin
     .firestore()
     .collection('invites')
-    .doc(email)
+    .doc(`${email}:${role}`)
   await iref2.update({ redeemed: true, redeemedAt: new Date().toISOString() })
+  const iref3 = await admin
+    .firestore()
+    .collection('invites')
+    .doc(`${email}:${role}`)
+    .get()
+  const { referrerID } = iref3.data()
+  const uref = admin
+    .firestore()
+    .collection('users')
+    .doc(referrerID)
+  const increment = admin.firestore.FieldValue.increment(1)
+  await uref.update({ numInvitesLeft: increment })
   return true
 }
 
@@ -64,7 +76,7 @@ exports.updateUserDoc = functions.firestore.document('users/{uid}').onUpdate(asy
     .get()
   const userDoc = uref.data()
   if (userDoc.email) {
-    const hasAcceptedInvite = await wasUserInvitedAndReclaimInvitation(userDoc.email) || !!isDevelopment
+    const hasAcceptedInvite = await wasUserInvitedAndReclaimInvitation(userDoc) || !!isDevelopment
     await admin
       .firestore()
       .collection('users')
@@ -88,7 +100,7 @@ exports.handleUserLogin = functions.https.onCall(async (data, ctx) => {
       .doc(uid)
     await uref2.update(data)
   } else {
-  // try redeeming invites by updating the user doc
+  // try redeeming invites by updating the user doc, so the listener can fire.
     const uref2 = admin
       .firestore()
       .collection('users')

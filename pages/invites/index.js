@@ -42,20 +42,38 @@ function Invites ({ userDoc, ...props }) {
     <>
       {isLoading && <SuspensePlaceholders />}
       {!isLoading && <div>
+        <div className='text-md m-10 mt-12 pt-6'>
+
+          <p>
+
+            help your friends get a job with international software companies! 🎉
+          </p>
+          <p>
+            you will get 1% per month! 💸💸
+          </p>
+
+          <p>
+            there is no limit to how many companies you can invite.
+          </p>
+          <p>
+            you will receive 1% per month for each dev hired by the company!  🤑 🤑
+          </p>
+
+        </div>
         <div className='flex flex-row m-1 md:m-8 xl:m-16 justify-around items-center'>
 
           <div className='flex flex-col p-2 m-2'>
-            <div>Sent</div>
+            <div>sent</div>
             <div className='text-4xl'>{invites.length}</div>
           </div>
 
           <div className='flex flex-col p-2 m-2'>
-            <div>Redeemed</div>
+            <div>redeemed</div>
             <div className='text-4xl'>{invites.filter(i => i.redeemed).length}</div>
           </div>
 
           <div className='flex flex-col p-2 m-2'>
-            <div>Remaining</div>
+            <div>remaining (dev)</div>
             <div className='text-4xl'>{userDoc.numInvitesLeft}</div>
           </div>
 
@@ -83,7 +101,28 @@ function Invites ({ userDoc, ...props }) {
                         scope='col'
                         className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'
                       >
-                        status
+                        role
+                      </th>
+
+                      <th
+                        scope='col'
+                        className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'
+                      >
+                        invite
+                      </th>
+
+                      <th
+                        scope='col'
+                        className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'
+                      >
+                        active
+                      </th>
+
+                      <th
+                        scope='col'
+                        className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'
+                      >
+                        USD $
                       </th>
 
                     </tr>
@@ -97,14 +136,36 @@ function Invites ({ userDoc, ...props }) {
                           </div>
                         </td>
 
+                        <td className='px-6 py-4 whitespace-nowrap '>
+                          <div className='ml-4'>
+                            <div className='text-sm font-medium text-gray-900'>{inv.role}</div>
+                          </div>
+                        </td>
+
                         <td className='px-6 py-4 whitespace-nowrap'>
                           {inv.redeemed && <span className='px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800'>
-                            Redeemed
-                                           </span>}
+                            redeemed
+                          </span>}
                           {!inv.redeemed && <span className='px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800'>
-                            Pending
-                                            </span>}
+                            pending
+                          </span>}
                         </td>
+
+                        <td className='px-6 py-4 whitespace-nowrap'>
+                          {inv.isActive && <span className='px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800'>
+                            active
+                          </span>}
+                          {!inv.isActive && <span className='px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800'>
+                            inactive
+                          </span>}
+                        </td>
+
+                        <td className='px-6 py-4 whitespace-nowrap '>
+                          <div className='ml-4'>
+                            <div className='text-sm font-medium text-gray-900'>{inv.usd}</div>
+                          </div>
+                        </td>
+
                       </tr>
                     ))}
                   </tbody>
@@ -112,11 +173,14 @@ function Invites ({ userDoc, ...props }) {
               </div>
             </div>
           </div>
-          {userDoc.numInvitesLeft > 0 && <div className='fixed bottom-16 right-8 lg:bottom-8 lg:right-4 text-md' onClick={() => router.push('invites/add')}>
-            <CreateButton />
-                                         </div>}
+          {userDoc.numInvitesLeft > 0 && <div className='fixed top-16 right-8 lg:bottom-8 lg:right-4 text-md' onClick={() => router.push('invites/add/dev')}>
+            <CreateButton text='dev' extraClasses='bg-green-500 hover:bg-green-700' />
+          </div>}
+          <div className='fixed top-16 right-32 lg:bottom-8 lg:right-32 text-md' onClick={() => router.push('invites/add/company')}>
+            <CreateButton text='company' extraClasses='bg-indigo-500 hover:bg-indigo-700' />
+          </div>
         </div>
-                     </div>}
+      </div>}
     </>
   )
 }

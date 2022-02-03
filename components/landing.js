@@ -52,7 +52,7 @@ function Landing ({ handleCreateJobPosting, ...props }) {
                   hire with total confidence
                 </h1>
                 <p className='mt-4 text-lg text-gray-300'>
-                  from an exclusive community of professional developers, with guaranteed results.
+                  from an exclusive community of professional developers, with proven results.
                 </p>
                 <button
                   className='bg-blue-800 text-white hover:bg-gray-700 text-xl font-bold px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 mt-12'

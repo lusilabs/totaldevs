@@ -396,9 +396,10 @@ function EditDevProfile ({ userDoc, ...props }) {
                       name='bio'
                       rows={3}
                       className='shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block w-full sm:text-sm border border-gray-300 rounded-md'
-                      {...register('bio', { required: true, maxLength: 256, pattern: /^[A-Za-z0-9 ]+$/i })}
+                      {...register('bio', { required: true, maxLength: 4096 })}
                     />
                   </div>
+                  {errors.bio && <div className='m-2 text-sm text-red-500'>at most 4096 chars</div>}
                 </div>
 
                 <div className='col-span-6 sm:col-span-2'>
