@@ -1,9 +1,11 @@
-import { ProjectsToCheck } from "@/components/matches/projects";
+import { ProjectsToCheck } from '@/components/matches/projects'
 
-const Projects = ({userDoc}) => {
-    return <div>
-        <ProjectsToCheck userDoc={userDoc} />
+const Projects = ({ userDoc }) => {
+  return (
+    <div>
+      <ProjectsToCheck userDoc={userDoc} />
     </div>
+  )
 }
 
-export default Projects;
+export default Projects

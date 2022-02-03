@@ -184,7 +184,7 @@ function EditDevProfile ({ userDoc, ...props }) {
                     placeholder=''
                     autoComplete='given-name'
                     className='mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
-                    {...register('displayName', { required: true, minLength: 3, pattern: /^[A-Za-z0-9 ]+$/i })}
+                    {...register('displayName', { required: true, minLength: 3 })}
                   />
                   {errors.name && <div className='m-2 text-sm text-red-500'>at least 3 chars</div>}
                 </div>
@@ -200,9 +200,9 @@ function EditDevProfile ({ userDoc, ...props }) {
                     placeholder=''
                     autoComplete='given-name'
                     className='mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
-                    {...register('phone', { required: false, minLength: 8, pattern: /^[0-9 ]+$/i })}
+                    {...register('phone', { required: false, minLength: 8 })}
                   />
-                  {errors.phone && <div className='m-2 text-sm text-red-500'>10 chars</div>}
+                  {errors.phone && <div className='m-2 text-sm text-red-500'>min 8 chars</div>}
                 </div>
 
                 <div className='col-span-6 sm:col-span-3'>
@@ -416,7 +416,7 @@ function EditDevProfile ({ userDoc, ...props }) {
                     </span>
                     <input
                       type='text' name='company-website' id='company-website' className='focus:ring-indigo-500 focus:border-indigo-500 flex-1 block w-full rounded-none rounded-r-md sm:text-sm border-gray-300' placeholder=''
-                      {...register('githubURI', { required: false, maxLength: 256, pattern: /^[A-Za-z0-9 ]+$/i })}
+                      {...register('githubURI', { required: false, maxLength: 256 })}
                     />
                   </div>
                 </div>
@@ -431,7 +431,7 @@ function EditDevProfile ({ userDoc, ...props }) {
                     </span>
                     <input
                       type='text' name='company-website' id='company-website' className='focus:ring-indigo-500 focus:border-indigo-500 flex-1 block w-full rounded-none rounded-r-md sm:text-sm border-gray-300' placeholder=''
-                      {...register('linkedInURI', { required: false, maxLength: 256, pattern: /^[A-Za-z0-9 ]+$/i })}
+                      {...register('linkedInURI', { required: false, maxLength: 256 })}
                     />
                   </div>
                 </div>
@@ -546,7 +546,7 @@ function EditDevProfile ({ userDoc, ...props }) {
                     <div className='w-0 flex-1 flex items-center'>
                       {resumeName && <> <svg className='flex-shrink-0 h-5 w-5 text-gray-400' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='currentColor' aria-hidden='true'>
                         <path fillRule='evenodd' d='M8 4a3 3 0 00-3 3v4a5 5 0 0010 0V7a1 1 0 112 0v4a7 7 0 11-14 0V7a5 5 0 0110 0v4a3 3 0 11-6 0V7a1 1 0 012 0v4a1 1 0 102 0V7a3 3 0 00-3-3z' clipRule='evenodd' />
-                      </svg>
+                                        </svg>
                         <span className='ml-2 flex-1 w-0 truncate'>
                           {resumeName}
                         </span>
@@ -558,7 +558,7 @@ function EditDevProfile ({ userDoc, ...props }) {
                             view
                           </a>
                         </div>
-                      </>}
+                                     </>}
                     </div>
                   </div>
                   <div className='mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md'>
@@ -617,7 +617,7 @@ function EditDevProfile ({ userDoc, ...props }) {
             </div>
           </div>
         </form>
-      </div>}
+                    </div>}
     </>
   )
 }
