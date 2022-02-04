@@ -17,13 +17,13 @@ export default function MatchView ({ userDoc, ...props }) {
   const [routerMatchID, setRouterMatchID] = useState()
   const [saving, setSaving] = useState()
 
-const [matchDoc, matchLoaded, _dr] = useDocument({ collection: 'matches', docID: routerMatchID })
+const [matchDoc, matchLoaded, _dr, setMatchDoc] = useDocument({ collection: 'matches', docID: routerMatchID })
   useEffect(() => {
     const { matchID } = router.query
     setRouterMatchID(matchID)
   })
 
-  const [profileDoc, profileLoaded, _pr] = useDocument({ collection: 'profiles', docID: matchDoc?.dev }, [matchDoc])
+  const [profileDoc, profileLoaded, _pr, setProfileDoc] = useDocument({ collection: 'profiles', docID: matchDoc?.dev }, [matchDoc])
 
   const handleAcceptMatch = () => {}
   const handleDeclineMatch = () => {}

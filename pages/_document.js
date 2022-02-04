@@ -6,11 +6,11 @@ class MyDocument extends Document {
       <Html>
         <Head>
           <title>totaldevs</title>
-          <meta name='totaldevs' content='&nbsp;' />
+          <meta name='totaldevs' content='hire talent from Latin America' />
           <script type='text/javascript' src='/tawk.js' />
           <script type='text/javascript' src='/gtag.js' />
           <link rel='icon' href='/logo-small.png' />
-          <meta name='application-name' content='totaldevs.com' />
+          <meta name='application-name' content='totaldevs' />
           <meta name='apple-mobile-web-app-capable' content='yes' />
           <meta name='apple-mobile-web-app-status-bar-style' content='default' />
           <meta name='apple-mobile-web-app-title' content='totaldevs' />
@@ -37,13 +37,13 @@ class MyDocument extends Document {
           <meta name='twitter:card' content='summary' />
           <meta name='twitter:url' content='https://totaldevs.com' />
           <meta name='twitter:title' content='totaldevs' />
-          <meta name='twitter:description' content='totaldevs' />
-          <meta name='twitter:image' content='https://totaldevs.com/icons/android-chrome-192x192.png' />
+          <meta name='twitter:description' content='hire talent from Latin America' />
+          <meta name='twitter:image' content='https://totaldevs.com/icon-192x192.png' />
           <meta name='twitter:creator' content='@totaldevs' />
           <meta property='og:type' content='website' />
           <meta property='og:title' content='totaldevs title' />
           <meta property='og:description' content='totaldevs description' />
-          <meta property='og:site_name' content='totaldevs sitename' />
+          <meta property='og:site_name' content='totaldevs' />
           <meta property='og:url' content='https://totaldevs.com' />
           <meta property='og:image' content='https://totaldevs.com/icons/apple-touch-icon.png' />
 

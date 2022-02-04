@@ -55,7 +55,7 @@ function Dashboard ({ userDoc, setIsPageLoading, ...props }) {
   return (
     <div>
       {userDoc.role !== 'company' && isStripeBannerActive && <Banner name='dev-stripe-onboarding' color='bg-yellow-600' text='verify your account to start matching' buttonText='click here' handleClick={() => handleDevStripeOnboarding(userDoc)} handleClose={() => setIsStripeBannerActive(false)} />}
-      {isProfileBannerActive && <Banner name='profile-complete' color='bg-red-400' text='your profile is incomplete' buttonText='go to profile' href='/profile' handleClose={() => setIsProfileBannerActive(false)} />}
+      {isProfileBannerActive && <Banner name='profile-complete' color='bg-red-400' text='complete your profile to start matching' buttonText='go to profile' href='/profile' handleClose={() => setIsProfileBannerActive(false)} />}
       {userDoc.role === 'explorer' && isInviteBannerActive && <Banner name='explorer-invites' color='bg-indigo-600' text='you have new gift developer invites!' buttonText='invite a dev!' href='/invites' handleClose={() => setIsInviteBannerActive(false)} />}
       {/* <DashboardActions userDoc={userDoc} setIsPageLoading={setIsPageLoading} {...props} /> */}
       {!actionsLoaded && <SuspensePlaceholders />}

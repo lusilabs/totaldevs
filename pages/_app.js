@@ -53,7 +53,7 @@ const anonRoutes = [
 
 const pageNavigationByRole = {
   dev: [
-    { name: 'matches', href: '/projects', current: false },
+    { name: 'jobs', href: '/projects', current: false },
     { name: 'content', href: '/content', current: false },
     { name: 'payments', href: '/payments', current: false },
     { name: 'invites', href: '/invites', current: false, Icon: <CurrencyDollarIcon className='w-4 h-4 text-green-400' /> }
@@ -149,6 +149,7 @@ function MyApp ({ Component, pageProps }) {
     logEvent(analytics, 'new company signup')
     setIsPageLoading(false)
   }
+  console.log({ userDoc })
 
   useEffect(() => {
     const awaitRedirectResults = async () => {

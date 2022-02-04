@@ -13,9 +13,9 @@ import CreateButton from '@/components/createbutton'
 function JobList ({ userDoc, ...props }) {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(true)
-  const [assignmentMap, setAssignmentMap] = useState({})
-  const [jobs, jobsLoaded, _] = useDocuments({ docs: 'jobs', queryConstraints: [where('uid', '==', userDoc.uid)] }, [userDoc.uid])
-  const [matches, matchesLoaded, __] = useDocuments({
+  const [matchesMap, setMatchesMap] = useState({})
+  const [jobs, jobsLoaded, _, setJobs] = useDocuments({ docs: 'jobs', queryConstraints: [where('uid', '==', userDoc.uid)] }, [userDoc.uid])
+  const [matches, matchesLoaded, __, setMatches] = useDocuments({
     docs: 'matches',
     queryConstraints: [
       where('company', '==', userDoc.uid),
@@ -35,7 +35,7 @@ function JobList ({ userDoc, ...props }) {
 
   useEffect(() => {
     if (matches) {
-      setAssignmentMap(
+      setMatchesMap(
         matches.reduce(
           (map, match) => ({ ...map, [match.job]: (map[match.job] || 0) + 1 }), {}
         )
@@ -47,7 +47,7 @@ function JobList ({ userDoc, ...props }) {
     <div className='max-w-2xl mx-auto py-4 px-4 sm:py-8 sm:px-6 lg:max-w-7xl lg:px-8'>
       <div className='mt-8 grid grid-cols-2 gap-y-2 gap-x-6 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8'>
         {isLoading && <SuspensePlaceholders />}
-        {!isLoading && jobs && jobs.length > 0 && jobs.map((j, ix) => <Job key={ix} job={j} numPendingRequests={assignmentMap[j.id]} {...props} />)}
+        {!isLoading && jobs && jobs.length > 0 && jobs.map((j, ix) => <Job key={ix} job={j} numPendingRequests={matchesMap[j.id]} {...props} />)}
         {!isLoading && jobs && jobs.length === 0 && <div className='text-md text-gray-600'>no jobs posted yet.</div>}
         <div className='fixed top-16 right-8 lg:bottom-8 lg:right-4 text-md' onClick={() => router.push('/jobs/add')}>
           <CreateButton extraClasses='bg-green-500' text='new job' />
