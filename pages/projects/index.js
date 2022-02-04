@@ -1,7 +1,9 @@
-function Projects () {
+import { ProjectsToCheck } from '@/components/matches/projects'
+
+const Projects = ({ userDoc }) => {
   return (
     <div>
-      Inside projects
+      <ProjectsToCheck userDoc={userDoc} />
     </div>
   )
 }

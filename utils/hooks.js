@@ -23,7 +23,7 @@ export function useDocuments ({ userDoc, docs, queryConstraints = [], ...props }
   const refresh = () => {
     setDocumentsLoaded(false)
   }
-  return [documents, documentsLoaded, refresh]
+  return [documents, documentsLoaded, refresh, setDocuments]
 }
 
 export function useDocument ({ collection, docID }, dependencies = []) {

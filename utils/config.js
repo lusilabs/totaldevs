@@ -18,6 +18,8 @@ const firebaseConfig = {
   measurementId: 'G-7BGXW6MV9H'
 }
 
+const vapidKeyFCM = 'BG_67u9DP6hm1El1fX73jbf3yTwK92Rp0dwnFyP6IM6WEcuUBIJp7WpLsH7gnn39gDy28Bf8Nps-U5ycerlsykU'
+
 const app = initializeApp(firebaseConfig)
 const auth = getAuth(app)
 const functions = getFunctions(app)
@@ -50,4 +52,4 @@ if (typeof window !== 'undefined') {
   })
 }
 
-export { app, auth, functions, db, firebaseConfig, storage, analytics }
+export { app, auth, functions, db, firebaseConfig, storage, analytics, vapidKeyFCM }

@@ -112,6 +112,12 @@ To view config and run locally
 To set keys locally
 `firebase functions:config:set stripe.secret_key_local="sk_test_.."`
 
+### Export emulators
+To save a checkpoint on the current state of the emulators run 
+`firebase emulators:export ./emulators`
+
+The import code should just load it next time you start
+
 
 ## Help
 If stuck ask someone for help and contribute to this README with the solution if it is a recurring problem.

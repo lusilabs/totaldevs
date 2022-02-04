@@ -55,12 +55,12 @@ function Landing ({ handleCreateJobPosting, ...props }) {
                   from an exclusive community of professional developers, with proven results.
                 </p>
                 <button
-                  className='bg-blue-800 text-white hover:bg-gray-700 text-xl font-bold px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 mt-12'
+                  className='bg-blue-700 text-white hover:bg-blue-500 text-xl font-bold px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 mt-12'
                   type='button'
                   style={{ transition: 'all .50s ease' }}
                   onClick={handleCreateJobPosting}
                 >
-                  create a free job posting &nbsp;
+                  post remote jobs &nbsp;
                   <i className='fas fa-arrow-alt-circle-right' />
                 </button>
               </div>

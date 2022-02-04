@@ -98,18 +98,15 @@ function Header ({ user, userDoc, navigation, userNavigation, logoHref = '/', ..
                           {userNavigation.map((item) => (
                             <Menu.Item key={item.name}>
                               {({ active }) => (
-                                <div className='flex items-center'>
-                                  <a
-                                    onClick={() => handleUserNavigation(item)}
-                                    className={classNames(
-                                      active ? 'bg-gray-100' : '',
-                                      'px-4 py-2 text-sm text-gray-700'
-                                    )}
-                                  >
-                                    {item.name}
-                                  </a>
-                                  {item.Icon}
-                                </div>
+                                <a
+                                  onClick={() => handleUserNavigation(item)}
+                                  className={classNames(
+                                    active ? 'bg-gray-100' : '',
+                                    'px-4 py-2 text-sm text-gray-700 flex'
+                                  )}
+                                >
+                                  {item.name}
+                                </a>
                               )}
                             </Menu.Item>
                           ))}
