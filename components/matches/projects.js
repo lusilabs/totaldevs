@@ -1,59 +1,71 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { toast } from 'react-toastify'
+import { db, functions } from '@/utils/config'
+import { doc, setDoc, where } from 'firebase/firestore'
+import { Table } from '@/components/base/table'
+import { Button } from 'semantic-ui-react'
 import { useDocuments } from '@/utils/hooks'
-import { storage, db } from '@/utils/config'
-import { where } from 'firebase/firestore'
-import { doc, setDoc, addDoc, collection, getDoc } from 'firebase/firestore'
 
-const AssignmentCard = ({explorer, job, dev, status, onClick, selected}) => {
-    return (<div onClick={onClick}>
-        {selected && ">>>>"} {dev} {explorer} {job} {status}
-    </div>)
-}
-
-const ConfirmAvailability = ({userDoc, selectedAssignment, refreshAssignments}) => {
-    if (!selectedAssignment) {
-        return null;
-    }
-    const updateAssignment = (status) => () => {
-        const assignment = doc(db, "assignments", `${selectedAssignment.dev}:${selectedAssignment.job}`)
-        setDoc(assignment, {
-            status
-        }, {merge: true})
-        refreshAssignments()
-    }
-    return <div>
-        <button type="button" 
-                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" 
-                onClick={updateAssignment("dev_interested")}>
-                    Available, can schedule meeting with client
-        </button>
-        <button type="button" 
-                className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded" 
-                onClick={updateAssignment("dev_unavailable")}>
-                    Not available at the moment
-        </button>
+const ConfirmAvailability = ({ userDoc, selectedMatch, refreshMatches }) => {
+  if (!selectedMatch) {
+    return null
+  }
+  const updateMatch = (status, notifyee) => () => {
+    const match = doc(db, 'matches', `${selectedMatch.id}`)
+    setDoc(match, {
+      status
+    }, { merge: true })
+    toast.success(`${notifyee} has been notified.`)
+    refreshMatches(status)
+  }
+  return (
+    <div className='py-5'>
+      <Button
+        type='button' color='green' className='text-md'
+        onClick={updateMatch('dev_interested', selectedMatch.companyName)}
+      >
+        Available, can schedule meeting with client
+      </Button>
+      <Button
+        type='button' color='red' className='text-md'
+        onClick={updateMatch('dev_unavailable', selectedMatch.explorerName)}
+      >
+        Not available at the moment
+      </Button>
     </div>
+  )
 }
 
-export const ProjectsToCheck = ( {userDoc} ) => {
-    const [assigments, , refreshAssignments] = useDocuments({docs: "assignments", queryConstraints: [where('dev', '==', userDoc.uid)]})
-    const [selectedAssignment, setSelectedAssignment] = useState(null)
+export const ProjectsToCheck = ({ userDoc }) => {
+  const [matches, _ml, _rm, setMatchesState] = useDocuments({ docs: 'matches', queryConstraints: [where('dev', '==', userDoc.uid)] })
+  const [selectedMatch, setSelectedMatch] = useState(null)
 
-    return (<div>
-        <div>
-            <span>Projects</span>
-            {
-                assigments.map((assignment) => 
-                    <AssignmentCard key={assignment.id} 
-                        selected={selectedAssignment?.id === assignment.id} 
-                        onClick={() => setSelectedAssignment(
-                            selectedAssignment?.id !== assignment.id ? assignment : null)}
-                        {...assignment}/>
-                )
-            }
-        </div>
-        {selectedAssignment &&
-            <ConfirmAvailability {...{userDoc, selectedAssignment, refreshAssignments  }}/>
-        }
-    </div>)
+  const tableProps = {
+    columns: ['title', 'min_salary', 'max_salary', 'company name', 'current status', 'explorer name'],
+    type: 'matches',
+    data: matches,
+    onSelect: setSelectedMatch,
+    getterMapping: {
+      'explorer name': (row) => row.explorerName,
+      title: (row) => row.jobData.title,
+      min_salary: (row) => row.jobData.salaryMin,
+      max_salary: (row) => row.jobData.salaryMax,
+      'company name': (row) => row.companyName,
+      'current status': (row) => row.status
+    }
+  }
+
+  const refreshMatches = (status) => {
+    return setMatchesState(matches.map((match) => match.id !== selectedMatch.id
+      ? match
+      : { ...match, status }))
+  }
+
+  return (
+    <div className='px-4 py-5'>
+      <Table {...tableProps} />
+      {selectedMatch &&
+        <ConfirmAvailability {...{ userDoc, matches, selectedMatch, refreshMatches }} />}
+    </div>
+  )
 }
