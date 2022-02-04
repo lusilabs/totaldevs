@@ -79,38 +79,74 @@ exports.createUserDoc = functions.auth.user().onCreate(async user => {
     })
 })
 
-exports.handleMatchUpdate = functions.firestore.document('matches/{matchID}').onUpdate(async (change, context) => {
-  const matchID = context.params.matchID
-  const curr = change.after.data()
-  const prev = change.before.data()
+exports.handleMatchDoc = functions.firestore.document('matches/{matchID}').onWrite(async (change, context) => {
+  // const matchID = context.params.matchID
+  const newMatch = !change.before.exists
+  const prev = change.before.exists ? change.before.data() : null
+  const curr = change.after.exists ? change.after.data() : null
+  if (!curr) return // case where it got deleted.
+  const doc = curr
+  const hasStatusChanged = prev && prev.status !== curr.status
 
-  const devMapping = { 
-    'position_offered': 'dev'
-  }
-  if (curr.status !== prev.status) {
+  if (hasStatusChanged || newMatch) {
+    const statusMapping = {
+      position_offered: {
+        role: 'dev',
+        text: 'you got a job offer!',
+        url: '/projects',
+        email: 'devEmail',
+        emailText: 'visit https://totaldevs.com/projects to view your offer!',
+        emailSubject: 'you just got a job offer! 🤩'
+      },
+      requesting_dev_status: {
+        role: 'dev',
+        text: 'you just matched with a company!',
+        url: '/projects',
+        email: 'devEmail',
+        emailText: 'visit https://totaldevs.com/projects to view your match!',
+        emailSubject: 'you just got a job offer! 🤩'
+      },
+      dev_interested: {
+        role: 'company',
+        text: 'there is a new match for your job posting!',
+        url: `/jobs/${doc.job}`,
+        emailText: `visit https://totaldevs.com/jobs/${doc.job} to view it.`,
+        emailSubject: 'there is a new match for your job posting! 🤩',
+        email: 'companyEmail'
+      }
+    }
+
+    const obj = statusMapping[doc.status]
+    const text = obj.text
+    const uid = doc[obj.role]
+    const email = obj.email === 'companyEmail' ? doc.jobData.companyEmail : doc[obj.email]
+
     admin
       .firestore()
       .collection('actions')
       .add({
-        uid: curr[devMapping[curr.status]],
+        uid,
+        text,
         seen: false,
         color: 'amber',
-        text: curr.text,
-        url: ''
-      // url: `/jobs/${jobID}`
+        url: obj.url
       })
     admin
       .firestore()
       .collection('mail')
       .add({
         message: {
-          text: curr.text,
-          subject: 
-          // subject: companyEmail + ' ' + companyName + ' ' + company + ' just posted a new position!'
+          text: obj.emailText,
+          subject: obj.emailSubject
         },
-        to: [curr.companyEmail],
+        to: [email],
         createdAt: new Date().toISOString()
       })
+    const ref = admin.firestore().collection('fcmTokens').doc(uid).get()
+    if (!ref.exists) return
+    const { fcmToken } = ref.data()
+    const payload = { data: text, notification: { title: obj.emailSubject, body: text }, token: fcmToken }
+    admin.messaging().send(payload)
   }
 })
 
@@ -239,14 +275,12 @@ exports.updateJob = functions.firestore.document('jobs/{id}').onUpdate(async (ch
     { document: 'matches', fieldToSearch: 'job', valueToSearch: jobid, destinationField: 'jobData', latestObject: job }
   ]
   triggerList.forEach(triggerOnUpdate)
-
+})
 
 exports.sendMessage = functions.https.onCall(async ({ text, fcmToken }, ctx) => {
   if (!fcmToken) return { success: true }
   const payload = { data: text, notification: { title: text, body: text }, token: fcmToken }
-  console.log(payload)
   return await admin.messaging().send(payload).then((response) => {
-    console.log('message sent', response)
     return { success: true }
   }).catch((error) => {
     return { error: error.code }
