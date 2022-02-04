@@ -149,7 +149,6 @@ function MyApp ({ Component, pageProps }) {
     logEvent(analytics, 'new company signup')
     setIsPageLoading(false)
   }
-  console.log({ userDoc })
 
   useEffect(() => {
     const awaitRedirectResults = async () => {
