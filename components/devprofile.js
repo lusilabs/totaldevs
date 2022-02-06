@@ -14,6 +14,11 @@ import ProfileEducation from '@/components/profileeducation'
 import ProfileProjects from '@/components/profileprojects'
 import ProfileAvailability from '@/components/profileavailability'
 
+const biosByRole = {
+  fullstack: 'I am experienced developing web applications, from front to back to all things like cloud, deployments, testing, etc., and working with remote teams.  I have a strong mathematics background, and I am seeking a mentor to become a software architect.'
+
+}
+
 const verifyCalendlyUrl = httpsCallable(functions, 'verifyCalendlyUrl')
 
 // const biosByRole = {
@@ -28,8 +33,12 @@ const requiredFieldsByModule = {
   isEducationComplete: []// empty means that if it passes onSubmit then it is alright (we use 'required' inside components)
 }
 
-function EditDevProfile ({ userDoc, ...props }) {
+function EditDevProfile({ userDoc, ...props }) {
   const [saving, setSaving] = useState(false)
+  const [photoURL, setPhotoURL] = useState(null)
+  const [searchQuery, setSearchQuery] = useState('')
+  const [selectedStack, setSelectedStack] = useState([])
+  const [dropdownOptions, setDropdownOptions] = useState([])
   const [isEditing, setIsEditing] = useState(false)
   const [photoURL, setPhotoURL] = useState(null)
   const [jobs, setJobs] = useState([])
@@ -41,6 +50,8 @@ function EditDevProfile ({ userDoc, ...props }) {
     setDegrees(userDoc.degrees ?? [])
     setProjects(userDoc.projects ?? [])
     setJobs(userDoc.jobs ?? [])
+    setSelectedStack(userDoc.stack ?? [])
+    setDropdownOptions(userDoc.stack?.map(name => ({ key: name, value: name, text: name })) ?? [])
   }, [])
 
   const onSubmit = async data => {
