@@ -1,15 +1,23 @@
-import { PaperClipIcon } from '@heroicons/react/solid'
 import { useEffect } from 'react'
 import { functions } from '@/utils/config'
 import { httpsCallable } from 'firebase/functions'
 import EditButton from '@/components/editbutton'
 
 const checkStripeAccountStanding = httpsCallable(functions, 'stripe-checkStripeAccountStanding')
+const generateOnboardingURL = httpsCallable(functions, 'stripe-generateOnboardingURL')
 
-export default function DevProfileDisplay ({ userDoc, setIsEditing, readOnly }) {
+export default function DevProfileDisplay ({ userDoc, setIsEditing, readOnly, setIsPageLoading }) {
   useEffect(() => {
     checkStripeAccountStanding()
   }, [])
+
+  const handleDevStripeOnboarding = async () => {
+    setIsPageLoading(true)
+    const { data: url } = await generateOnboardingURL(userDoc)
+    setIsPageLoading(false)
+    window.location.assign(url)
+  }
+
   return (
     <>
       <div className='bg-white shadow-md overflow-hidden sm:rounded-lg m-4'>
@@ -38,8 +46,9 @@ export default function DevProfileDisplay ({ userDoc, setIsEditing, readOnly }) 
               <dt className='ml-4 text-lg font-medium text-gray-500'>payments</dt>
             </div>
             {userDoc.stripeVerified && <span className='px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800'> verified </span>}
-            {!userDoc.stripeVerified && <span className='px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800'> verification pending </span>}
-            <EditButton setIsEditing={() => setIsEditing('payments')} />
+            {!userDoc.stripeVerified && <span className='px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800'> verify now </span>}
+
+            <EditButton setIsEditing={handleDevStripeOnboarding} />
           </div>
 
           <div className=' px-4 py-5 flex justify-between items-center'>

@@ -25,6 +25,14 @@ const mergeSearchResults = (prev, names) => {
   return deduped
 }
 
+const requiredFieldsByModule = {
+  isAvailabilityComplete: ['impossible'],
+  isAboutMeComplete: ['displayName', 'title', 'salaryMin', 'photoURL', 'englishLevel', 'bio', 'experienceYears', 'visibility', 'hasAcceptedTerms', 'jobSearch'],
+  isExperienceComplete: ['impossible'],
+  isProjectsComplete: ['impossible'],
+  isEducationComplete: ['impossible']
+}
+
 function EditDevProfile ({ userDoc, ...props }) {
   const [saving, setSaving] = useState(false)
   const [photoURL, setPhotoURL] = useState(null)
@@ -70,42 +78,24 @@ function EditDevProfile ({ userDoc, ...props }) {
     }
     setSaving(true)
     await sleep(2000)
-    const profileComplete = true
+    for (const [key, fields] of Object.entries(requiredFieldsByModule)) {
+      data[key] = fields.every(f => data[f])
+    }
+    const profileComplete = data.isProjectsComplete && data.isExperienceComplete && data.isAvailabilityComplete && data.isEducationComplete && data.isAboutMeComplete
     const uref = doc(db, 'users', userDoc.uid)
     await setDoc(uref, {
-      displayName: data.displayName,
-      phone: data.phone,
-      englishLevel: data.englishLevel,
+      ...data,
       stack: selectedStack,
-      experienceYears: data.experienceYears,
-      remoteExperienceYears: data.remoteExperienceYears,
-      title: data.title,
-      bio: data.bio,
-      githubURI: data.githubURI,
-      linkedInURI: data.linkedInURI,
-      websiteURL: data.websiteURL,
-      visibility: data.visibility,
-      jobSearch: data.jobSearch,
-      hasAcceptedTerms: data.hasAcceptedTerms,
       photoURL,
       profileComplete
     }, { merge: true })
-    // save to /profiles
+
     const pref = doc(db, 'profiles', userDoc.uid)
     await setDoc(pref, {
-      displayName: data.displayName,
-      phone: data.phone,
-      englishLevel: data.englishLevel,
-      stack: selectedStack,
-      experienceYears: data.experienceYears,
-      remoteExperienceYears: data.remoteExperienceYears,
-      title: data.title,
-      githubURI: data.githubURI,
-      linkedInURI: data.linkedInURI,
-      websiteURL: data.websiteURL,
-      visibility: data.visibility,
-      photoURL,
+      ...data,
       email: userDoc.email,
+      photoURL,
+      stack: selectedStack,
       profileComplete
     }, { merge: true })
     toast.success('profile saved successfully.')
@@ -113,24 +103,7 @@ function EditDevProfile ({ userDoc, ...props }) {
     setIsEditing(false)
   }
 
-  const { register, handleSubmit, watch, formState: { errors } } = useForm({
-    defaultValues: {
-      displayName: userDoc.displayName,
-      title: userDoc.title,
-      bio: userDoc.bio,
-      photoURL: userDoc.photoURL,
-      githubURI: userDoc.githubURI,
-      linkedInURI: userDoc.linkedInURI,
-      websiteURL: userDoc.websiteURL,
-      visibility: userDoc.visibility,
-      jobSearch: userDoc.jobSearch,
-      phone: userDoc.phone,
-      englishLevel: userDoc.englishLevel,
-      experienceYears: userDoc.experienceYears,
-      remoteExperienceYears: userDoc.remoteExperienceYears,
-      hasAcceptedTerms: userDoc.hasAcceptedTerms
-    }
-  })
+  const { register, handleSubmit, watch, formState: { errors } } = useForm({ defaultValues: { ...userDoc } })
 
   const handleUploadPhoto = e => {
     const file = e.target.files[0]
@@ -157,14 +130,12 @@ function EditDevProfile ({ userDoc, ...props }) {
             {isEditing === 'experience' && <ProfileExperience register={register} errors={errors} />}
             {isEditing === 'projects' && <ProfileProjects register={register} errors={errors} />}
             {isEditing === 'education' && <ProfileEducation register={register} errors={errors} />}
-
             <div className='px-4 py-3 text-right sm:px-6 mb-8'>
               <Button disabled={saving} loading={saving} type='submit' color='green' fluid className='text-md'>
                 {saving && <span>saving</span>}
                 {!saving && <span>save</span>}
               </Button>
             </div>
-
           </div>
         </form>}
     </>

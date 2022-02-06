@@ -81,7 +81,7 @@ export default function AboutMe ({ register, errors, saving, photoURL, handleUpl
 
       <div className='col-span-6 sm:col-span-3'>
         <label htmlFor='salary' className='block text-sm font-medium text-gray-700'>
-          (desired min monthly salary or payment)
+          desired min monthly salary or payment
         </label>
         <div className='mt-1 relative rounded-md shadow-sm'>
           <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none'>
@@ -94,7 +94,7 @@ export default function AboutMe ({ register, errors, saving, photoURL, handleUpl
             min='0'
             step='1'
             className='focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-14 pr-12 sm:text-sm border-gray-300 rounded-md shadow-sm '
-            {...register('salaryMin', { required: false })}
+            {...register('salaryMin', { required: true })}
           />
         </div>
         {errors.salaryMin && <div className='m-2 text-sm text-red-500'>min salary or payment cannot be null</div>}
