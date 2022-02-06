@@ -162,7 +162,7 @@ exports.updateJob = functions.firestore.document('jobs/{id}').onUpdate(async (ch
     { document: 'matches', fieldToSearch: 'job', valueToSearch: jobid, destinationField: 'jobData', latestObject: job }
   ]
   triggerList.forEach(triggerOnUpdate)
-
+})
 
 exports.sendMessage = functions.https.onCall(async ({ text, fcmToken }, ctx) => {
   if (!fcmToken) return { success: true }
