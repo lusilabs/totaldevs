@@ -63,8 +63,8 @@ function EditDevProfile ({ userDoc, ...props }) {
 
   useEffect(() => {
     setPhotoURL(userDoc.photoURL)
-    setSelectedStack(userDoc.stack ?? [])
-    setDropdownOptions(userDoc.stack?.map(name => ({ key: name, value: name, text: name })) ?? [])
+    // setSelectedStack(userDoc.stack ?? [])
+    // setDropdownOptions(userDoc.stack?.map(name => ({ key: name, value: name, text: name })) ?? [])
   }, [])
 
   const onSubmit = async data => {
@@ -130,12 +130,19 @@ function EditDevProfile ({ userDoc, ...props }) {
             {isEditing === 'experience' && <ProfileExperience register={register} errors={errors} />}
             {isEditing === 'projects' && <ProfileProjects register={register} errors={errors} />}
             {isEditing === 'education' && <ProfileEducation register={register} errors={errors} />}
-            <div className='px-4 py-3 text-right sm:px-6 mb-8'>
-              <Button disabled={saving} loading={saving} type='submit' color='green' fluid className='text-md'>
-                {saving && <span>saving</span>}
-                {!saving && <span>save</span>}
-              </Button>
-            </div>
+
+          </div>
+          <div className='px-4 py-3 text-right sm:px-6'>
+            <Button disabled={saving} loading={saving} type='submit' color='green' fluid className='text-md'>
+              {saving && <span>saving</span>}
+              {!saving && <span>save</span>}
+            </Button>
+          </div>
+
+          <div className='px-4 py-3 text-right sm:px-6 mb-8'>
+            <Button onClick={() => setIsEditing(false)} color='gray' fluid className='text-md'>
+              cancel
+            </Button>
           </div>
         </form>}
     </>

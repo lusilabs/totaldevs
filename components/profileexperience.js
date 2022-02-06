@@ -1,10 +1,13 @@
-function ProfileExperience () {
+function ProfileExperience ({ register, errors }) {
   return (
-    <div className='col-span-6 sm:col-span-6'>
-      <label htmlFor='stack' className='block text-sm font-medium text-gray-700'>
+
+    <div className='shadow overflow-hidden rounded-lg p-4 sm:p-6 grid grid-cols-6 gap-6'>
+
+      <div className='col-span-6 sm:col-span-6'>
+        <label htmlFor='stack' className='block text-sm font-medium text-gray-700'>
         tech stack
       </label>
-      <Dropdown
+        <Dropdown
         onChange={handleChange}
         onSearchChange={handleSearchChange}
         options={dropdownOptions}
@@ -15,6 +18,7 @@ function ProfileExperience () {
         selection
         search
       />
+      </div>
     </div>
 
   )
