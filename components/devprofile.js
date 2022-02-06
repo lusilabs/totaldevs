@@ -18,13 +18,6 @@ const biosByRole = {
 
 }
 
-const mergeSearchResults = (prev, names) => {
-  const prevNames = prev.map(({ value }) => value)
-  const dedupedNames = new Set([...prevNames, ...names])
-  const deduped = [...dedupedNames].map(name => ({ key: name, value: name, text: name }))
-  return deduped
-}
-
 const requiredFieldsByModule = {
   isAvailabilityComplete: ['impossible'],
   isAboutMeComplete: ['displayName', 'title', 'salaryMin', 'photoURL', 'englishLevel', 'bio', 'experienceYears', 'visibility', 'hasAcceptedTerms', 'jobSearch'],
@@ -35,45 +28,22 @@ const requiredFieldsByModule = {
 
 function EditDevProfile ({ userDoc, ...props }) {
   const [saving, setSaving] = useState(false)
-  const [photoURL, setPhotoURL] = useState(null)
-  const [searchQuery, setSearchQuery] = useState('')
-  const [selectedStack, setSelectedStack] = useState([])
-  const [dropdownOptions, setDropdownOptions] = useState([])
   const [isEditing, setIsEditing] = useState(false)
-
-  const handleSearchChange = async (e, { searchQuery: query }) => setSearchQuery(query)
-  const handleChange = (e, { value }) => {
-    setSelectedStack(value)
-  }
-  const fetchAndSetDropdownOptions = async url => {
-    const response = await fetch(url)
-    const { items } = await response.json()
-    if (items && items.length > 0) {
-      setDropdownOptions(prev => mergeSearchResults(prev, items.map(({ name }) => name)))
-    }
-  }
-
-  useEffect(() => {
-    const searchURL = `https://api.stackexchange.com/2.3/tags?pagesize=25&order=desc&sort=popular&inname=${searchQuery}&site=stackoverflow`
-    const timer = setTimeout(() => {
-      if (searchQuery !== '') fetchAndSetDropdownOptions(searchURL)
-    }, 300)
-    return () => clearTimeout(timer)
-  }, [searchQuery])
+  const [photoURL, setPhotoURL] = useState(null)
+  const [jobs, setJobs] = useState([])
+  const [projects, setProjects] = useState([])
+  const [degrees, setDegrees] = useState([])
 
   useEffect(() => {
     setPhotoURL(userDoc.photoURL)
-    // setSelectedStack(userDoc.stack ?? [])
-    // setDropdownOptions(userDoc.stack?.map(name => ({ key: name, value: name, text: name })) ?? [])
+    setDegrees(userDoc.degrees ?? [])
+    setProjects(userDoc.projects ?? [])
+    setJobs(userDoc.jobs ?? [])
   }, [])
 
   const onSubmit = async data => {
     if (data.visibility === 'public' && !photoURL) {
       toast.error('please upload a photo if your profile is public')
-      return
-    }
-    if (selectedStack.length === 0) {
-      toast.error('please select at least 1 technology')
       return
     }
     setSaving(true)
@@ -85,8 +55,10 @@ function EditDevProfile ({ userDoc, ...props }) {
     const uref = doc(db, 'users', userDoc.uid)
     await setDoc(uref, {
       ...data,
-      stack: selectedStack,
       photoURL,
+      jobs,
+      projects,
+      degrees,
       profileComplete
     }, { merge: true })
 
@@ -95,7 +67,9 @@ function EditDevProfile ({ userDoc, ...props }) {
       ...data,
       email: userDoc.email,
       photoURL,
-      stack: selectedStack,
+      jobs,
+      projects,
+      degrees,
       profileComplete
     }, { merge: true })
     toast.success('profile saved successfully.')
@@ -117,21 +91,18 @@ function EditDevProfile ({ userDoc, ...props }) {
     })
   }
 
-  console.log(watch(['displayName', 'title', 'bio', 'githubURI', 'linkedInURI', 'websiteURL', 'photoURL', 'visibility', 'jobSearch', 'hasAcceptedTerms']))
+  // console.log(watch(['displayName', 'title', 'bio', 'githubURI', 'linkedInURI', 'websiteURL', 'photoURL', 'visibility', 'jobSearch', 'hasAcceptedTerms']))
 
   return (
     <>
       {!isEditing && <DevProfileDisplay userDoc={userDoc} {...props} setIsEditing={setIsEditing} />}
       {isEditing &&
         <form onSubmit={handleSubmit(onSubmit)}>
-          <div className='m-4 md:col-span-2 shadow-xl'>
-            {isEditing === 'availability' && <ProfileAvailability register={register} errors={errors} />}
-            {isEditing === 'about' && <AboutMe register={register} errors={errors} photoURL={photoURL} handleUploadPhoto={handleUploadPhoto} />}
-            {isEditing === 'experience' && <ProfileExperience register={register} errors={errors} />}
-            {isEditing === 'projects' && <ProfileProjects register={register} errors={errors} />}
-            {isEditing === 'education' && <ProfileEducation register={register} errors={errors} />}
-
-          </div>
+          {isEditing === 'availability' && <ProfileAvailability register={register} errors={errors} />}
+          {isEditing === 'about' && <AboutMe register={register} errors={errors} photoURL={photoURL} handleUploadPhoto={handleUploadPhoto} />}
+          {isEditing === 'experience' && <ProfileExperience register={register} errors={errors} jobs={jobs} setJobs={setJobs} />}
+          {isEditing === 'projects' && <ProfileProjects register={register} errors={errors} projects={projects} setProjects={setProjects} />}
+          {isEditing === 'education' && <ProfileEducation register={register} errors={errors} degrees={degrees} setDegrees={setDegrees} />}
           <div className='px-4 py-3 text-right sm:px-6'>
             <Button disabled={saving} loading={saving} type='submit' color='green' fluid className='text-md'>
               {saving && <span>saving</span>}
