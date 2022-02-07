@@ -31,7 +31,7 @@ function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
 
   const { jobID } = router.query
   const { register, handleSubmit, watch, formState: { errors }, reset } = useForm({ defaultValues: jobDoc })
-  const [matches, _, __] = useDocuments({
+  const [matches, _ml, _mr, setMatches] = useDocuments({
     docs: 'matches',
     queryConstraints: [
       where('job', '==', jobID),

@@ -111,7 +111,7 @@ function EditDevProfile ({ userDoc, ...props }) {
           </div>
 
           <div className='px-4 py-3 text-right sm:px-6 mb-8'>
-            <Button onClick={() => setIsEditing(false)} color='gray' fluid className='text-md'>
+            <Button onClick={() => setIsEditing(false)} fluid className='text-md'>
               cancel
             </Button>
           </div>
