@@ -2,6 +2,7 @@ import { useForm } from 'react-hook-form'
 import { Button, Dropdown } from 'semantic-ui-react'
 import React, { useState, useEffect } from 'react'
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
+import Assignments from '@/components/matches/assignments'
 import { storage, db } from '@/utils/config'
 import { useDocuments } from '@/utils/hooks'
 import { doc, setDoc, addDoc, collection, getDoc, where } from 'firebase/firestore'
@@ -31,7 +32,7 @@ function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
 
   const { jobID } = router.query
   const { register, handleSubmit, watch, formState: { errors }, reset } = useForm({ defaultValues: jobDoc })
-  const [matches, _, __] = useDocuments({
+  const [matches, _, __, setMatches] = useDocuments({
     docs: 'matches',
     queryConstraints: [
       where('job', '==', jobID),
