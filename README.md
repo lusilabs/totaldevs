@@ -289,6 +289,12 @@ return <div className={`bg-${bgColor}`} />
 As bg-white never appears in its entirety it will be purged.
 
 In my case this was not the problem. It seemed to be a problem with the glob selector
+### npm run dev not starting
+`sudo lsof -ti:3000`
+
+when running `kill -9 <pid>` we get 'operation not permitted', usually because of a running background node instance.
+
+`sudo pkill node`
 
 #### npm ci && npm run build failing
 ```

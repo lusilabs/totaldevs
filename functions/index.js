@@ -104,7 +104,7 @@ exports.handleMatchDoc = functions.firestore.document('matches/{matchID}').onWri
         url: '/projects',
         email: 'devEmail',
         emailText: 'visit https://totaldevs.com/projects to view your match!',
-        emailSubject: 'you just got a job offer! 🤩'
+        emailSubject: 'you just got a new job match! 🤩'
       },
       dev_interested: {
         role: 'company',
@@ -286,3 +286,4 @@ exports.sendMessage = functions.https.onCall(async ({ text, fcmToken }, ctx) => 
     return { error: error.code }
   })
 })
+
