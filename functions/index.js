@@ -1,5 +1,7 @@
 const functions = require('firebase-functions')
 const admin = require('firebase-admin')
+const fetch = require('node-fetch')
+
 admin.initializeApp()
 const logger = functions.logger
 const config = functions.config()
@@ -162,16 +164,12 @@ exports.updateJob = functions.firestore.document('jobs/{id}').onUpdate(async (ch
     { document: 'matches', fieldToSearch: 'job', valueToSearch: jobid, destinationField: 'jobData', latestObject: job }
   ]
   triggerList.forEach(triggerOnUpdate)
+})
 
-
-exports.sendMessage = functions.https.onCall(async ({ text, fcmToken }, ctx) => {
-  if (!fcmToken) return { success: true }
-  const payload = { data: text, notification: { title: text, body: text }, token: fcmToken }
-  console.log(payload)
-  return await admin.messaging().send(payload).then((response) => {
-    console.log('message sent', response)
-    return { success: true }
+exports.verifyUrl = functions.https.onCall(async ({ url }, ctx) => {
+  return await fetch(url).then((response) => {
+    return { success: response.status === 200 }
   }).catch((error) => {
-    return { error: error.code }
+    return { error }
   })
 })

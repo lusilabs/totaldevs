@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { Fragment, useState, useEffect } from 'react'
 import { Disclosure, Menu, Transition } from '@headlessui/react'
 import { BellIcon, CurrencyDollarIcon } from '@heroicons/react/outline'
+import PendingBanners from '@/components/pendingbanners'
 
 function classNames (...classes) {
   return classes.filter(Boolean).join(' ')
@@ -122,6 +123,7 @@ function Header ({ user, userDoc, navigation, userNavigation, logoHref = '/', ..
           </>
         )}
       </Disclosure>
+      <PendingBanners {...{ userDoc, ...props }} />
     </>
   )
 }

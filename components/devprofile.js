@@ -3,11 +3,14 @@ import { Button, Dropdown } from 'semantic-ui-react'
 import React, { useState, useEffect } from 'react'
 import sleep from '@/utils/misc'
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
-import { storage, db } from '@/utils/config'
+import { storage, db, functions } from '@/utils/config'
 import { doc, setDoc } from 'firebase/firestore'
+import { httpsCallable } from 'firebase/functions'
 import { toast } from 'react-toastify'
 import DevProfileDisplay from '@/components/devprofiledisplay'
 import Link from 'next/link'
+
+const verifyUrl = httpsCallable(functions, 'verifyUrl')
 
 const mergeSearchResults = (prev, names) => {
   const prevNames = prev.map(({ value }) => value)
@@ -86,6 +89,7 @@ function EditDevProfile ({ userDoc, ...props }) {
       visibility: data.visibility,
       jobSearch: data.jobSearch,
       hasAcceptedTerms: data.hasAcceptedTerms,
+      calendlyUrl: data.calendlyUrl,
       resumeURL,
       photoURL,
       resumeName,
@@ -105,6 +109,7 @@ function EditDevProfile ({ userDoc, ...props }) {
       linkedInURI: data.linkedInURI,
       websiteURL: data.websiteURL,
       visibility: data.visibility,
+      calendlyUrl: data.calendlyUrl,
       photoURL,
       resumeURL,
       email: userDoc.email,
@@ -131,8 +136,10 @@ function EditDevProfile ({ userDoc, ...props }) {
       englishLevel: userDoc.englishLevel,
       experienceYears: userDoc.experienceYears,
       remoteExperienceYears: userDoc.remoteExperienceYears,
-      hasAcceptedTerms: userDoc.hasAcceptedTerms
-    }
+      hasAcceptedTerms: userDoc.hasAcceptedTerms,
+      calendlyUrl: userDoc.calendlyUrl
+    },
+    reValidateMode: 'onSubmit'
   })
 
   const handleUploadPhoto = e => {
@@ -242,6 +249,28 @@ function EditDevProfile ({ userDoc, ...props }) {
                     <option value='dev ops'>dev ops</option>
 
                   </select>
+                </div>
+
+                <div className='col-span-6 sm:col-span-3'>
+                  <label htmlFor='displayName' className='block text-sm font-medium text-gray-700'>
+                    calendly url
+                  </label>
+                  <input
+                    type='text'
+                    id='calendlyUrl'
+                    name='calendlyUrl'
+                    placeholder=''
+                    className='mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
+                    {...register('calendlyUrl', {
+                      required: false,
+                      validate: async (url) => {
+                        if (!url) return true
+                        const { data: { success } } = await verifyUrl({ url })
+                        return success
+                      }
+                    })}
+                  />
+                  {errors.calendlyUrl && <div className='m-2 text-sm text-red-500'>url provided is not valid</div>}
                 </div>
 
                 <div className='col-span-6 sm:col-span-6 items-center'>
@@ -546,7 +575,7 @@ function EditDevProfile ({ userDoc, ...props }) {
                     <div className='w-0 flex-1 flex items-center'>
                       {resumeName && <> <svg className='flex-shrink-0 h-5 w-5 text-gray-400' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='currentColor' aria-hidden='true'>
                         <path fillRule='evenodd' d='M8 4a3 3 0 00-3 3v4a5 5 0 0010 0V7a1 1 0 112 0v4a7 7 0 11-14 0V7a5 5 0 0110 0v4a3 3 0 11-6 0V7a1 1 0 012 0v4a1 1 0 102 0V7a3 3 0 00-3-3z' clipRule='evenodd' />
-                                        </svg>
+                      </svg>
                         <span className='ml-2 flex-1 w-0 truncate'>
                           {resumeName}
                         </span>
@@ -558,7 +587,7 @@ function EditDevProfile ({ userDoc, ...props }) {
                             view
                           </a>
                         </div>
-                                     </>}
+                      </>}
                     </div>
                   </div>
                   <div className='mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md'>
@@ -617,7 +646,7 @@ function EditDevProfile ({ userDoc, ...props }) {
             </div>
           </div>
         </form>
-                    </div>}
+      </div>}
     </>
   )
 }
