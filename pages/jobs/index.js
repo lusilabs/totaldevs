@@ -9,13 +9,14 @@ import { db } from '@/utils/config'
 import { useDocuments } from '@/utils/hooks'
 import Link from 'next/link'
 import CreateButton from '@/components/createbutton'
+import { map } from 'next-pwa/cache'
 
 function JobList ({ userDoc, ...props }) {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(true)
-  const [matchesMap, setMatchesMap] = useState({})
-  const [jobs, jobsLoaded, _, setJobs] = useDocuments({ docs: 'jobs', queryConstraints: [where('uid', '==', userDoc.uid)] }, [userDoc.uid])
-  const [matches, matchesLoaded, __, setMatches] = useDocuments({
+  const [assignmentMap, setAssignmentMap] = useState({})
+  const [jobs, jobsLoaded, _jr, _sj] = useDocuments({ docs: 'jobs', queryConstraints: [where('uid', '==', userDoc.uid)] }, [userDoc.uid])
+  const [matches, matchesLoaded, _mr, _sm] = useDocuments({
     docs: 'matches',
     queryConstraints: [
       where('company', '==', userDoc.uid),
