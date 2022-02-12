@@ -19,10 +19,10 @@ const biosByRole = {
 
 const requiredFieldsByModule = {
   isAvailabilityComplete: ['calendlyURL', 'title', 'jobSearch', 'salaryMin'],
-  isAboutMeComplete: ['displayName', 'photoURL', 'englishLevel', 'bio', 'experienceYears', 'visibility', 'hasAcceptedTerms'],
-  isExperienceComplete: [],
-  isProjectsComplete: ['impossible'],
-  isEducationComplete: ['impossible']
+  isAboutMeComplete: ['displayName', 'englishLevel', 'bio', 'experienceYears', 'visibility', 'hasAcceptedTerms'],
+  isExperienceComplete: [], // empty means that if it passes onSubmit then it is alright (we use 'required' inside components)
+  isProjectsComplete: [],
+  isEducationComplete: []
 }
 
 function EditDevProfile ({ userDoc, ...props }) {
@@ -45,18 +45,23 @@ function EditDevProfile ({ userDoc, ...props }) {
       toast.error('please upload a photo if your profile is public')
       return
     }
-    for (const [key, fields] of Object.entries(requiredFieldsByModule)) {
-      data[key] = fields.every(f => data[f])
-    }
-    if (jobs.length < 1) {
+    if (isEditing === 'experience' && jobs.length < 1) {
       toast.error('add at least 1 job')
       return
     }
-    if (jobs.some(job => job.activities.length < 1 || job.activities.some(a => !a))) {
+    if (isEditing === 'experience' && jobs.some(job => job.activities.length < 1 || job.activities.some(a => !a))) {
       toast.error('add at least 1 activity to every job')
       return
     }
-    const profileComplete = data.isProjectsComplete && data.isExperienceComplete && data.isAvailabilityComplete && data.isEducationComplete && data.isAboutMeComplete
+    if (isEditing === 'projects' && projects.length < 1) {
+      toast.error('add at least 1 project')
+      return
+    }
+    for (const [key, fields] of Object.entries(requiredFieldsByModule)) {
+      if (key.toLowerCase().includes(isEditing)) data[key] = fields.every(f => data[f])
+    }
+    const isProfileComplete = !!(data.isProjectsComplete && data.isExperienceComplete && data.isAvailabilityComplete && data.isEducationComplete && data.isAboutMeComplete)
+    console.log({ isProfileComplete })
     setSaving(true)
     await sleep(2000)
     const uref = doc(db, 'users', userDoc.uid)
@@ -66,7 +71,7 @@ function EditDevProfile ({ userDoc, ...props }) {
       jobs,
       projects,
       degrees,
-      profileComplete
+      isProfileComplete
     }, { merge: true })
 
     const pref = doc(db, 'profiles', userDoc.uid)
@@ -77,7 +82,7 @@ function EditDevProfile ({ userDoc, ...props }) {
       jobs,
       projects,
       degrees,
-      profileComplete
+      isProfileComplete
     }, { merge: true })
     toast.success('profile saved successfully.')
     setSaving(false)

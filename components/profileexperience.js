@@ -43,16 +43,19 @@ export default function ProfileExperience ({ jobs, setJobs }) {
     }
     setJobs(jobsClone)
   }
+
   const handleAddNewJob = () => {
     setJobs(js => [...js, { stack: [], activities: [''] }])
     setDropdownOptions(p => [...p, []])
   }
+
   const handleRemoveJob = (e, ix) => {
     e.preventDefault()
     const jobsClone = [...jobs]
     jobsClone.splice(ix, 1)
     setJobs(jobsClone)
   }
+
   const handleAddNewActivity = (e, ix) => {
     e.preventDefault()
     const jobsClone = [...jobs]
