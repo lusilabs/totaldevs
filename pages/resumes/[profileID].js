@@ -11,7 +11,7 @@ const TotalResume = () => {
     setProfileID(profileID)
   })
   return (
-    <div className='m-6'>
+    <div className='m-6 max-w-xl'>
       <AboutMeSection profileDoc={profileDoc} />
       <hr />
       <ExperienceSection profileDoc={profileDoc} />
