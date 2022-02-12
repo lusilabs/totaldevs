@@ -6,7 +6,7 @@ export default function Devs () {
   const queryConstraints = [
     where('role', '==', 'dev')
   ]
-  const [documents] = useDocuments({ docs: 'users', queryConstraints })
+  const [documents, _dl, _dr, _sd] = useDocuments({ docs: 'users', queryConstraints })
   return (
     <div className='flex flex-col m-2 md:m-8 xl:m-16 '>
       <div className='-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8'>
@@ -100,7 +100,7 @@ export default function Devs () {
                         <a href={doc.resumeURL} target='blank' className='font-medium text-indigo-600 hover:text-indigo-500'>
                           view
                         </a>
-                                        </div>}
+                      </div>}
                       {!doc.resumeURL && <span>no resume</span>}
                     </td>
 
