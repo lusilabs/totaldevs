@@ -1,6 +1,7 @@
 import { useDocument } from '@/utils/hooks'
 import { useRouter } from 'next/router'
 import { useState, useEffect } from 'react'
+import { SuspensePlaceholders } from '@/components/suspense'
 
 const TotalResume = () => {
   const [profileID, setProfileID] = useState()
@@ -11,6 +12,9 @@ const TotalResume = () => {
     setProfileID(profileID)
   })
   return (
+    <>
+    {!profileLoaded && <SuspensePlaceholders />}
+    {profileLoaded && profileDoc.isProfileComplete && 
     <div className='m-6 max-w-xl'>
       <AboutMeSection profileDoc={profileDoc} />
       <hr />
@@ -20,7 +24,9 @@ const TotalResume = () => {
       <hr />
       {profileDoc.degrees?.length > 1 && <EducationSection profileDoc={profileDoc} />}
     </div>
-
+    }
+    {profileLoaded && !profileDoc.isProfileComplete && <h1> Under construction... </h1>}
+    </>
   )
 }
 

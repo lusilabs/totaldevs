@@ -28,8 +28,8 @@ function Dashboard ({ userDoc, setIsPageLoading, ...props }) {
       toast.warn('link expired, redirecting...')
       handleDevStripeOnboarding(userDoc)
     }
-    setIsProfileBannerActive(!userDoc.profileComplete)
-    setIsStripeBannerActive(userDoc.profileComplete && !stripe_redirect_success && !userDoc.stripeVerified)
+    setIsProfileBannerActive(!userDoc.isProfileComplete)
+    setIsStripeBannerActive(userDoc.isProfileComplete && !stripe_redirect_success && !userDoc.stripeVerified)
     setIsInviteBannerActive(userDoc.numInvitesLeft > 0)
   }, [])
 
