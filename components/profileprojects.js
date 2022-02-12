@@ -103,7 +103,7 @@ export default function ProfileProjects ({ projects, setProjects }) {
             />
           </div>
 
-          <div className='col-span-6 sm:col-span-2'>
+          <div className='col-span-3 sm:col-span-2'>
             <label htmlFor='projectURL' className='block text-sm font-medium text-gray-700'>
               (project url)
             </label>
@@ -114,6 +114,22 @@ export default function ProfileProjects ({ projects, setProjects }) {
               placeholder=''
               autoComplete='given-projectURL'
               defaultValue={p.projectURL}
+              className='mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
+              onChange={e => handleFieldChange(e, ix)}
+            />
+          </div>
+
+          <div className='col-span-3 sm:col-span-2'>
+            <label htmlFor='projectRepoURL' className='block text-sm font-medium text-gray-700'>
+              (project repo url)
+            </label>
+            <input
+              type='text'
+              id='projectRepoURL'
+              name='projectRepoURL'
+              placeholder=''
+              autoComplete='given-projectRepoURL'
+              defaultValue={p.projectRepoURL}
               className='mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
               onChange={e => handleFieldChange(e, ix)}
             />

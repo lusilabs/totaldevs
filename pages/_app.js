@@ -51,6 +51,11 @@ const anonRoutes = [
   '/jobs/add?signup=true&convert=false'
 ]
 
+const regexAnonRoutes = [
+  // be very careful adding routes here!
+  /^\/resumes\/*/g
+]
+
 const pageNavigationByRole = {
   dev: [
     { name: 'matches', href: '/projects', current: false },
@@ -108,7 +113,7 @@ function MyApp ({ Component, pageProps }) {
   const [navigation, setNavigation] = useState(anonNavigation)
   const [userNavigation, setUserNavigation] = useState(anonUserNavigation)
   const router = useRouter()
-  const onAnonRoutes = anonRoutes.includes(router.asPath)
+  const onAnonRoutes = anonRoutes.includes(router.asPath) || regexAnonRoutes.some(regex => regex.test(router.asPath))
   const onAdminRoutes = router.pathname.includes('admin')
   const [isPageLoading, setIsPageLoading] = useState(false)
   const [profiles, setProfiles] = useState([])

@@ -42,15 +42,15 @@ export default function ProfileEducation ({ degrees, setDegrees }) {
             <div className='text-sm font-medium text-gray-500'>#{ix + 1}</div>
           </div>
 
-          <div className='col-span-2 sm:col-span-2'>
+          <div className='col-span-6 sm:col-span-2'>
             <label htmlFor='degreeName' className='block text-sm font-medium text-gray-700'>
-              degree name
+              degree and field of study
             </label>
             <input
               type='text'
               id='degreeName'
               name='degreeName'
-              placeholder='BSc Computer Science'
+              placeholder='BSc. Computer Science'
               autoComplete='given-degreeName'
               defaultValue={d.degreeName}
               required
@@ -59,24 +59,40 @@ export default function ProfileEducation ({ degrees, setDegrees }) {
             />
           </div>
 
-          <div className='col-span-3 sm:col-span-2'>
-            <label htmlFor='university' className='block text-sm font-medium text-gray-700'>
-              university
+          <div className='col-span-6 sm:col-span-2'>
+            <label htmlFor='universityName' className='block text-sm font-medium text-gray-700'>
+              university name
             </label>
             <input
               type='text'
-              id='university'
-              name='university'
+              id='universityName'
+              name='universityName'
               placeholder=''
-              autoComplete='given-university'
-              defaultValue={d.university}
+              autoComplete='given-universityName'
+              defaultValue={d.universityName}
               required
               className='mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
               onChange={e => handleFieldChange(e, ix)}
             />
           </div>
 
-          <div className='col-span-1 sm:col-span-1'>
+          <div className='col-span-3 sm:col-span-2'>
+            <label htmlFor='universityURL' className='block text-sm font-medium text-gray-700'>
+              (university url)
+            </label>
+            <input
+              type='text'
+              id='universityURL'
+              name='universityURL'
+              placeholder=''
+              autoComplete='given-universityURL'
+              defaultValue={d.universityURL}
+              className='mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
+              onChange={e => handleFieldChange(e, ix)}
+            />
+          </div>
+
+          <div className='col-span-3 sm:col-span-2'>
             <label htmlFor='endYear' className='block text-sm font-medium text-gray-700'>
               end year
             </label>

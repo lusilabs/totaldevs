@@ -61,7 +61,6 @@ function EditDevProfile ({ userDoc, ...props }) {
       if (key.toLowerCase().includes(isEditing)) data[key] = fields.every(f => data[f])
     }
     const isProfileComplete = !!(data.isProjectsComplete && data.isExperienceComplete && data.isAvailabilityComplete && data.isEducationComplete && data.isAboutMeComplete)
-    console.log({ isProfileComplete })
     setSaving(true)
     await sleep(2000)
     const uref = doc(db, 'users', userDoc.uid)
