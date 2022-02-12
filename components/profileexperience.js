@@ -11,29 +11,42 @@ const mergeSearchResults = (prev, names) => {
 }
 
 export default function ProfileExperience ({ jobs, setJobs }) {
-  const [dropdownOptions, setDropdownOptions] = useState([])
-  const [searchQuery, setSearchQuery] = useState('')
+  const [dropdownOptions, setDropdownOptions] = useState(jobs.map(j => j.stack?.map(name => ({ key: name, value: name, text: name })) ?? []))
+  const [searchQuery, setSearchQuery] = useState(['', 0])
 
-  const fetchAndSetDropdownOptions = async url => {
+  const fetchAndSetDropdownOptions = async (url, ix) => {
     const response = await fetch(url)
     const { items } = await response.json()
-    if (items && items.length > 0) setDropdownOptions(prev => mergeSearchResults(prev, items.map(({ name }) => name)))
+    if (items && items.length > 0) {
+      const dropdownOptionsClone = [...dropdownOptions]
+      const prev = dropdownOptionsClone[ix]
+      const next = mergeSearchResults(prev, items.map(({ name }) => name))
+      dropdownOptionsClone[ix] = next
+      setDropdownOptions(dropdownOptionsClone)
+    }
   }
 
   useEffect(() => {
-    const searchURL = `https://api.stackexchange.com/2.3/tags?pagesize=25&order=desc&sort=popular&inname=${searchQuery}&site=stackoverflow`
+    const searchURL = `https://api.stackexchange.com/2.3/tags?pagesize=25&order=desc&sort=popular&inname=${searchQuery[0]}&site=stackoverflow`
     const timer = setTimeout(() => {
-      if (searchQuery !== '') fetchAndSetDropdownOptions(searchURL)
+      if (searchQuery[0] !== '') fetchAndSetDropdownOptions(searchURL, searchQuery[1])
     }, 300)
     return () => clearTimeout(timer)
   }, [searchQuery])
 
-  const handleFieldChange = (e, ix) => {
+  const handleFieldChange = (e, ix, aix) => {
     const jobsClone = [...jobs]
-    jobsClone[ix][e.target.id] = e.target.value
+    if (e.target.id === 'activity') {
+      jobsClone[ix].activities[aix] = e.target.value
+    } else {
+      jobsClone[ix][e.target.id] = e.target.value
+    }
     setJobs(jobsClone)
   }
-  const handleAddNewJob = () => setJobs(js => [...js, { stack: [], activities: [''] }])
+  const handleAddNewJob = () => {
+    setJobs(js => [...js, { stack: [], activities: [''] }])
+    setDropdownOptions(p => [...p, []])
+  }
   const handleRemoveJob = (e, ix) => {
     e.preventDefault()
     const jobsClone = [...jobs]
@@ -54,7 +67,7 @@ export default function ProfileExperience ({ jobs, setJobs }) {
     setJobs(jobsClone)
   }
 
-  const handleSearchChange = async (e, { searchQuery: query }, ix) => setSearchQuery(query)
+  const handleSearchChange = async (e, { searchQuery: query }, ix) => setSearchQuery([query, ix])
   const handleChange = (e, { value }, ix) => {
     const jobsClone = [...jobs]
     jobsClone[ix].stack = value
@@ -69,16 +82,17 @@ export default function ProfileExperience ({ jobs, setJobs }) {
       {jobs.length > 0 && jobs.map((j, ix) =>
 
         <div key={ix} className='relative m-4 p-4 md:m-6 md:p-6 rounded-lg overflow-hidden shadow grid grid-cols-6 gap-6 pb-12'>
+          <div className='text-sm font-medium text-gray-500'>#{ix + 1}</div>
           <div className='col-span-6 sm:col-span-6'>
             <label htmlFor='stack' className='block text-sm font-medium text-gray-700'>
               tech stack used
             </label>
             <Dropdown
-              options={dropdownOptions}
+              options={dropdownOptions[ix] ?? []}
               onChange={(e, v) => handleChange(e, v, ix)}
               onSearchChange={(e, v) => handleSearchChange(e, v, ix)}
-              searchQuery={searchQuery}
-              value={jobs[ix].stack}
+              searchQuery={searchQuery[0]}
+              value={j.stack}
               fluid
               multiple
               selection
@@ -96,7 +110,7 @@ export default function ProfileExperience ({ jobs, setJobs }) {
               name='fromYear'
               placeholder=''
               autoComplete='given-fromYear'
-              defaultValue={jobs[ix].fromYear}
+              defaultValue={j.fromYear}
               required
               className='mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
               onChange={e => handleFieldChange(e, ix)}
@@ -113,7 +127,7 @@ export default function ProfileExperience ({ jobs, setJobs }) {
               name='toYear'
               placeholder=''
               autoComplete='given-toYear'
-              defaultValue={jobs[ix].toYear}
+              defaultValue={j.toYear}
               required
               className='mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
               onChange={e => handleFieldChange(e, ix)}
@@ -130,7 +144,7 @@ export default function ProfileExperience ({ jobs, setJobs }) {
               name='companyURL'
               placeholder=''
               autoComplete='given-companyURL'
-              defaultValue={jobs[ix].companyURL}
+              defaultValue={j.companyURL}
               className='mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
               onChange={e => handleFieldChange(e, ix)}
             />
@@ -146,7 +160,7 @@ export default function ProfileExperience ({ jobs, setJobs }) {
               name='role'
               placeholder=''
               autoComplete='given-role'
-              defaultValue={jobs[ix].role}
+              defaultValue={j.role}
               required
               className='mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
               onChange={e => handleFieldChange(e, ix)}
@@ -163,24 +177,25 @@ export default function ProfileExperience ({ jobs, setJobs }) {
               name='companyName'
               placeholder=''
               autoComplete='given-companyName'
-              defaultValue={jobs[ix].companyName}
+              defaultValue={j.companyName}
               required
               className='mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
               onChange={e => handleFieldChange(e, ix)}
             />
           </div>
 
-          {((jobs[ix].activities && jobs[ix].activities.length === 0) || !jobs[ix].activities) && <div className='col-span-6 text-sm text-red-400'>(please add activities)</div>}
-          {jobs[ix].activities && jobs[ix].activities.length > 0 && jobs[ix].activities.map((a, aix) =>
+          {((j.activities && j.activities.length === 0) || !j.activities) && <div className='col-span-6 text-sm text-red-400'>(please add activities)</div>}
+          {j.activities && j.activities.length > 0 && j.activities.map((a, aix) =>
             <div className='col-span-6' key={aix}>
               <label htmlFor='toYear' className='block text-sm font-medium text-gray-700'>
                 description of activity {aix + 1}
               </label>
               <textarea
-                id='activity1'
-                name='activity1'
+                id='activity'
+                name='activity'
                 rows={3}
                 onChange={e => handleFieldChange(e, ix, aix)}
+                defaultValue={j.activities[aix]}
                 className='shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block w-full sm:text-sm border border-gray-300 rounded-md'
               />
               <button

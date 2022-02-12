@@ -135,6 +135,45 @@ export default function AboutMe ({ register, errors, saving, photoURL, handleUpl
           </div>
         </div>
 
+        <div className='col-span-6 sm:col-span-3 items-center'>
+          <label htmlFor='visibility' className='block text-sm font-medium text-gray-700 p-2'>
+            landing page visibility
+          </label>
+          <div className='flex flex-col'>
+
+            <div>
+              <input
+                {...register('visibility', { required: true })}
+                id='public'
+                name='visibility'
+                type='radio'
+                value='public'
+                required
+                className='ml-1 h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded'
+              />
+              <label htmlFor='public' className='ml-2 text-md text-gray-700'>
+                public
+              </label>
+            </div>
+
+            <div>
+              <input
+                {...register('visibility', { required: true })}
+                id='private'
+                name='visibility'
+                type='radio'
+                value='private'
+                className='ml-1 h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded'
+              />
+              <label htmlFor='private' className='ml-2 text-md text-gray-700'>
+                private
+              </label>
+            </div>
+
+          </div>
+
+        </div>
+
         <div className='col-span-6'>
           <label htmlFor='bio' className='block text-sm font-medium text-gray-700'>
             about me

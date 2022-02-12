@@ -18,9 +18,9 @@ const biosByRole = {
 }
 
 const requiredFieldsByModule = {
-  isAvailabilityComplete: ['impossible'],
-  isAboutMeComplete: ['displayName', 'title', 'salaryMin', 'photoURL', 'englishLevel', 'bio', 'experienceYears', 'visibility', 'hasAcceptedTerms', 'jobSearch'],
-  isExperienceComplete: ['impossible'],
+  isAvailabilityComplete: ['calendlyURL', 'title', 'jobSearch', 'salaryMin'],
+  isAboutMeComplete: ['displayName', 'photoURL', 'englishLevel', 'bio', 'experienceYears', 'visibility', 'hasAcceptedTerms'],
+  isExperienceComplete: [],
   isProjectsComplete: ['impossible'],
   isEducationComplete: ['impossible']
 }
@@ -41,7 +41,6 @@ function EditDevProfile ({ userDoc, ...props }) {
   }, [])
 
   const onSubmit = async data => {
-    console.log({ data })
     if (data.visibility === 'public' && !photoURL) {
       toast.error('please upload a photo if your profile is public')
       return
@@ -49,11 +48,11 @@ function EditDevProfile ({ userDoc, ...props }) {
     for (const [key, fields] of Object.entries(requiredFieldsByModule)) {
       data[key] = fields.every(f => data[f])
     }
-    if (data.jobs.length < 1) {
+    if (jobs.length < 1) {
       toast.error('add at least 1 job')
       return
     }
-    if (data.jobs.some(job => job.activities.length < 1 || job.activities.some(a => !a))) {
+    if (jobs.some(job => job.activities.length < 1 || job.activities.some(a => !a))) {
       toast.error('add at least 1 activity to every job')
       return
     }

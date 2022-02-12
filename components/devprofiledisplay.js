@@ -54,7 +54,7 @@ export default function DevProfileDisplay ({ userDoc, setIsEditing, readOnly, se
           <div className=' px-4 py-5 flex justify-between items-center'>
             <div className='flex items-center'>
               <i className='fa fa-calendar' aria-hidden='true' />
-              <dt className='ml-4 text-lg font-medium text-gray-500'>availability</dt>
+              <dt className='ml-4 text-lg font-medium text-gray-500'>preferences and availability</dt>
             </div>
             <div className='flex items-center'>
               {!userDoc.isAvailabilityComplete && <i className='mr-4 fa fa-exclamation-triangle text-yellow-300' aria-hidden='true' />}

@@ -1,7 +1,6 @@
 function ProfileAvailability ({ register, errors }) {
   return (
-
-    <div className='shadow overflow-hidden rounded-lg p-4 sm:p-6 grid grid-cols-6 gap-6'>
+    <div className='shadow overflow-hidden rounded-lg p-4 sm:p-6 grid grid-cols-6 gap-6 m-4'>
 
       <div className='col-span-6 sm:col-span-6'>
         <label htmlFor='displayName' className='block text-sm font-medium text-gray-700'>
@@ -60,7 +59,7 @@ function ProfileAvailability ({ register, errors }) {
       </div>
 
       <div className='col-span-6 sm:col-span-3 items-center content-start'>
-        <label htmlFor='visibility' className='block text-sm font-medium text-gray-700 p-2'>
+        <label htmlFor='jobSearch' className='block text-sm font-medium text-gray-700 p-2'>
           job search
         </label>
 
