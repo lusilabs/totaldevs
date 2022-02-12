@@ -33,10 +33,24 @@ export default function ProfileExperience ({ jobs, setJobs }) {
     jobsClone[ix][e.target.id] = e.target.value
     setJobs(jobsClone)
   }
-  const handleAddNewJob = () => setJobs(js => [...js, { stack: [] }])
-  const handleAddNewActivity = ix => {
+  const handleAddNewJob = () => setJobs(js => [...js, { stack: [], activities: [''] }])
+  const handleRemoveJob = (e, ix) => {
+    e.preventDefault()
+    const jobsClone = [...jobs]
+    jobsClone.splice(ix, 1)
+    setJobs(jobsClone)
+  }
+  const handleAddNewActivity = (e, ix) => {
+    e.preventDefault()
     const jobsClone = [...jobs]
     jobsClone[ix].activities = [...(jobsClone[ix].activities ?? []), '']
+    setJobs(jobsClone)
+  }
+
+  const handleRemoveActivity = (e, jix, aix) => {
+    e.preventDefault()
+    const jobsClone = [...jobs]
+    jobsClone[jix].activities.splice(aix, 1)
     setJobs(jobsClone)
   }
 
@@ -51,7 +65,7 @@ export default function ProfileExperience ({ jobs, setJobs }) {
     <div>
       <h3 className='text-gray-500 m-4 p-4'>jobs</h3>
 
-      {jobs.length === 0 && <div className='text-gray-500 text-lg shadow m-4 p-4 text-center'>no jobs registered, please add a job</div>}
+      {jobs.length === 0 && <div className='text-red-400 text-lg shadow m-4 p-4 text-center'>no jobs registered, please add a job</div>}
       {jobs.length > 0 && jobs.map((j, ix) =>
 
         <div key={ix} className='relative m-4 p-4 md:m-6 md:p-6 rounded-lg overflow-hidden shadow grid grid-cols-6 gap-6 pb-12'>
@@ -117,7 +131,6 @@ export default function ProfileExperience ({ jobs, setJobs }) {
               placeholder=''
               autoComplete='given-companyURL'
               defaultValue={jobs[ix].companyURL}
-              required
               className='mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
               onChange={e => handleFieldChange(e, ix)}
             />
@@ -157,7 +170,7 @@ export default function ProfileExperience ({ jobs, setJobs }) {
             />
           </div>
 
-          {((jobs[ix].activities && jobs[ix].activities.length === 0) || !jobs[ix].activities) && <div className='col-span-6 text-sm text-red-500'>(please add activities)</div>}
+          {((jobs[ix].activities && jobs[ix].activities.length === 0) || !jobs[ix].activities) && <div className='col-span-6 text-sm text-red-400'>(please add activities)</div>}
           {jobs[ix].activities && jobs[ix].activities.length > 0 && jobs[ix].activities.map((a, aix) =>
             <div className='col-span-6' key={aix}>
               <label htmlFor='toYear' className='block text-sm font-medium text-gray-700'>
@@ -170,12 +183,22 @@ export default function ProfileExperience ({ jobs, setJobs }) {
                 onChange={e => handleFieldChange(e, ix, aix)}
                 className='shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block w-full sm:text-sm border border-gray-300 rounded-md'
               />
+              <button
+                onClick={e => handleRemoveActivity(e, ix, aix)}
+                className='bg-red-200 h-6 px-4 rounded-full'
+              >-
+              </button>
             </div>)}
 
           <button
-            onClick={() => handleAddNewActivity(ix)}
-            className='absolute right-2 bottom-2 lg:bottom-8 lg:right-4 text-md cursor-hover text-white px-4 rounded-md w-auto h-6 active:shadow-lg mouse shadow transition ease-in duration-200 focus:outline-none bg-gray-500'
-            disabled
+            onClick={e => handleRemoveJob(e, ix)}
+            className='bg-red-200 h-6 px-4 absolute bottom-2 left-2 rounded-full'
+          >remove
+          </button>
+
+          <button
+            onClick={e => handleAddNewActivity(e, ix)}
+            className='absolute right-2 bottom-2 lg:bottom-8 lg:right-4 text-md cursor-hover text-white px-4 rounded-md w-auto h-6 active:shadow-lg mouse shadow transition ease-in duration-200 focus:outline-none bg-indigo-400'
           >
             <span>+</span>
           </button>
@@ -183,9 +206,7 @@ export default function ProfileExperience ({ jobs, setJobs }) {
         </div>
       )}
 
-      <div onClick={handleAddNewJob} className='fixed top-16 right-8 lg:bottom-8 lg:right-4 text-md'>
-        <CreateButton text='+' extraClasses='bg-green-500' disabled />
-      </div>
+      <CreateButton onClick={handleAddNewJob} text='+' extraClasses='bg-indigo-400 fixed top-16 right-8 lg:bottom-8 lg:right-4 text-md' />
     </div>
   )
 }

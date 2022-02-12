@@ -15,7 +15,6 @@ import ProfileAvailability from '@/components/profileavailability'
 
 const biosByRole = {
   fullstack: 'I am experienced developing web applications, from front to back to all things like cloud, deployments, testing, etc., and working with remote teams.  I have a strong mathematics background, and I am seeking a mentor to become a software architect.'
-
 }
 
 const requiredFieldsByModule = {
@@ -42,16 +41,25 @@ function EditDevProfile ({ userDoc, ...props }) {
   }, [])
 
   const onSubmit = async data => {
+    console.log({ data })
     if (data.visibility === 'public' && !photoURL) {
       toast.error('please upload a photo if your profile is public')
       return
     }
-    setSaving(true)
-    await sleep(2000)
     for (const [key, fields] of Object.entries(requiredFieldsByModule)) {
       data[key] = fields.every(f => data[f])
     }
+    if (data.jobs.length < 1) {
+      toast.error('add at least 1 job')
+      return
+    }
+    if (data.jobs.some(job => job.activities.length < 1 || job.activities.some(a => !a))) {
+      toast.error('add at least 1 activity to every job')
+      return
+    }
     const profileComplete = data.isProjectsComplete && data.isExperienceComplete && data.isAvailabilityComplete && data.isEducationComplete && data.isAboutMeComplete
+    setSaving(true)
+    await sleep(2000)
     const uref = doc(db, 'users', userDoc.uid)
     await setDoc(uref, {
       ...data,
