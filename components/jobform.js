@@ -81,7 +81,6 @@ function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
   }
 
   const onSubmit = async data => {
-    console.log(data.salaryMin, data.salaryMax)
     if (data.salaryMax && Number(data.salaryMax) < Number(data.salaryMin)) {
       toast.error('max salary cannot be smaller than min salary')
       return
@@ -107,7 +106,9 @@ function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
         jobTitle: data.jobTitle,
         pdfURL,
         pdfName,
-        photoURL: photoURL ?? url,
+        photoURL: url,
+        companyName: userDoc.displayName,
+        companyEmail: userDoc.email,
         editedAt: new Date().toISOString()
       }, { merge: true })
     } else {
@@ -127,6 +128,9 @@ function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
         photoURL: photoURL ?? url,
         uid: userDoc.uid,
         status: 'matching',
+        companyName: userDoc.displayName,
+        companyEmail: userDoc.email,
+        company: userDoc.uid,
         hasAcceptedTerms: data.hasAcceptedTerms,
         companyName: userDoc.displayName,
         companyEmail: userDoc.email,
