@@ -125,7 +125,7 @@ export const JobsToMatch = ({ userDoc }) => {
           }}
                               >
           select another {startTable.tableProps.type}?
-        </Button>}
+                              </Button>}
         {selectedJob && selectedDev && <RecommendRole {...{ userDoc, selectedJob, selectedDev }} />}
       </div>
       {!startTable.entity && <Table {...{ ...startTable.tableProps, getterMapping, renderMapping }} />}
@@ -142,7 +142,7 @@ export const JobsToMatch = ({ userDoc }) => {
             {
                             nextTable.entity && <div className='col-span-6 sm:col-span-3 '>
                               <DetailedView {...{ ...nextTable }} />
-                                                </div>
+                            </div>
                         }
           </div>
         </>}

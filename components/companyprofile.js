@@ -197,9 +197,6 @@ export default function EditCompanyProfile ({ userDoc, ...props }) {
                 </div>
 
                 <div className='col-span-6 sm:col-span-6 items-center'>
-                  <label htmlFor='terms' className='block text-sm font-medium text-gray-700 p-2'>
-                    terms and conditions
-                  </label>
                   <div className='flex items-center justify-start'>
 
                     <div>
@@ -227,7 +224,7 @@ export default function EditCompanyProfile ({ userDoc, ...props }) {
             </div>
           </div>
         </form>
-                    </div>}
+      </div>}
     </>
   )
 }

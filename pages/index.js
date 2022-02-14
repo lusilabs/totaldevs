@@ -5,6 +5,7 @@ import { useRouter } from 'next/router'
 import Landing from '@/components/landing'
 import { analytics } from '@/utils/config'
 import { handleDevStripeOnboarding } from '@/utils/stripe'
+import Dashboard from './dashboard'
 
 export default function Index ({ userDoc, handleCreateJobPosting, ...props }) {
   const router = useRouter()
@@ -35,7 +36,7 @@ export default function Index ({ userDoc, handleCreateJobPosting, ...props }) {
 
   return (
     <>
-      {/* {userDoc && userDoc.role === 'dev' && <Dashboard userDoc={userDoc} {...props} />} */}
+      {userDoc && <Dashboard userDoc={userDoc} {...props} />}
       {!userDoc && <Landing handleCreateJobPosting={handleCreateJobPosting} {...props} />}
     </>
   )
