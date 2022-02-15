@@ -38,8 +38,8 @@ export function useDocument ({ collection, docID }, dependencies = []) {
           const data = doc.data()
           setDocument(data)
         }
+        setLoaded(true)
       })
-      setLoaded(true)
     }
   }, [loaded, docID, dependencies])
 
