@@ -1,10 +1,24 @@
-import { logEvent } from 'firebase/analytics'
 import { useEffect } from 'react'
-import Dashboard from './dashboard'
+import { toast } from 'react-toastify'
+import { logEvent } from 'firebase/analytics'
+import { useRouter } from 'next/router'
 import Landing from '@/components/landing'
 import { analytics } from '@/utils/config'
+import { handleDevStripeOnboarding } from '@/utils/stripe'
+import Dashboard from './dashboard'
 
 export default function Index ({ userDoc, handleCreateJobPosting, ...props }) {
+  const router = useRouter()
+  const { stripe_redirect_success, stripe_redirect_failure } = router.query
+
+  useEffect(() => {
+    if (stripe_redirect_success) toast.success('processing...')
+    if (stripe_redirect_failure) {
+      toast.warn('link expired, redirecting...')
+      handleDevStripeOnboarding(userDoc, props.setIsPageLoading)
+    }
+  }, [])
+
   useEffect(() => {
     logEvent(analytics, 'New visit v2. how do I log more data?')
   }, [])
@@ -22,7 +36,6 @@ export default function Index ({ userDoc, handleCreateJobPosting, ...props }) {
 
   return (
     <>
-      {/* {userDoc && userDoc.role === 'dev' && <Dashboard userDoc={userDoc} {...props} />} */}
       {userDoc && <Dashboard userDoc={userDoc} {...props} />}
       {!userDoc && <Landing handleCreateJobPosting={handleCreateJobPosting} {...props} />}
     </>

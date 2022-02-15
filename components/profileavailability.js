@@ -1,11 +1,11 @@
 function ProfileAvailability ({ register, errors }) {
   return (
     <div className='shadow overflow-hidden rounded-lg p-4 sm:p-6 grid grid-cols-6 gap-6 m-4'>
-
       <div className='col-span-6 sm:col-span-6'>
-        <label htmlFor='displayName' className='block text-sm font-medium text-gray-700'>
+        <label htmlFor='calendlyURL' className='block text-sm font-medium text-gray-700'>
           <a href='https://calendly.com'>
             setup your calendly URL (https://calendly.com) so companies can schedule meetings with you.
+            make sure to include 'https://'!
           </a>
         </label>
         <input

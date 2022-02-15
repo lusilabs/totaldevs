@@ -64,7 +64,8 @@ const pageNavigationByRole = {
     { name: 'invites', href: '/invites', current: false, Icon: <CurrencyDollarIcon className='w-4 h-4 text-green-400' /> }
   ],
   company: [
-    { name: 'jobs', href: '/jobs', current: false }
+    { name: 'jobs', href: '/jobs', current: false },
+    { name: 'payments', href: '/payments', current: false }
   ],
   explorer: [
     { name: 'matches', href: '/matches', current: false },
@@ -190,7 +191,7 @@ function MyApp ({ Component, pageProps }) {
       {error && <Error title='error while retrieving user' statusCode={500} />}
       {!user && !isUserLoading && !onAnonRoutes && <Landing profiles={profiles} setIsPageLoading={setIsPageLoading} handleCreateJobPosting={handleCreateJobPosting} />}
       {user && userDoc && !onAnonRoutes &&
-        <Layout user={user} userDoc={userDoc} navigation={navigation} userNavigation={userNavigation} {...pageProps}>
+        <Layout user={user} userDoc={userDoc} navigation={navigation} userNavigation={userNavigation} setIsPageLoading={setIsPageLoading} {...pageProps}>
           <Component user={user} userDoc={userDoc} setIsPageLoading={setIsPageLoading} {...pageProps} />
           <ToastContainer pauseOnFocusLoss={false} autoClose={2000} />
         </Layout>}

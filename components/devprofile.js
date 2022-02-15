@@ -3,8 +3,9 @@ import { Button, Dropdown } from 'semantic-ui-react'
 import React, { useState, useEffect } from 'react'
 import sleep from '@/utils/misc'
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
-import { storage, db } from '@/utils/config'
+import { storage, db, functions } from '@/utils/config'
 import { doc, setDoc } from 'firebase/firestore'
+import { httpsCallable } from 'firebase/functions'
 import { toast } from 'react-toastify'
 import DevProfileDisplay from '@/components/devprofiledisplay'
 import AboutMe from '@/components/aboutme'
@@ -12,6 +13,8 @@ import ProfileExperience from '@/components/profileexperience'
 import ProfileEducation from '@/components/profileeducation'
 import ProfileProjects from '@/components/profileprojects'
 import ProfileAvailability from '@/components/profileavailability'
+
+const verifyCalendlyUrl = httpsCallable(functions, 'verifyCalendlyUrl')
 
 const biosByRole = {
   fullstack: 'I am experienced developing web applications, from front to back to all things like cloud, deployments, testing, etc., and working with remote teams.  I have a strong mathematics background, and I am seeking a mentor to become a software architect.'
@@ -56,6 +59,16 @@ function EditDevProfile ({ userDoc, ...props }) {
     if (isEditing === 'projects' && projects.length < 1) {
       toast.error('add at least 1 project')
       return
+    }
+    if (isEditing === 'availability') {
+      setSaving(true)
+      const url = data.calendlyURL
+      const { data: { error } } = await verifyCalendlyUrl({ url })
+      if (error) {
+        toast.error('Please enter a valid and recent calendly URL')
+        setSaving(false)
+        return
+      }
     }
     for (const [key, fields] of Object.entries(requiredFieldsByModule)) {
       if (key.toLowerCase().includes(isEditing)) data[key] = fields.every(f => data[f])
@@ -103,6 +116,7 @@ function EditDevProfile ({ userDoc, ...props }) {
   }
 
   // console.log(watch(['displayName', 'title', 'bio', 'githubURI', 'linkedInURI', 'websiteURL', 'photoURL', 'visibility', 'jobSearch', 'hasAcceptedTerms']))
+  // console.log(watch(['calendlyURL']))
 
   return (
     <>
