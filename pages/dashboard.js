@@ -1,17 +1,9 @@
-import Banner from '@/components/banner'
-import { auth, db, functions } from '@/utils/config'
-import { httpsCallable } from 'firebase/functions'
-import { toast } from 'react-toastify'
+import { db } from '@/utils/config'
 import { useRouter } from 'next/router'
-import { useEffect, useState } from 'react'
 import { useDocuments } from '@/utils/hooks'
-import { getDoc, setDoc, getDocs, collection, doc, query, limit, where, orderBy } from '@firebase/firestore'
+import { setDoc, doc, limit, where } from '@firebase/firestore'
 import { SuspensePlaceholders } from '@/components/suspense'
-import Link from 'next/link'
 import { SpeakerphoneIcon } from '@heroicons/react/outline'
-// import DashboardActions from '@/components/dashboardactions'
-
-const generateOnboardingURL = httpsCallable(functions, 'stripe-generateOnboardingURL')
 
 function Dashboard ({ userDoc, setIsPageLoading, ...props }) {
   const queryConstraints = [
@@ -22,9 +14,6 @@ function Dashboard ({ userDoc, setIsPageLoading, ...props }) {
   ]
 
   const router = useRouter()
-  const [isStripeBannerActive, setIsStripeBannerActive] = useState(true)
-  const [isInviteBannerActive, setIsInviteBannerActive] = useState(true)
-  const [isProfileBannerActive, setIsProfileBannerActive] = useState(true)
   const [actions, actionsLoaded, _ar] = useDocuments({ userDoc, docs: 'actions', queryConstraints })
   const handleClickOnAction = action => {
     const aref = doc(db, 'actions', action.id)
@@ -32,32 +21,8 @@ function Dashboard ({ userDoc, setIsPageLoading, ...props }) {
     if (!action.noop) router.push(action.url)
   }
 
-  const handleDevStripeOnboarding = async userDoc => {
-    setIsPageLoading(true)
-    const { data: url } = await generateOnboardingURL(userDoc)
-    setIsPageLoading(false)
-    window.location.assign(url)
-  }
-
-  const { stripe_redirect_success, stripe_redirect_failure } = router.query
-
-  useEffect(() => {
-    if (stripe_redirect_success) toast.success('processing...')
-    if (stripe_redirect_failure) {
-      toast.warn('link expired, redirecting...')
-      handleDevStripeOnboarding(userDoc)
-    }
-    setIsProfileBannerActive(!userDoc.profileComplete)
-    setIsStripeBannerActive(userDoc.profileComplete && !stripe_redirect_success && !userDoc.stripeVerified)
-    setIsInviteBannerActive(userDoc.numInvitesLeft > 0)
-  }, [])
-
   return (
     <div>
-      {userDoc.role !== 'company' && isStripeBannerActive && <Banner name='dev-stripe-onboarding' color='bg-yellow-600' text='verify your account to start matching' buttonText='click here' handleClick={() => handleDevStripeOnboarding(userDoc)} handleClose={() => setIsStripeBannerActive(false)} />}
-      {isProfileBannerActive && <Banner name='profile-complete' color='bg-red-400' text='complete your profile to start matching' buttonText='go to profile' href='/profile' handleClose={() => setIsProfileBannerActive(false)} />}
-      {userDoc.role === 'explorer' && isInviteBannerActive && <Banner name='explorer-invites' color='bg-indigo-600' text='you have new gift developer invites!' buttonText='invite a dev!' href='/invites' handleClose={() => setIsInviteBannerActive(false)} />}
-      {/* <DashboardActions userDoc={userDoc} setIsPageLoading={setIsPageLoading} {...props} /> */}
       {!actionsLoaded && <SuspensePlaceholders />}
       {actionsLoaded && actions.length === 0 && <EmptyDashboardView />}
       {/* {actionsLoaded && actions.length > 0 && actions.map((a, aix) => <ActionView action={a} key={a.id} handleClickOnAction={handleClickOnAction} />)} */}

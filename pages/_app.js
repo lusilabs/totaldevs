@@ -186,7 +186,7 @@ function MyApp ({ Component, pageProps }) {
       {error && <Error title='error while retrieving user' statusCode={500} />}
       {!user && !isUserLoading && !onAnonRoutes && <Landing profiles={profiles} setIsPageLoading={setIsPageLoading} handleCreateJobPosting={handleCreateJobPosting} />}
       {user && userDoc && !onAnonRoutes &&
-        <Layout user={user} userDoc={userDoc} navigation={navigation} userNavigation={userNavigation} {...pageProps}>
+        <Layout user={user} userDoc={userDoc} navigation={navigation} userNavigation={userNavigation} setIsPageLoading={setIsPageLoading} {...pageProps}>
           <Component user={user} userDoc={userDoc} setIsPageLoading={setIsPageLoading} {...pageProps} />
           <ToastContainer pauseOnFocusLoss={false} autoClose={2000} />
         </Layout>}
