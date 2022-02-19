@@ -124,6 +124,8 @@ function MyApp ({ Component, pageProps }) {
     setOnAdminRoutes(router.pathname.includes('admin'))
   }, [router.asPath])
 
+  console.log({ onAnonRoutes })
+
   useEffect(() => {
     let unsubscribe = () => {}
     if (user && user.uid) {
