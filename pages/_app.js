@@ -116,14 +116,13 @@ function MyApp ({ Component, pageProps }) {
   const [userNavigation, setUserNavigation] = useState(anonUserNavigation)
   const [isPageLoading, setIsPageLoading] = useState(false)
   const [profiles, setProfiles] = useState([])
-  const [onAnonRoutes, setOnAnonRoutes] = useState(anonRoutes.includes(router.asPath) || regexAnonRoutes.some(regex => regex.test(router.asPath)))
-  const [onAdminRoutes, setOnAdminRoutes] = useState(router.pathname.includes('admin'))
+  const [onAnonRoutes, setOnAnonRoutes] = useState()
+  const [onAdminRoutes, setOnAdminRoutes] = useState()
 
   useEffect(() => {
     setOnAnonRoutes(anonRoutes.includes(router.asPath) || regexAnonRoutes.some(regex => regex.test(router.asPath)))
     setOnAdminRoutes(router.pathname.includes('admin'))
-    console.log({ onAnonRoutes, path: router.asPath, Component, pageProps })
-  })
+  }, [router.asPath])
 
   useEffect(() => {
     let unsubscribe = () => {}
