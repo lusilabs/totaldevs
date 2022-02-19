@@ -186,7 +186,6 @@ function MyApp ({ Component, pageProps }) {
 
   return (
     <>
-
       {(isUserLoading || isPageLoading) && <Spinner />}
       {error && <Error title='error while retrieving user' statusCode={500} />}
       {!user && !isUserLoading && !onAnonRoutes && <Landing profiles={profiles} setIsPageLoading={setIsPageLoading} handleCreateJobPosting={handleCreateJobPosting} />}

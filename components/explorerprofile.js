@@ -26,12 +26,12 @@ export default function EditExplorerProfile ({ userDoc, ...props }) {
     setSaving(true)
     await sleep(2000)
     const uref = doc(db, 'users', userDoc.uid)
-    const profileComplete = true
+    const isProfileComplete = true
     await setDoc(uref, {
       displayName: data.displayName,
       bio: data.bio,
       hasAcceptedTerms: data.hasAcceptedTerms,
-      profileComplete,
+      isProfileComplete,
       photoURL
     }, { merge: true })
     // save to /profiles
@@ -39,7 +39,7 @@ export default function EditExplorerProfile ({ userDoc, ...props }) {
     await setDoc(pref, {
       displayName: data.displayName,
       bio: data.bio,
-      profileComplete,
+      isProfileComplete,
       photoURL
     }, { merge: true })
     toast.success('profile saved successfully.')
@@ -176,7 +176,7 @@ export default function EditExplorerProfile ({ userDoc, ...props }) {
             </div>
           </div>
         </form>
-                    </div>}
+      </div>}
     </>
   )
 }

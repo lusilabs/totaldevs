@@ -34,7 +34,7 @@ if (process.env.NODE_ENV !== 'production') {
   connectStorageEmulator(storage, '127.0.0.1', 9199)
   connectAuthEmulator(auth, 'http://localhost:9099')
   connectFunctionsEmulator(functions, 'localhost', 5001)
-  connectFirestoreEmulator(db, 'localhost', 8080)
+  connectFirestoreEmulator(db, 'localhost', 8081)
 }
 /*
 this is a workaround for nextjs. because it tries to SSR

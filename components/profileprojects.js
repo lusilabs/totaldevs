@@ -59,8 +59,10 @@ export default function ProfileProjects ({ projects, setProjects }) {
 
   return (
     <div>
-      <h3 className='text-gray-500 m-4 p-4'>projects</h3>
-
+      <div className='flex justify-between p-2'>
+        <h3 className='text-gray-500 m-4 p-4'>projects</h3>
+        <CreateButton onClick={handleAddNewProject} text='+' extraClasses='bg-indigo-400 text-md' />
+      </div>
       {projects.length === 0 && <div className='text-red-400 text-lg shadow m-4 p-4 text-center'>no projects registered, please add a project</div>}
       {projects.length > 0 && projects.map((p, ix) =>
 
@@ -173,11 +175,8 @@ export default function ProfileProjects ({ projects, setProjects }) {
             className='bg-red-200 h-6 px-4 absolute bottom-2 left-2 rounded-full'
           >remove
           </button>
-
         </div>
       )}
-
-      <CreateButton onClick={handleAddNewProject} text='+' extraClasses='bg-indigo-400 fixed top-16 right-8 lg:bottom-8 lg:right-4 text-md' />
     </div>
   )
 }

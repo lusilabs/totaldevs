@@ -79,11 +79,12 @@ export default function ProfileExperience ({ jobs, setJobs }) {
 
   return (
     <div>
-      <h3 className='text-gray-500 m-4 p-4'>jobs</h3>
-
+      <div className='flex justify-between p-2'>
+        <h3 className='text-gray-500 m-4 p-4'>jobs</h3>
+        <CreateButton onClick={handleAddNewJob} text='+' extraClasses='bg-indigo-400 text-md' />
+      </div>
       {jobs.length === 0 && <div className='text-red-400 text-lg shadow m-4 p-4 text-center'>no jobs registered, please add a job</div>}
       {jobs.length > 0 && jobs.map((j, ix) =>
-
         <div key={ix} className='relative m-4 p-4 md:m-6 md:p-6 rounded-lg overflow-hidden shadow grid grid-cols-6 gap-6 pb-12'>
           <div className='text-sm font-medium text-gray-500'>#{ix + 1}</div>
           <div className='col-span-6 sm:col-span-6'>
@@ -224,7 +225,6 @@ export default function ProfileExperience ({ jobs, setJobs }) {
         </div>
       )}
 
-      <CreateButton onClick={handleAddNewJob} text='+' extraClasses='bg-indigo-400 fixed top-16 right-8 lg:bottom-8 lg:right-4 text-md' />
     </div>
   )
 }
