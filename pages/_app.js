@@ -119,6 +119,8 @@ function MyApp ({ Component, pageProps }) {
   const [isPageLoading, setIsPageLoading] = useState(false)
   const [profiles, setProfiles] = useState([])
 
+  console.log({ onAnonRoutes })
+
   useEffect(() => {
     let unsubscribe = () => {}
     if (user && user.uid) {
