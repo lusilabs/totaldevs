@@ -119,7 +119,7 @@ function MyApp ({ Component, pageProps }) {
   const [isPageLoading, setIsPageLoading] = useState(false)
   const [profiles, setProfiles] = useState([])
 
-  console.log({ onAnonRoutes })
+  console.log({ onAnonRoutes, path: router.asPath, Component, pageProps })
 
   useEffect(() => {
     let unsubscribe = () => {}
