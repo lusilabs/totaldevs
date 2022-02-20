@@ -124,8 +124,6 @@ function MyApp ({ Component, pageProps }) {
     setOnAdminRoutes(router.pathname.includes('admin'))
   }, [router.asPath])
 
-  console.log({ onAnonRoutes })
-
   useEffect(() => {
     let unsubscribe = () => {}
     if (user && user.uid) {
@@ -191,6 +189,7 @@ function MyApp ({ Component, pageProps }) {
 
   if (onAdminRoutes && !userDoc?.isAdmin) return null
 
+  console.log({ user, userDoc, onAdminRoutes, onAnonRoutes, Component, path: router.asPath })
   return (
     <>
       {(isUserLoading || isPageLoading) && <Spinner />}
