@@ -1,6 +1,7 @@
 const functions = require('firebase-functions')
 const admin = require('firebase-admin')
 const fetch = require('node-fetch')
+const crypto = require('crypto')
 
 admin.initializeApp()
 const logger = functions.logger
@@ -8,6 +9,7 @@ const config = functions.config()
 const adminConfig = JSON.parse(process.env.FIREBASE_CONFIG)
 const isDevelopment = process.env.FUNCTIONS_EMULATOR
 const NUM_DEFAULT_INVITES = 3
+
 exports.stripe = require('./stripe')
 
 const isAuthed = ctx => {
@@ -122,7 +124,23 @@ exports.handleMatchDoc = functions.firestore.document('matches/{matchID}').onWri
     const text = obj.text
     const uid = doc[obj.role]
     const email = obj.email === 'companyEmail' ? doc.jobData.companyEmail : doc[obj.email]
-
+    if (doc.status === 'position_offered_real') {
+      // TODO: update status, and create right templates/signers/fields/webhook url for real stuff
+      const fields = [{ identifier: 'specific_text', value: doc.job }]
+      const signers = [
+        {
+          role: 'dev',
+          name: doc.devName,
+          email: doc.devEmail
+        },
+        {
+          role: 'client',
+          name: doc.devName,
+          email: doc.companyEmail
+        }
+      ]
+      await sendEversignDocuments(signers, fields, context.params.matchID)
+    }
     admin
       .firestore()
       .collection('actions')
@@ -296,3 +314,74 @@ exports.sendMessage = functions.https.onCall(async ({ text, fcmToken }, ctx) => 
     return { error }
   })
 })
+
+const EVERSIGN_SANDBOX = isDevelopment ? 1 : 0
+const EVERSIGN_API_KEY = config.eversign.api_key
+const EVERSIGN_BUSINESS_ID = config.eversign.business_id
+const EVERSIGN_DEV_COMPANY_TEMPLATE_ID = config.eversign.dev_company_template_id
+const EVERSIGN_COMPANY_DEV_TEMPLATE_PAYLOAD = {
+  sandbox: EVERSIGN_SANDBOX,
+  template_id: EVERSIGN_DEV_COMPANY_TEMPLATE_ID,
+  title: 'My New Document',
+  message: 'This is my message.',
+  client: '',
+  embedded_signing_enabled: 0,
+  signers: [],
+  recipients: [],
+  fields: []
+}
+
+exports.handleEversignEvent = functions.firestore.document('rawEversignEvents/{eventId}').onCreate(async (rawEvent, context) => {
+  const event = rawEvent.data()
+  const eversignDocumentId = `${event.meta.related_document_hash}`
+  const updatedFields = {
+    [event.event_type]: true
+  }
+  if (event.signer) {
+    updatedFields[`signers.${event.signer.role}`] = { ...event.signer }
+  }
+
+  await admin.firestore().collection('eversignDocuments').doc(eversignDocumentId).set(updatedFields, { merge: true })
+
+  admin.firestore().collection('rawEversignEvents').doc(rawEvent.id).delete()
+})
+
+exports.updateDocument = functions.firestore.document('eversignDocuments/{id}').onUpdate(async (change, context) => {
+  const document = change.after.data()
+  if (document.document_completed) {
+    console.log(document.match, 'starting stripe process')
+    // Start stripe stuff
+  }
+})
+
+exports.eversignWebhook = functions.https.onRequest((req, res) => {
+  const event = req.body
+  const hmac = crypto.createHmac('sha256', EVERSIGN_API_KEY)
+  hmac.update(event.event_time.toString() + event.event_type)
+  if (hmac.digest('hex') === event.event_hash) {
+    admin
+      .firestore()
+      .collection('rawEversignEvents')
+      .add(event)
+  }
+
+  res.status(200).send()
+})
+
+const sendEversignDocuments = async (signers, fields, match) => {
+  const response = await fetch(`https://api.eversign.com/api/document?access_key=${EVERSIGN_API_KEY}&business_id=${EVERSIGN_BUSINESS_ID}`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ ...EVERSIGN_COMPANY_DEV_TEMPLATE_PAYLOAD, signers, fields })
+    })
+  const data = await response.json()
+  await admin.firestore().collection('eversignDocuments').doc(data.document_hash).set({
+    rawDocumentResponse: { ...data, fields: data.fields[0] },
+    match,
+    originalSigners: signers,
+    originalFields: fields
+  })
+}

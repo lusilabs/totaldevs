@@ -14,7 +14,7 @@ import { map } from 'next-pwa/cache'
 function JobList ({ userDoc, ...props }) {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(true)
-  const [assignmentMap, setAssignmentMap] = useState({})
+  const [matchesMap, setMatchesMap] = useState({})
   const [jobs, jobsLoaded, _jr, _sj] = useDocuments({ docs: 'jobs', queryConstraints: [where('uid', '==', userDoc.uid)] }, [userDoc.uid])
   const [matches, matchesLoaded, _mr, _sm] = useDocuments({
     docs: 'matches',
