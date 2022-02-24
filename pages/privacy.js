@@ -5,7 +5,6 @@ export default function Privacy () {
     <>
       <div className='flex-shrink-0 bg-black'>
         <Link href='/'>
-
           <img
             className='h-12 w-12'
             src='/logo-small.png'
