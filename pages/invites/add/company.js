@@ -81,7 +81,7 @@ function AddInvite ({ userDoc, ...props }) {
   }, [searchQuery])
 
   const handleDropdownChange = (e, v) => {
-    const resume = `https://totaldevs.com/resumes/${v.value}`
+    const resume = `https://totaldevs.com/resumes?profileID=${v.value}`
     setResumeURL(resume)
     setTextArea(generateText({ position, resumeURL: resume }))
   }

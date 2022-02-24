@@ -1,4 +1,8 @@
 import Error from 'next/error'
+import { useRouter } from 'next/router'
+import TotalResume from '@/components/resume'
+
 export default function Resumes () {
-  return <Error statusCode={404} />
+  const router = useRouter()
+  return <TotalResume {...router.query} />
 }
