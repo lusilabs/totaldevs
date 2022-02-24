@@ -30,7 +30,7 @@ export default function About () {
         </ul>
         <h1>oath</h1>
         <p>
-          "Hear my words and bear witness to my vow, Night gathers, and now my watch begins. It shall not end until the internet crashes. I shall have no life, hold no lands, feed not the trolls. I shall wear no crowns and win no glory. I shall live and die at my computer. I am the sword in the darkness. I am the watcher on the logs. I am the fire that burns against the bugs, the light that brings the dawn, the alerts that wake the sleepers, the shield that guards the realms of tech. I pledge my life and honor to totaldevs, for this night and all the nights to come."
+          "Hear my words and bear witness to my vow, Night gathers, and now my watch begins. It shall not end until the internet crashes. I shall have no life, hold no lands, feed no trolls. I shall wear no crowns and win no glory. I shall live and die at my computer. I am the sword in the darkness. I am the watcher on the logs. I am the fire that burns against the bugs, the light that brings the fix, the alerts that wake the sleepers, the shield that guards the realms of tech. I pledge my life and honor to totaldevs, for this night and all the nights to come."
         </p>
       </div>
       <Footer />
