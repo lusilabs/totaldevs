@@ -1,15 +1,33 @@
 import { useForm } from 'react-hook-form'
-import { Button } from 'semantic-ui-react'
-import React, { useState } from 'react'
+import { Button, Dropdown } from 'semantic-ui-react'
+import React, { useState, useEffect } from 'react'
 import { db } from '@/utils/config'
-import { doc, setDoc, addDoc, increment, collection, getDoc } from 'firebase/firestore'
+import { doc, setDoc, addDoc, increment, collection, getDoc, where } from 'firebase/firestore'
 import router from 'next/router'
 import { toast } from 'react-toastify'
+import { useDocuments } from '@/utils/hooks'
+
+const generateText = ({ position, resumeURL } = {}) => {
+  console.log({ position, resumeURL })
+  return `Hi, we noticed you had an open position${position ? ` looking for ${position}s` : ''}, we might have the perfect fit for you${resumeURL ? ` , check out this potential candidate ${resumeURL}` : ''} ! Hiring talent from Latin America can save you up to 50% without compromising on quality. We provide pre-screened and professional talent from an exclusive developer community. Open up a free job posting at https://totaldevs.com. We handle all the difficult paperwork and payment processes. Questions? book a 15min meeting https://calendly.com/carlo-totaldevs/1-on-1`
+}
 
 function AddInvite ({ userDoc, ...props }) {
+  const [searchQuery, setSearchQuery] = useState('')
   const [saving, setSaving] = useState(false)
   const [position, setPosition] = useState('')
-  const [textArea, setTextArea] = useState('Hi, we noticed you had an open position, we might have the perfect fit for you. Have you considered hiring talent from Latin America and saving up to 50% with proven results? We at totaldevs have pre-screened and mentored talent from an exclusive professional developer community ready to deliver work. Open up a free job posting at https://totaldevs.com, the process is completely streamlined and hassle-free. We handle all the difficult paperwork and process the payment for the devs. Questions? book a 15min meeting https://calendly.com/carlo-totaldevs/1-on-1')
+  const [resumeURL, setResumeURL] = useState()
+  const [textArea, setTextArea] = useState(generateText())
+  const [displayName, setDisplayName] = useState()
+  const [profiles, _pl, _pr, setProfiles] = useDocuments({
+    docs: 'profiles',
+    queryConstraints: [
+      // where('displayName', '>=', displayName),
+      // where('displayName', '<', displayName),
+      where('isProfileComplete', '==', true)
+      // where('jobSearch', '!=', 'blocked')
+    ]
+  }, [displayName])
 
   const onSubmit = async data => {
     setSaving(true)
@@ -31,7 +49,7 @@ function AddInvite ({ userDoc, ...props }) {
     await addDoc(mref, {
       message: {
         text: data.inviteText,
-        subject: 'Have you considered recruiting talent from Latin America? 🤔'
+        subject: 'Have you considered recruiting talent from Latin America?🤔, we might have the perfect fit for your position.'
       },
       to: [data.email],
       createdAt: new Date().toISOString()
@@ -55,15 +73,28 @@ function AddInvite ({ userDoc, ...props }) {
     }
   })
 
-  // console.log(watch(['email', 'inviteText']))
-  const handlePositionChange = e => {
-    setPosition(e.target.value)
-    setTextArea(`Hi, we noticed you had an open position for a ${e.target.value}, we might have the perfect fit for you. Have you considered hiring talent from Latin America and saving up to 50% with proven results? We at totaldevs have pre-screened and mentored talent from an exclusive professional developer community ready to deliver work. Open up a free job posting at https://totaldevs.com, the process is completely streamlined and hassle-free. We handle all the difficult paperwork and process the payment for the devs. Questions? book a 15min meeting https://calendly.com/carlo-totaldevs/1-on-1`)
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (searchQuery !== '') setDisplayName(searchQuery)
+    }, 500)
+    return () => clearTimeout(timer)
+  }, [searchQuery])
+
+  const handleDropdownChange = (e, v) => {
+    const resume = `https://totaldevs.com/resumes/${v.value}`
+    setResumeURL(resume)
+    setTextArea(generateText({ position, resumeURL: resume }))
   }
 
-  const handleTextAreaChange = e => {
-    setTextArea(e.target.value)
+  // console.log(watch(['email', 'inviteText']))
+
+  const handlePositionChange = e => {
+    const pos = e.target.value
+    setPosition(pos)
+    setTextArea(generateText({ position: pos, resumeURL }))
   }
+
+  const handleTextAreaChange = e => setTextArea(e.target.value)
 
   return (
     <div className='m-4 md:col-span-2 shadow-xl'>
@@ -87,18 +118,18 @@ function AddInvite ({ userDoc, ...props }) {
               </div>
 
               <div className='col-span-6 sm:col-span-3'>
-                <label htmlFor='title' className='block text-sm font-medium text-gray-700'>
-                  (title)
+                <label htmlFor='position' className='block text-sm font-medium text-gray-700'>
+                  (position)
                 </label>
                 <select
-                  id='title'
-                  name='title'
-                  autoComplete='title-name'
+                  id='position'
+                  name='position'
+                  autoComplete='position-name'
                   onChange={handlePositionChange}
-                  className={`mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-gray-700 ${props.sid ? 'bg-gray-100' : ''}`}
+                  className='mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-gray-700'
                 >
-                  <option value='frontend developer'>frontend developer</option>
                   <option value='frontend engineer'>frontend engineer</option>
+                  <option value='frontend developer'>frontend developer</option>
                   <option value='backend developer'>backend developer</option>
                   <option value='backend engineer'>backend engineer</option>
                   <option value='full stack developer'>full stack developer</option>
@@ -123,6 +154,23 @@ function AddInvite ({ userDoc, ...props }) {
 
                 </select>
               </div>
+
+              {userDoc.role === 'explorer' &&
+                <div className='col-span-6 sm:col-span-3'>
+                  <label className='block text-sm font-medium text-gray-700'>
+                    (developer name)
+                  </label>
+                  <Dropdown
+                    options={profiles?.map(({ displayName, id }) => ({ key: displayName, value: id, text: displayName }))}
+                    onSearchChange={(e, v) => setSearchQuery(v.searchQuery)}
+              // searchQuery={searchQuery[0]}
+              // value={j.stack}
+                    onChange={(e, v) => handleDropdownChange(e, v)}
+                    fluid
+                    selection
+                    search
+                  />
+                </div>}
 
               <div className='col-span-6'>
                 <label htmlFor='inviteText' className='block text-sm font-medium text-gray-700'>

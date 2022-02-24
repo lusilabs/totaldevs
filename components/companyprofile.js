@@ -57,7 +57,7 @@ export default function EditCompanyProfile ({ userDoc, ...props }) {
   const onSubmit = async data => {
     setSaving(true)
     await sleep(2000)
-    const profileComplete = true
+    const isProfileComplete = true
     const uref = doc(db, 'users', userDoc.uid)
     await setDoc(uref, {
       displayName: data.displayName,
@@ -65,7 +65,7 @@ export default function EditCompanyProfile ({ userDoc, ...props }) {
       websiteURL: data.websiteURL,
       hasAcceptedTerms: data.hasAcceptedTerms,
       photoURL,
-      profileComplete
+      isProfileComplete
     }, { merge: true })
     // save to /profiles
     const pref = doc(db, 'profiles', userDoc.uid)
@@ -74,7 +74,7 @@ export default function EditCompanyProfile ({ userDoc, ...props }) {
       bio: data.bio,
       websiteURL: data.websiteURL,
       photoURL,
-      profileComplete
+      isProfileComplete
     }, { merge: true })
     toast.success('profile saved successfully.')
     setSaving(false)

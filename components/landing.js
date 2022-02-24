@@ -128,7 +128,7 @@ function Landing ({ handleCreateJobPosting, ...props }) {
                       <i className='fas fa-check' />
                     </div>
                     <h6 className='text-xl font-semibold'>
-                      guaranteed results.
+                      proven results.
                     </h6>
                     <p className='mt-2 mb-4 text-gray-600'>
                       talent selected from an exclusive community of professional developers.

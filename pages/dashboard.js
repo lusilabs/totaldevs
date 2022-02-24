@@ -14,7 +14,7 @@ function Dashboard ({ userDoc, setIsPageLoading, ...props }) {
   ]
 
   const router = useRouter()
-  const [actions, actionsLoaded, _ar] = useDocuments({ userDoc, docs: 'actions', queryConstraints })
+  const [actions, actionsLoaded, _ar, _as] = useDocuments({ userDoc, docs: 'actions', queryConstraints })
   const handleClickOnAction = action => {
     const aref = doc(db, 'actions', action.id)
     setDoc(aref, { seen: true }, { merge: true })

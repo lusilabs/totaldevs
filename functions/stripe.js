@@ -132,6 +132,7 @@ const createStripeConnectExpressAccount = async user => {
 const updateStripeAccount = async account => {
   const { id: stripeAccountID, charges_enabled, payouts_enabled } = account
   const stripeVerified = charges_enabled && payouts_enabled
+  // todo@stripe does detect fraud change those properties? fraud handling
   const uref = await admin
     .firestore()
     .collection('users')
@@ -152,7 +153,7 @@ exports.handleWebhooks = functions.https.onRequest(async (req, resp) => {
     event = stripe.webhooks.constructEvent(req.rawBody, req.headers['stripe-signature'], STRIPE_WEBHOOK_SECRET)
     // todo@carlo-stripe this is dumb. WHY can Connect test events go to live mode? ask stripe cc.
     if (!isDevelopment && !event.data.livemode) {
-      resp.status(406).send('Why?')
+      resp.status(406).send('Why Stripe?')
       return
     }
   } catch (error) {
