@@ -30,7 +30,7 @@ NProgress.configure({ showSpinner: false })
 
 const anonRoutes = [
   // these routes are hard-matches and allow anon users to visit sensitive pages so add with care.
-  '/terms',
+  '/about',
   '/privacy',
   '/login',
   '/login?role=dev',
