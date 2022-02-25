@@ -261,7 +261,7 @@ function Landing ({ handleCreateJobPosting, ...props }) {
                   available devs
                 </h2>
                 <p className='text-lg leading-relaxed m-4 text-gray-600'>
-                  select any of the following top talent right now.
+                  get paired with the following talent right now.
                 </p>
               </div>
             </div>
