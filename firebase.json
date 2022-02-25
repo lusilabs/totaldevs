@@ -17,10 +17,11 @@
       "**/.*",
       "**/node_modules/**"
     ],
+    "cleanUrls": true,
     "rewrites": [
       {
         "source": "**",
-        "destination": "/index.html"
+        "destination": "/"
       }
     ]
   },
@@ -38,7 +39,7 @@
     },
     "firestore": {
       "host": "127.0.0.1",
-      "port": 8080
+      "port": 8081
     },
     "database": {
       "host": "127.0.0.1",
@@ -46,7 +47,7 @@
     },
     "hosting": {
       "host": "127.0.0.1",
-      "port": 5000
+      "port": 5555
     },
     "pubsub": {
       "host": "127.0.0.1",

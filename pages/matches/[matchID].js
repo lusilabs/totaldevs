@@ -8,6 +8,7 @@ import { doc, setDoc, addDoc, collection, getDoc, where } from 'firebase/firesto
 import { toast } from 'react-toastify'
 import sleep from '@/utils/misc'
 import { useRouter } from 'next/router'
+import TotalResume from '@/components/resume'
 
 import DevProfileDisplay from '@/components/devprofiledisplay'
 import { SuspensePlaceholders } from '@/components/suspense'
@@ -33,11 +34,15 @@ const [matchDoc, matchLoaded, _dr, setMatchDoc] = useDocument({ collection: 'mat
     {!(matchLoaded && profileLoaded) && <SuspensePlaceholders />}
     {(matchLoaded && profileLoaded) && 
     <div className='m-4'>
-      <h3 className='text-gray-500'>dev profile</h3>
-      <DevProfileDisplay userDoc={profileDoc} readOnly />
-      <h3 className='text-gray-500'>book a meeting</h3>
+      <h3 className='text-gray-500'>dev resume</h3>
+      <div className='flex justify-center min-w-full w-full'>
+        <TotalResume profileID={profileDoc.uid} />
+      </div>
       <div className='bg-white shadow overflow-hidden sm:rounded-lg m-4'>
-        Dev Calendly goes here
+      <h3 className='text-gray-500 m-4 p-4'>
+      <a href={profileDoc.calendlyURL}>book a meeting here</a>
+      </h3>
+        
       </div>
       <div className='m-4'>
         <Button disabled={saving} loading={saving} onClick={handleAcceptMatch} color='green' fluid>
