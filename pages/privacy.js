@@ -75,11 +75,18 @@ export default function Privacy () {
             <p>Phone number</p>
           </li>
           <li>
-            <p>Address, State, Province, ZIP/Postal code, City</p>
+            <p>Education</p>
+          </li>
+          <li>
+            <p>Work experience</p>
+          </li>
+          <li>
+            <p>Personal projects</p>
           </li>
           <li>
             <p>Usage Data</p>
           </li>
+          <p>this information may be shared with external companies as a resumé via email to help with the hiring process</p>
         </ul>
         <h3>Usage Data</h3>
         <p>Usage Data is collected automatically when using the Service.</p>
@@ -91,7 +98,7 @@ export default function Privacy () {
         <ul>
           <li>Google</li>
           <li>Facebook</li>
-          <li>Twitter</li>
+          <li>Github</li>
         </ul>
         <p>If You decide to register through or otherwise grant us access to a Third-Party Social Media Service, We may collect Personal data that is already associated with Your Third-Party Social Media Service's account, such as Your name, Your email address, Your activities or Your contact list associated with that account.</p>
         <p>You may also have the option of sharing additional information with the Company through Your Third-Party Social Media Service's account. If You choose to provide such information and Personal Data, during registration or otherwise, You are giving the Company permission to use, share, and store it in a manner consistent with this Privacy Policy.</p>
