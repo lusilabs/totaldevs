@@ -26,7 +26,7 @@ export default function About () {
         <ul>
           <li>honesty</li>
           <li>commitment</li>
-          <li>loyalty</li>
+          <li>team player</li>
         </ul>
         <h1>oath</h1>
         <p>
