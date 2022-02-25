@@ -4,6 +4,7 @@ import { Fragment, useState, useEffect } from 'react'
 import { Disclosure, Menu, Transition } from '@headlessui/react'
 import { BellIcon, CurrencyDollarIcon } from '@heroicons/react/outline'
 import PendingBanners from '@/components/pendingbanners'
+import TopCornerBadge from '@/components/misc/badge'
 
 function classNames (...classes) {
   return classes.filter(Boolean).join(' ')
@@ -31,12 +32,13 @@ function Header ({ user, userDoc, navigation, userNavigation, logoHref = '/', ..
               <div className='flex items-center justify-between h-auto'>
                 <div className='flex items-center'>
                   <Link href={logoHref} passRef>
-                    <div className='flex-shrink-0'>
+                    <div className='flex-shrink-0 flex-col relative'>
                       <img
                         className='h-8 w-8 rounded-full'
                         src='/logo-small.png'
                         alt='logo'
                       />
+                      <span class='absolute bg-red-500 h-3 w-3 rounded-full -top-0 -right-2' />
                     </div>
                   </Link>
                   <div className='block md:block'>
