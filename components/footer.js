@@ -60,42 +60,43 @@ export default function Footer () {
             <div className='flex flex-wrap items-top mb-6'>
               <div className='w-full lg:w-4/12 px-4 ml-auto'>
                 <span className='block uppercase text-gray-600 text-sm font-semibold mb-2'>
-                  Useful Links
+                  links
                 </span>
                 <ul className='list-unstyled'>
                   <li>
                     <a
                       className='text-gray-700 hover:text-gray-900 font-semibold block pb-2 text-sm'
+                      href='/about'
                     >about us
                     </a>
                   </li>
-                  <li>
+                  {/* <li>
                     <a
                       className='text-gray-700 hover:text-gray-900 font-semibold block pb-2 text-sm'
                     >blog
                     </a>
-                  </li>
+                  </li> */}
 
                 </ul>
               </div>
               <div className='w-full lg:w-4/12 px-4'>
                 <span className='block uppercase text-gray-600 text-sm font-semibold mb-2'>
-                  other Resources
+                  other resources
                 </span>
                 <ul className='list-unstyled'>
 
-                  <li>
+                  {/* <li>
                     <a
                       className='text-gray-700 hover:text-gray-900 font-semibold block pb-2 text-sm'
                       href='/terms'
                     >Terms & Conditions
                     </a>
-                  </li>
+                  </li> */}
                   <li>
                     <a
                       className='text-gray-700 hover:text-gray-900 font-semibold block pb-2 text-sm'
                       href='/privacy'
-                    >Privacy Policy
+                    >privacy policy
                     </a>
                   </li>
 

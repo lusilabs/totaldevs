@@ -279,12 +279,13 @@ exports.updateJob = functions.firestore.document('jobs/{id}').onUpdate(async (ch
   triggerList.forEach(triggerOnUpdate)
 })
 
-exports.verifyUrl = functions.https.onCall(async ({ url }, ctx) => {
-  return await fetch(url).then((response) => {
-    return { success: response.status === 200 }
-  }).catch((error) => {
-    return { error }
-  })
+exports.verifyCalendlyUrl = functions.https.onCall(async ({ url }, ctx) => {
+  try {
+    const response = await fetch(url)
+    return { error: !(response.status === 200) }
+  } catch (error) {
+    return { error: !!error }
+  }
 })
 
 exports.sendMessage = functions.https.onCall(async ({ text, fcmToken }, ctx) => {

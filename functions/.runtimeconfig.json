@@ -1,8 +1,0 @@
-{
-  "stripe": {
-    "return_url_dev": "http://localhost:3000/?stripe_redirect_success=true",
-    "refresh_url_dev": "http://localhost:3000/?stripe_redirect_failure=true",
-    "secret_key_prod": "test",
-    "secret_key_dev": "sk_test_51K5wctKId0epTCbqKe7PzedDO9zHmaLo0zoD9lh5QouTRNXUxMaLXRqefHorZ6gOA0JCtTlUcCrhJvwN25uQbo2e00TSenHmIu"
-  }
-}
