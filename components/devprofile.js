@@ -16,16 +16,16 @@ import ProfileAvailability from '@/components/profileavailability'
 
 const verifyCalendlyUrl = httpsCallable(functions, 'verifyCalendlyUrl')
 
-const biosByRole = {
-  fullstack: 'I am experienced developing web applications, from front to back to all things like cloud, deployments, testing, etc., and working with remote teams.  I have a strong mathematics background, and I am seeking a mentor to become a software architect.'
-}
+// const biosByRole = {
+//   fullstack: 'I am experienced developing web applications, from front to back to all things like cloud, deployments, testing, etc., and working with remote teams.  I have a strong mathematics background, and I am seeking a mentor to become a software architect.'
+// }
 
 const requiredFieldsByModule = {
   isAvailabilityComplete: ['calendlyURL', 'title', 'jobSearch', 'salaryMin'],
   isAboutMeComplete: ['displayName', 'englishLevel', 'bio', 'experienceYears', 'visibility', 'hasAcceptedTerms'],
   isExperienceComplete: [], // empty means that if it passes onSubmit then it is alright (we use 'required' inside components)
-  isProjectsComplete: [],
-  isEducationComplete: []
+  isProjectsComplete: [], // empty means that if it passes onSubmit then it is alright (we use 'required' inside components)
+  isEducationComplete: []// empty means that if it passes onSubmit then it is alright (we use 'required' inside components)
 }
 
 function EditDevProfile ({ userDoc, ...props }) {
@@ -73,7 +73,14 @@ function EditDevProfile ({ userDoc, ...props }) {
     for (const [key, fields] of Object.entries(requiredFieldsByModule)) {
       if (key.toLowerCase().includes(isEditing)) data[key] = fields.every(f => data[f])
     }
-    const isProfileComplete = !!(data.isProjectsComplete && data.isExperienceComplete && data.isAvailabilityComplete && data.isEducationComplete && data.isAboutMeComplete)
+    const isProfileComplete = !!(
+      (data.isProjectsComplete || userDoc.isProjectsComplete) &&
+      (data.isExperienceComplete || userDoc.isExperienceComplete) &&
+      (data.isAvailabilityComplete || userDoc.isAvailabilityComplete) &&
+      (data.isEducationComplete || userDoc.isEducationComplete) &&
+      (data.isAboutMeComplete || userDoc.isAboutMeComplete)
+    )
+
     setSaving(true)
     await sleep(2000)
     const uref = doc(db, 'users', userDoc.uid)

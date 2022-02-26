@@ -38,7 +38,7 @@ function Header ({ user, userDoc, navigation, userNavigation, logoHref = '/', ..
                         src='/logo-small.png'
                         alt='logo'
                       />
-                      <span class='absolute bg-red-500 h-3 w-3 rounded-full -top-0 -right-2' />
+                      <span className='absolute bg-red-500 h-3 w-3 rounded-full -top-0 -right-2' />
                     </div>
                   </Link>
                   <div className='block md:block'>
