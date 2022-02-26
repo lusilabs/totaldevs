@@ -281,7 +281,7 @@ export default function AboutMe ({ register, errors, saving, photoURL, handleUpl
                 className='ml-1 h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded'
               />
               <label htmlFor='terms' className='ml-2 text-md text-gray-700'>
-                I have read and agree to the <Link href='/terms'><a> Privacy Policy </a></Link>  of totaldevs.com
+                I have read and agree to the <Link href='/privacy'><a> Privacy Policy </a></Link>  of totaldevs.com
               </label>
             </div>
 
