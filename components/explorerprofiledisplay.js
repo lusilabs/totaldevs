@@ -12,8 +12,8 @@ export default function ExplorerProfileDisplay ({ userDoc, setIsEditing }) {
               &nbsp;
               &nbsp;
             {/* profile standing */}
-            {userDoc.profileComplete && <span className='px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800'> complete </span>}
-            {!userDoc.profileComplete && <span className='px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800'> incomplete </span>}
+            {userDoc.isProfileComplete && <span className='px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800'> complete </span>}
+            {!userDoc.isProfileComplete && <span className='px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800'> incomplete </span>}
             {/* {!userDoc.status && <span className='px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800'> unpublished </span>} */}
 
           </div>

@@ -51,6 +51,11 @@ const anonRoutes = [
   '/jobs/add?signup=true&convert=false'
 ]
 
+const regexAnonRoutes = [
+  // be very careful adding routes here!
+  /^\/resumes\/*/
+]
+
 const pageNavigationByRole = {
   dev: [
     { name: 'matches', href: '/projects', current: false },
@@ -104,15 +109,20 @@ const anonUserNavigation = [
 const handleAnonUserConversion = httpsCallable(functions, 'handleAnonUserConversion')
 
 function MyApp ({ Component, pageProps }) {
+  const router = useRouter()
   const [user, isUserLoading, error] = useAuthState(auth)
   const [userDoc, setUserDoc] = useState()
   const [navigation, setNavigation] = useState(anonNavigation)
   const [userNavigation, setUserNavigation] = useState(anonUserNavigation)
-  const router = useRouter()
-  const onAnonRoutes = anonRoutes.includes(router.asPath)
-  const onAdminRoutes = router.pathname.includes('admin')
   const [isPageLoading, setIsPageLoading] = useState(false)
   const [profiles, setProfiles] = useState([])
+  const [onAnonRoutes, setOnAnonRoutes] = useState()
+  const [onAdminRoutes, setOnAdminRoutes] = useState()
+
+  useEffect(() => {
+    setOnAnonRoutes(anonRoutes.includes(router.asPath) || regexAnonRoutes.some(regex => regex.test(router.asPath)))
+    setOnAdminRoutes(router.pathname.includes('admin'))
+  }, [router.asPath])
 
   useEffect(() => {
     let unsubscribe = () => {}
@@ -179,9 +189,9 @@ function MyApp ({ Component, pageProps }) {
 
   if (onAdminRoutes && !userDoc?.isAdmin) return null
 
+  // console.log({ user, userDoc, onAdminRoutes, onAnonRoutes, Component, path: router.asPath })
   return (
     <>
-
       {(isUserLoading || isPageLoading) && <Spinner />}
       {error && <Error title='error while retrieving user' statusCode={500} />}
       {!user && !isUserLoading && !onAnonRoutes && <Landing profiles={profiles} setIsPageLoading={setIsPageLoading} handleCreateJobPosting={handleCreateJobPosting} />}

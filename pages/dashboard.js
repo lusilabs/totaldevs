@@ -14,7 +14,7 @@ function Dashboard ({ userDoc, setIsPageLoading, ...props }) {
   ]
 
   const router = useRouter()
-  const [actions, actionsLoaded, _ar] = useDocuments({ userDoc, docs: 'actions', queryConstraints })
+  const [actions, actionsLoaded, _ar, _as] = useDocuments({ userDoc, docs: 'actions', queryConstraints })
   const handleClickOnAction = action => {
     const aref = doc(db, 'actions', action.id)
     setDoc(aref, { seen: true }, { merge: true })
@@ -45,10 +45,10 @@ const ActionView = ({ actions, handleClickOnAction }) => {
     <>
       <div className='flex items-center mt-4 p-4'>
         <SpeakerphoneIcon className='h-6 w-6 text-indigo-400' aria-hidden='true' />
-        <p class='ml-4 text-lg font-bold text-indigo-400'>notifications</p>
+        <p className='ml-4 text-lg font-bold text-indigo-400'>notifications</p>
       </div>
-      <div class='w-11/12 lg:10/12 mx-auto relative mt-2 p-6'>
-        <div class='border-l-2 mt-6'>
+      <div className='w-11/12 lg:10/12 mx-auto relative mt-2 p-6'>
+        <div className='border-l-2 mt-6'>
           {actions.map((a, aix) => <ActionCard action={a} key={aix} handleClickOnAction={handleClickOnAction} />)}
         </div>
       </div>
