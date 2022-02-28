@@ -189,7 +189,7 @@ function MyApp ({ Component, pageProps }) {
 
   if (onAdminRoutes && !userDoc?.isAdmin) return null
 
-  console.log({ user, userDoc, onAdminRoutes, onAnonRoutes, Component, path: router.asPath })
+  // console.log({ user, userDoc, onAdminRoutes, onAnonRoutes, Component, path: router.asPath })
   return (
     <>
       {(isUserLoading || isPageLoading) && <Spinner />}

@@ -19,7 +19,7 @@ export default function ProfileEducation ({ degrees, setDegrees }) {
       <h3 className='text-gray-500 m-4 p-4'>degrees</h3>
       {degrees.length === 0 && <>
         <div className='text-red-400 text-lg shadow m-4 p-4 text-center flex flex-col'>
-          no degrees registered, please add a degree or select "no degree"
+          no degrees registered
           {/* <div>
             <input
               type='checkbox' id='noDegree' name='noDegree'
@@ -33,7 +33,7 @@ export default function ProfileEducation ({ degrees, setDegrees }) {
 
           </div> */}
         </div>
-      </>}
+                               </>}
       {degrees.length > 0 && degrees.map((d, ix) =>
 
         <div key={ix} className='relative m-4 p-4 md:m-6 md:p-6 rounded-lg overflow-hidden shadow grid grid-cols-6 gap-6 pb-12'>

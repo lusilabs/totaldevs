@@ -3,7 +3,7 @@ export const Select = ({ options, value, onChange }) => {
     <div>
       <div className='mb-3 xl:w-96'>
         <select
-          class='form-select appearance-none
+          className='form-select appearance-none
                 block
                 w-full
                 px-3

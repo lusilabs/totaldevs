@@ -56,7 +56,7 @@ const RecommendRole = ({ userDoc, selectedDev, selectedJob }) => {
 
 export const JobsToMatch = ({ userDoc }) => {
   const [jobs, jobsLoaded, _jr] = useDocuments({ docs: 'jobs' })
-  const [devs, devsLoaded, _dr] = useDocuments({ docs: 'users', queryConstraints: [where('role', '==', 'dev'), where('profileComplete', '==', true)] })
+  const [devs, devsLoaded, _dr] = useDocuments({ docs: 'users', queryConstraints: [where('role', '==', 'dev'), where('isProfileComplete', '==', true)] })
   const [selectedJob, setSelectedJob] = useState(null)
   const [selectedDev, setSelectedDev] = useState(null)
   const [start, setStart] = useState('Dev')
@@ -125,7 +125,7 @@ export const JobsToMatch = ({ userDoc }) => {
           }}
                               >
           select another {startTable.tableProps.type}?
-                              </Button>}
+        </Button>}
         {selectedJob && selectedDev && <RecommendRole {...{ userDoc, selectedJob, selectedDev }} />}
       </div>
       {!startTable.entity && <Table {...{ ...startTable.tableProps, getterMapping, renderMapping }} />}
@@ -142,7 +142,7 @@ export const JobsToMatch = ({ userDoc }) => {
             {
                             nextTable.entity && <div className='col-span-6 sm:col-span-3 '>
                               <DetailedView {...{ ...nextTable }} />
-                            </div>
+                                                </div>
                         }
           </div>
         </>}
