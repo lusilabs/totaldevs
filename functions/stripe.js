@@ -11,17 +11,16 @@ const STRIPE_SECRET = isDevelopment ? config.stripe.secret_key_dev : config.stri
 const STRIPE_WEBHOOK_SECRET = isDevelopment ? config.stripe.webhook_secret_dev : config.stripe.webhook_secret_prod
 const STRIPE_RETURN_URL = isDevelopment ? config.stripe.return_url_dev : config.stripe.return_url_prod
 const STRIPE_REFRESH_URL = isDevelopment ? config.stripe.refresh_url_dev : config.stripe.refresh_url_prod
-
-// const STRIPE_CHECKOUT_SUCCESS_URL = isDevelopment ? config.stripe.checkout_success_url_dev : config.stripe.checkout_success_url_prod
-// const STRIPE_CHECKOUT_CANCEL_URL = isDevelopment ? config.stripe.checkout_cancel_url_dev : config.stripe.checkout_cancel_url_prod
+const STRIPE_CHECKOUT_SUCCESS_URL = isDevelopment ? config.stripe.checkout_success_url_dev : config.stripe.checkout_success_url_prod
+const STRIPE_CHECKOUT_CANCEL_URL = isDevelopment ? config.stripe.checkout_cancel_url_dev : config.stripe.checkout_cancel_url_prod
 
 // const OWNER_STRIPE_CHECKOUT_SUCCESS_URL = isDevelopment ? config.stripe.owner_checkout_success_url_dev : config.stripe.owner_checkout_success_url_prod
 // const OWNER_STRIPE_CHECKOUT_CANCEL_URL = isDevelopment ? config.stripe.owner_checkout_cancel_url_dev : config.stripe.owner_checkout_cancel_url_prod
 // const OWNER_PORTAL_RETURN_URL = isDevelopment ? config.stripe.owner_portal_return_dev : config.stripe.owner_portal_return_prod
 // const CUSTOMER_PORTAL_RETURN_URL = isDevelopment ? config.stripe.customer_portal_return_dev : config.stripe.customer_portal_return_prod
 const stripe = Stripe(STRIPE_SECRET)
-
 const NUM_DEFAULT_INVITES = 3
+const APPLICATION_FEE_PERCENT = 4
 
 // const stripe = Stripe(STRIPE_SECRET)
 const isAuthed = ctx => {
@@ -85,8 +84,8 @@ exports.checkStripeAccountStanding = functions.https.onCall(async (_, ctx) => {
     .firestore()
     .collection('users')
     .doc(uid)
-  const stripeVerified = stripeAccount.details_submitted && stripeAccount.charges_enabled
-  uref2.update({ details_submitted, charges_enabled, stripeVerified })
+  const isStripeVerified = stripeAccount.details_submitted && stripeAccount.charges_enabled
+  uref2.update({ details_submitted, charges_enabled, isStripeVerified })
 })
 
 exports.generateExpressDashboardLink = functions.https.onCall(async (_, ctx) => {
@@ -117,21 +116,101 @@ const createStripeConnectExpressAccount = async user => {
   return account
 }
 
-// exports.assignStripeCustomerToUser = functions.https.onCall(async (data, ctx) => {
-//   const uid = isAuthedAndAppChecked(ctx)
-//   const { session_id } = data
-//   const cref = await admin.firestore().collection('checkouts').doc(session_id).get()
-//   const { customer } = cref.data()
-//   const ref = await admin
-//     .firestore()
-//     .collection('users')
-//     .doc(uid)
-//     .set({ customer }, { merge: true })
-// })
+exports.constructStripeModels = functions.firestore.document('subscriptions/{subID}').onCreate(async (snap, context) => {
+  const subID = context.params.subID
+  // const { dev, company, match, job } = snap.data()
+  const dev = 'pEQ78TklYpmlRuTXLn4sJP13QW5u'
+  const company = 'YLAU8mWyJzeWoV1CdW6Y3DJmihkK'
+  const match = 'pEQ78TklYpmlRuTXLn4sJP13QW5u:A35hntpKLEaOBNiIniZM'
+  const job = 'A35hntpKLEaOBNiIniZM'
+  const uref = await admin
+    .firestore()
+    .collection('users')
+    .doc(dev)
+    .get()
+  const { stripeAccountID } = uref.data()
+
+  const cref = await admin
+    .firestore()
+    .collection('users')
+    .doc(company)
+    .get()
+  const { email, displayName, uid } = cref.data()
+
+  const { id: customer } = await stripe.customers.create({
+    email,
+    name: displayName,
+    metadata: {
+      companyID: uid,
+      matchID: match
+    }
+  }, { stripeAccount: stripeAccountID })
+
+  const jref = await admin
+    .firestore()
+    .collection('jobs')
+    .doc(job)
+    .get()
+  const { finalSalary, photoURL, description, title } = jref.data()
+  const images = [photoURL]
+  const { id: product } = await stripe.products.create({
+    name: title, description, images
+  }, { stripeAccount: stripeAccountID })
+
+  const unit_amount = (100 * Number(finalSalary)).toFixed(0)
+  const { id: price } = await stripe.prices.create({
+    currency: 'usd', product, unit_amount, recurring: { interval: 'month' }
+  }, { stripeAccount: stripeAccountID })
+
+  return snap.ref.set({ customer, product, price, status: 'pending_payment' }, { merge: true })
+})
+
+exports.createCheckoutSession = functions.https.onCall(async (data, ctx) => {
+  // we assume there's only 1 subscription created per match.. is there a better way?
+  logger.info({ data })
+  const subDoc = await admin
+    .firestore()
+    .collection('subscriptions')
+    .where('match', '==', data.match)
+    .limit(1)
+    .get()
+    .then(d => d.docs[0].data())
+
+  const { price, company, dev, job, match, customer } = subDoc
+
+  logger.info({ price, company, dev, job, match, customer })
+
+  const uref = await admin
+    .firestore()
+    .collection('users')
+    .doc(dev)
+    .get()
+  const { stripeAccountID: stripeAccount } = uref.data()
+
+  const session = await stripe.checkout.sessions.create({
+    success_url: STRIPE_CHECKOUT_SUCCESS_URL,
+    cancel_url: STRIPE_CHECKOUT_CANCEL_URL,
+    payment_method_types: ['card'],
+    line_items: [
+      { price, quantity: 1 }
+    ],
+    mode: 'subscription',
+    subscription_data: {
+      application_fee_percent: APPLICATION_FEE_PERCENT
+    },
+    customer,
+    metadata: {
+      company, dev, job, match
+    }
+
+  }, { stripeAccount })
+
+  return session
+})
 
 const updateStripeAccount = async account => {
   const { id: stripeAccountID, charges_enabled, payouts_enabled } = account
-  const stripeVerified = charges_enabled && payouts_enabled
+  const isStripeVerified = charges_enabled && payouts_enabled
   // todo@stripe does detect fraud change those properties? fraud handling
   const uref = await admin
     .firestore()
@@ -141,7 +220,7 @@ const updateStripeAccount = async account => {
     .get()
     .then(snap => {
       const doc = snap.docs[0]
-      doc.ref.update({ charges_enabled, payouts_enabled, stripeVerified })
+      doc.ref.update({ charges_enabled, payouts_enabled, isStripeVerified })
     })
   return null
 }

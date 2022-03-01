@@ -84,7 +84,7 @@ exports.createUserDoc = functions.auth.user().onCreate(async user => {
 })
 
 exports.handleMatchDoc = functions.firestore.document('matches/{matchID}').onWrite(async (change, context) => {
-  // const matchID = context.params.matchID
+  const matchID = context.params.matchID
   const newMatch = !change.before.exists
   const prev = change.before.exists ? change.before.data() : null
   const curr = change.after.exists ? change.after.data() : null
@@ -139,7 +139,16 @@ exports.handleMatchDoc = functions.firestore.document('matches/{matchID}').onWri
           email: doc.companyEmail
         }
       ]
-      await sendEversignDocuments(signers, fields, context.params.matchID)
+      sendEversignDocuments(signers, fields, context.params.matchID)
+      admin.firestore()
+        .collection('subscriptions')
+        .add({
+          dev: doc.dev,
+          company: doc.company,
+          explorer: doc.explorer,
+          match: matchID,
+          job: doc.job
+        })
     }
     admin
       .firestore()
@@ -170,7 +179,7 @@ exports.handleMatchDoc = functions.firestore.document('matches/{matchID}').onWri
   }
 })
 
-exports.sendEmailOnJobCreate = functions.firestore.document('jobs/{jobID}').onCreate(async (change, context) => {
+exports.sendEmailOnJobCreate = functions.firestore.document('jobs/{jobID}').onCreate(async (snap, context) => {
   const jobID = context.params.jobID
   const { companyName, company, companyEmail } = snap.data()
   admin
@@ -179,7 +188,7 @@ exports.sendEmailOnJobCreate = functions.firestore.document('jobs/{jobID}').onCr
     .add({
       message: {
         text: JSON.stringify(snap.data()),
-        subject: companyEmail + ' ' + companyName + ' ' + company + ' just posted a new position!'
+        subject: companyEmail + ' ' + companyName + ' ' + company + ' just posted a new position!' + `jobID ${jobID}`
       },
       to: ['talent@totaldevs.com'],
       createdAt: new Date().toISOString()
