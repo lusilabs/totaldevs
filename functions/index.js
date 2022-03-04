@@ -124,7 +124,7 @@ exports.handleMatchDoc = functions.firestore.document('matches/{matchID}').onWri
     const text = obj.text
     const uid = doc[obj.role]
     const email = obj.email === 'companyEmail' ? doc.jobData.companyEmail : doc[obj.email]
-    if (doc.status === 'position_offered_real') {
+    if (doc.status === 'position_offered') {
       // TODO: update status, and create right templates/signers/fields/webhook url for real stuff
       const fields = [{ identifier: 'specific_text', value: doc.job }]
       const signers = [
