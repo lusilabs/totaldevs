@@ -1,0 +1,14 @@
+{
+  "eversign": {
+    "dev_company_template_id": "a9e0d75df53c4b8d8714a9110c3f1ab3",
+    "business_id": "412523"
+  },
+  "stripe": {
+    "webhook_secret_dev":"whsec_7890289dd772277159d1634bc75fff7f4b93ac66b7b36e6e6cfb1ac787e0b50b",
+    "return_url_dev": "http://localhost:3001/?stripe_redirect_success=true",
+    "refresh_url_dev": "http://localhost:3001/?stripe_redirect_failure=true",
+    "checkout_success_url_dev": "http://localhost:3001/matches/?success=true&session={{CHECKOUT_SESSION_ID}}",
+    "checkout_cancel_url_dev": "http://localhost:3001/matches/?cancel=true",
+    "secret_key_dev": "sk_test_51K5wctKId0epTCbqKe7PzedDO9zHmaLo0zoD9lh5QouTRNXUxMaLXRqefHorZ6gOA0JCtTlUcCrhJvwN25uQbo2e00TSenHmIu"
+  }
+}

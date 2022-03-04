@@ -12,7 +12,7 @@ function Payments (props) {
   }
   return (
     <>
-      {props.userDoc.verified && <Banner color='bg-indigo-600' handleClick={handleNavigateToDashboard} buttonText='go to stripe' text='payments are handled by stripe' />}
+      {props.userDoc.isStripeVerified && <Banner color='bg-indigo-600' handleClick={handleNavigateToDashboard} buttonText='go to stripe' text='payments are handled by stripe' />}
       <div className='flex flex-col items-center mt-8'>
         {!props.userDoc.verified && <h4 className='text-indigo-600 text-center'> please verify your account to view your payments </h4>}
         <img className='w-60 h-60' src='/astronaut.png' />

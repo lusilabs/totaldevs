@@ -28,7 +28,8 @@ export default function MatchView ({ userDoc, ...props }) {
 
   const [matchDoc, matchLoaded, _dr, setMatchDoc] = useDocument({ collection: 'matches', docID: routerMatchID })
   useEffect(() => {
-    const { matchID } = router.query
+    const { matchID, success, cancel, session } = router.query
+    console.log({matchID, success, cancel, session})
     setRouterMatchID(matchID)
   })
 

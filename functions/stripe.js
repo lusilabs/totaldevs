@@ -162,12 +162,10 @@ exports.constructStripeModels = functions.firestore.document('subscriptions/{sub
     currency: 'usd', product, unit_amount, recurring: { interval: 'month' }
   }, { stripeAccount: stripeAccountID })
 
-  return snap.ref.set({ customer, product, price, status: 'pending_payment' }, { merge: true })
+  return snap.ref.set({ customer, product, price, status: 'pending_payment', finalSalary, description, title, photoURL }, { merge: true })
 })
 
 exports.createCheckoutSession = functions.https.onCall(async (data, ctx) => {
-  // we assume there's only 1 subscription created per match.. is there a better way?
-  logger.info({ data })
   const subDoc = await admin
     .firestore()
     .collection('subscriptions')
@@ -177,8 +175,6 @@ exports.createCheckoutSession = functions.https.onCall(async (data, ctx) => {
     .then(d => d.docs[0].data())
 
   const { price, company, dev, job, match, customer } = subDoc
-
-  logger.info({ price, company, dev, job, match, customer })
 
   const uref = await admin
     .firestore()
@@ -225,9 +221,34 @@ const updateStripeAccount = async account => {
   return null
 }
 
+const handleCheckoutSessionCompleted = session => {
+  admin
+    .firestore()
+    .collection('subscriptions')
+    .where('match', '==', session.metadata.match)
+    .limit(1)
+    .get()
+    .then(snap => {
+      const doc = snap.docs[0]
+      doc.ref.update({ subscription: session.subscription })
+    })
+}
+
+const handleInvoiceUpdate = async invoice => {
+  admin
+    .firestore()
+    .collection('subscriptions')
+    .where('subscription', '==', invoice.subscription)
+    .limit(1)
+    .get()
+    .then(snap => {
+      const doc = snap.docs[0]
+      doc.ref.update({ status: invoice.status })
+    })
+}
+
 exports.handleWebhooks = functions.https.onRequest(async (req, resp) => {
   let event
-  let stripe
   try {
     event = stripe.webhooks.constructEvent(req.rawBody, req.headers['stripe-signature'], STRIPE_WEBHOOK_SECRET)
     // todo@carlo-stripe this is dumb. WHY can Connect test events go to live mode? ask stripe cc.
@@ -240,11 +261,18 @@ exports.handleWebhooks = functions.https.onRequest(async (req, resp) => {
     resp.status(401).send('Webhook Error: Invalid Secret')
     return
   }
-  logger.info('Processing webhook', { type: event.type })
+  logger.info('Processing webhook', { type: event.type, event })
   try {
     switch (event.type) {
       case 'account.updated':
         await updateStripeAccount(event.data.object)
+        break
+      case 'invoice.paid':
+      case 'invoice.payment_failed':
+        handleInvoiceUpdate(event.data.object)
+        break
+      case 'checkout.session.completed':
+        handleCheckoutSessionCompleted(event.data.object)
         break
       default:
         logger.error(new Error('Unhandled relevant event!'), { type: event.type })

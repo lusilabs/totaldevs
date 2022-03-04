@@ -7,7 +7,7 @@
     "all": "next dev -p 3001 & npm run emulators & npm run stripe",
     "_emulators": "lsof -ti:5000,5001,9099,8081,9000,8085,9199,9200 | xargs kill && firebase emulators:start --import=./emulators --export-on-exit",
     "emulators": "npm run _emulators",
-    "stripe": "stripe listen --forward-to http://127.0.0.1:5001/totaldevs-25387/us-central1/stripe-handleWebhooks --forward-connect-to http://127.0.0.1:5001/totaldevs-25387/us-central1/stripe-handleWebhooks",
+    "stripe": "stripe listen --forward-to http://127.0.0.1:5001/totaldevs-bef40/us-central1/stripe-handleWebhooks --forward-connect-to http://127.0.0.1:5001/totaldevs-bef40/us-central1/stripe-handleWebhooks",
     "build": "next build && next export",
     "debug": "NODE_OPTIONS='--inspect' next dev & firebase emulators:start '--inspect-functions'",
     "deploy-preview": "npm run build && firebase hosting:channel:deploy mvp",
