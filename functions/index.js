@@ -110,7 +110,7 @@ exports.handleMatchDoc = functions.firestore.document('matches/{matchID}').onWri
         emailText: 'visit https://totaldevs.com/projects to view your match!',
         emailSubject: 'you just got a new job match! 🤩'
       },
-      dev_interested: {
+      waiting_on_dev: {
         role: 'company',
         text: 'there is a new match for your job posting!',
         url: `/jobs/${doc.job}`,
@@ -296,6 +296,17 @@ const triggerOnUpdate = ({ document, fieldToSearch, valueToSearch, destinationFi
       querySnapshot.docs.forEach(doc => (doc.ref.update({ [destinationField]: latestObject })))
     })
 }
+
+exports.updateMatchDocOnServer = functions.https.onCall(async (data, ctx) => {
+  const uid = isAuthedAndAppChecked(ctx)
+  logger.info(data)
+  const { matchID, finalSalary, startDate, initialPayment } = data
+  const mref = admin
+    .firestore()
+    .collection('matches')
+    .doc(matchID)
+  await mref.update({ finalSalary, startDate, initialPayment })
+})
 
 exports.updateJob = functions.firestore.document('jobs/{id}').onUpdate(async (change, context) => {
   const jobid = context.params.id

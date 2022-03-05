@@ -22,7 +22,7 @@ const ConfirmAvailability = ({ userDoc, selectedMatch, refreshMatches }) => {
     <div className='py-5'>
       <Button
         type='button' color='green' className='text-md'
-        onClick={updateMatch('dev_interested', selectedMatch.companyName)}
+        onClick={updateMatch('waiting_on_dev', selectedMatch.companyName)}
       >
         Available, can schedule meeting with client
       </Button>

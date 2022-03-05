@@ -24,9 +24,9 @@ export default function JobDisplay ({ jobDoc, matches, setIsEditing }) {
               <div className='fixed left-24'>{m.devName}</div>
 
               <div>
-                {m.status !== 'dev_interested' && <span className='px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800'> OK </span>}
-                {m.status === 'dev_interested' && <span className='px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800'> action required </span>}
-                {/* {!jobDoc.status && <span className='px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800'> unpublished </span>} */}
+                {m.status === 'ongoing' && <span className='px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800'> OK </span>}
+                {m.status === 'waiting_on_dev' && <span className='px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800'> waiting on dev </span>}
+                {jobDoc.status === 'waiting_on_company' && <span className='px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800'> action required </span>}
 
               </div>
             </div>
