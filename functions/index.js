@@ -387,7 +387,7 @@ const sendEversignDocuments = async (signers, fields, match) => {
     originalFields: fields
   })
 }
-exports.sendCompanyInvite = functions.https.onCall(async ({ position, devProfile, pitch, explorer, email }, ctx) => {
+exports.sendCompanyInvite = functions.https.onCall(async ({ position, devProfile, pitch, explorer, email, bcc }, ctx) => {
   const iref = await admin
     .firestore()
     .collection('invites')
@@ -407,6 +407,7 @@ exports.sendCompanyInvite = functions.https.onCall(async ({ position, devProfile
   ]
   const processedHTML = data.reduce((html, { tag, value }) => html.replace(tag, value), rawHTML)
   const subject = 'Have you considered recruiting talent from Latin America?🤔, we might have the perfect fit for your position.'
+  const bccData = bcc ? { bcc: [ctx.auth.token.email] } : {}
   const mail = await admin
     .firestore()
     .collection('mail')
@@ -416,7 +417,8 @@ exports.sendCompanyInvite = functions.https.onCall(async ({ position, devProfile
         subject: subject
       },
       to: [email],
-      createdAt: new Date().toISOString()
+      createdAt: new Date().toISOString(),
+      ...bccData
     })
   iref.set({
     mailID: mail.id,

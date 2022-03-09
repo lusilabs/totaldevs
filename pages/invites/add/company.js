@@ -1,8 +1,8 @@
 import { useForm } from 'react-hook-form'
 import { Button, Dropdown } from 'semantic-ui-react'
 import React, { useState, useEffect } from 'react'
-import { db, functions } from '@/utils/config'
-import { doc, setDoc, addDoc, increment, collection, getDoc, where } from 'firebase/firestore'
+import { functions } from '@/utils/config'
+import { where } from 'firebase/firestore'
 import { httpsCallable } from 'firebase/functions'
 import router from 'next/router'
 import { toast } from 'react-toastify'
@@ -48,7 +48,8 @@ function AddInvite ({ userDoc, ...props }) {
       devProfile,
       pitch,
       explorer: userDoc.displayName,
-      email: data.email
+      email: data.email,
+      bcc: data.bcc
     })
     setSaving(false)
     if (response?.data?.error) {
@@ -59,7 +60,8 @@ function AddInvite ({ userDoc, ...props }) {
 
   const { register, handleSubmit, formState: { errors } } = useForm({
     defaultValues: {
-      pitch: DEFAULT_PITCH
+      pitch: DEFAULT_PITCH,
+      bcc: false
     }
   })
 
@@ -91,6 +93,15 @@ function AddInvite ({ userDoc, ...props }) {
                   {...register('email', { required: true, minLength: 3, pattern: /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/i })}
                 />
                 {errors.email && <div className='m-2 text-sm text-red-500'>a valid email is required</div>}
+                <input
+                  {...register('bcc')}
+                  id='bcc'
+                  type='checkbox'
+                  className='ml-1 h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded'
+                />
+                <label htmlFor='bcc' className='ml-2 text-md text-gray-700'>
+                  add self bcc
+                </label>
               </div>
 
               <div className='col-span-6 sm:col-span-3'>
