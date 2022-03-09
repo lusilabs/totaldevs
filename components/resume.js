@@ -5,7 +5,6 @@ import { SuspensePlaceholders } from '@/components/suspense'
 
 const TotalResume = ({ profileID }) => {
   const [profileDoc, profileLoaded, _pr] = useDocument({ collection: 'profiles', docID: profileID }, [profileID])
-  const router = useRouter()
   return (
     <>
       {!profileLoaded && <SuspensePlaceholders />}

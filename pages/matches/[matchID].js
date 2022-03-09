@@ -58,7 +58,13 @@ export default function MatchView ({ userDoc, ...props }) {
       case 'ready_to_pay':
         handleAcceptMatch(routerMatchID)
         break
-      case 'fresh':
+      case 'waiting_on_dev':
+        // handle
+        break
+      case 'rejected':
+        // handle
+        break
+      case 'ongoing':
         // handle
         break
       default:
@@ -90,7 +96,7 @@ export default function MatchView ({ userDoc, ...props }) {
         <div className='m-4'>
           <h3 className='text-gray-500'>dev resume</h3>
 
-          <div className='flex justify-center '>
+          <div className='flex justify-center'>
             <TotalResume profileID={profileDoc.uid} />
           </div>
 
@@ -163,7 +169,7 @@ export default function MatchView ({ userDoc, ...props }) {
             </div>
           </form>
 
-          <div className='flex align-items justify-between m-4'>
+          <div className='flex align-items justify-center m-4'>
 
             <div className='m-4'>
               <Button disabled={saving} loading={saving} onClick={handleDeclineMatch} color='red'>
