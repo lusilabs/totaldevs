@@ -387,7 +387,7 @@ const sendEversignDocuments = async (signers, fields, match) => {
   })
 }
 
-const SLACK_HOOK_URL = config.slack.hooks
+const SLACK_HOOK_URL = isDevelopment ? config.slack.dev_hook : config.slack.prod_hook
 
 const slackMapping = {
   matches: {
