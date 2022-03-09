@@ -92,7 +92,8 @@ const userNavigationByRole = {
 const adminNavigation = [
   { name: 'devs', href: '/admin/devs' },
   { name: 'exs', href: '/admin/explorers' },
-  { name: 'comps', href: '/admin/companies' }
+  { name: 'comps', href: '/admin/companies' },
+  { name: 'matches', href: '/admin/matches' }
 
 ]
 
