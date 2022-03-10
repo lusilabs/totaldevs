@@ -1,6 +1,6 @@
 import { useDocuments } from '@/utils/hooks'
-import { PaperClipIcon } from '@heroicons/react/solid'
-import { collection, query, where, getDocs, orderBy, limit, doc, getDoc } from 'firebase/firestore'
+import { where } from 'firebase/firestore'
+import Status from '@/components/misc/status'
 
 export default function Devs () {
   const queryConstraints = [
@@ -41,20 +41,6 @@ export default function Devs () {
                     scope='col'
                     className='px-6 py-3 text-left text-xs font-medium text-gray-500 tracking-wider'
                   >
-                    stack
-                  </th>
-
-                  <th
-                    scope='col'
-                    className='px-6 py-3 text-left text-xs font-medium text-gray-500 tracking-wider'
-                  >
-                    resume
-                  </th>
-
-                  <th
-                    scope='col'
-                    className='px-6 py-3 text-left text-xs font-medium text-gray-500 tracking-wider'
-                  >
                     USD
                   </th>
 
@@ -74,43 +60,19 @@ export default function Devs () {
                         </div>
                         <div className='ml-4'>
                           <div className='text-sm font-medium text-gray-900'>{doc.displayName}</div>
-                          &nbsp;
                           <div className='text-sm font-medium text-gray-900'>{doc.email}</div>
+                          <div className='text-sm font-medium text-gray-900'>{doc.uid}</div>
                         </div>
                       </div>
                     </td>
 
                     <td className='px-6 py-4 whitespace-nowrap'>
-                      {doc.isStripeVerified && <span className='px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800'> verified </span>}
-                      {!doc.isStripeVerified && <span className='px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800'> verification pending </span>}
+                      <Status green={['verified']} value={doc.stripeVerified ? 'verified' : 'verification pending'} />
                     </td>
 
                     <td className='px-6 py-4 whitespace-nowrap'>
-                      {doc.isProfileComplete && <span className='px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800'> complete </span>}
-                      {!doc.isProfileComplete && <span className='px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800'> incomplete </span>}
+                      <Status green={['complete']} value={doc.isProfileComplete ? 'complete' : 'incomplete'} />
                     </td>
-
-                    <td className='px-6 py-4 whitespace-nowrap'>
-                      <div className='text-sm text-gray-900'>{doc.stack?.join(' ')}</div>
-                    </td>
-
-                    <td className='px-6 py-4 whitespace-nowrap'>
-                      {doc.resumeURL && <div className='flex flex-row'>
-                        <PaperClipIcon className='flex-shrink-0 h-5 w-5 text-gray-400' aria-hidden='true' />
-                        <a href={doc.resumeURL} target='blank' className='font-medium text-indigo-600 hover:text-indigo-500'>
-                          view
-                        </a>
-                      </div>}
-                      {!doc.resumeURL && <span>no resume</span>}
-                    </td>
-
-                    {/* <td className='px-6 py-4 whitespace-nowrap text-right text-sm font-medium'>
-                      {doc.charges?.data?.length > 0 && <Link href={doc.charges.data[0].receipt_url}>
-                        <a className='text-indigo-600 hover:text-indigo-900'>
-                          Ver
-                        </a>
-                      </Link>}
-                    </td> */}
 
                     <td className='px-6 py-4 whitespace-nowrap text-sm text-gray-500'>{(Number(doc.amount_received) / 100).toFixed(2)}</td>
                   </tr>
