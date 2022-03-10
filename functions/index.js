@@ -170,7 +170,7 @@ exports.handleMatchDoc = functions.firestore.document('matches/{matchID}').onWri
   }
 })
 
-exports.sendEmailOnJobCreate = functions.firestore.document('jobs/{jobID}').onCreate(async (change, context) => {
+exports.sendEmailOnJobCreate = functions.firestore.document('jobs/{jobID}').onCreate(async (snap, context) => {
   const jobID = context.params.jobID
   const { companyName, company, companyEmail } = snap.data()
   admin
@@ -396,7 +396,8 @@ const slackMapping = {
   },
   jobs: {
     listeningFields: ['status'],
-    payloadFields: ['companyName', 'companyEmail']
+    payloadFields: ['companyName', 'companyEmail'],
+    dumpDocument: true
   },
   eversignDocuments: {
     listeningFields: ['document_completed'],
@@ -405,29 +406,33 @@ const slackMapping = {
   profiles: {
     listeningFields: ['isProfileComplete'],
     payloadFields: ['isProfileComplete', 'providerData']
+  },
+  users: {
+    listeningFields: ['email', 'stripeAccountID'],
+    payloadFields: ['email', 'role', 'stripeAccountID', 'hasAcceptedInvite']
   }
 }
 
-const changedField = (before, after) => (field) => {
-  return before[field] !== after[field]
+const didFieldChange = (before, after) => (field) => {
+  return (before && before[field] !== after[field])
 }
 
 for (const [document, config] of Object.entries(slackMapping)) {
   exports[`${document}SlackNotifier`] = functions.firestore
-    .document(`${document}/{objId}`)
+    .document(`${document}/{docID}`)
     .onWrite((change, context) => {
-      const after = change.after.data()
-      const before = change.before.data()
-      if (!config.listeningFields.some(changedField(before, after))) {
-        return null
-      }
+      const before = change.before.exists ? change.before.data() : {}
+      const after = change.after.exists ? change.after.data() : {}
+      if (!after) return // case where it got deleted.
+      if (!config.listeningFields.some(didFieldChange(before, after))) return null
       const jsonPayload = {
-        action: !before ? 'created' : 'updated',
-        documentID: context.params.objId,
         document,
+        action: !change.before.exists ? 'created' : 'updated',
+        documentID: context.params.docID,
+        ...(config.dumpDocument ? JSON.parse(JSON.stringify(after)) : {}),
         ...config.payloadFields.reduce(
-          (result, field) => ({ ...result, [field]: after[field] }), {})
-
+          (result, field) => ({ ...result, [field]: didFieldChange(before, after)(field) ? `${before[field]} -> ${after[field]}` : after[field] }), {}
+        )
       }
       const payload = JSON.stringify(jsonPayload, null, 4)
 
