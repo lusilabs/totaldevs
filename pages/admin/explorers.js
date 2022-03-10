@@ -1,9 +1,8 @@
 import { useDocuments } from '@/utils/hooks'
-import { PaperClipIcon } from '@heroicons/react/solid'
 import { httpsCallable } from 'firebase/functions'
 import { functions } from '@/utils/config'
-
-import { collection, query, where, getDocs, orderBy, limit, doc, getDoc } from 'firebase/firestore'
+import { where } from 'firebase/firestore'
+import Status from '@/components/misc/status'
 
 const sendMessage = httpsCallable(functions, 'sendMessage')
 
@@ -64,32 +63,21 @@ export default function Explorers () {
                         </div>
                         <div className='ml-4'>
                           <div className='text-sm font-medium text-gray-900'>{doc.displayName}</div>
-                          &nbsp;
                           <div className='text-sm font-medium text-gray-900'>{doc.email}</div>
+                          <div className='text-sm font-medium text-gray-900'>{doc.uid}</div>
                         </div>
                       </div>
                     </td>
 
                     <td className='px-6 py-4 whitespace-nowrap'>
-                      {doc.stripeVerified && <span className='px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800'> verified </span>}
-                      {!doc.stripeVerified && <span className='px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800'> verification pending </span>}
+                      <Status green={['verified']} value={doc.stripeVerified ? 'verified' : 'verification pending'} />
                     </td>
 
                     <td className='px-6 py-4 whitespace-nowrap'>
-                      {doc.isProfileComplete && <span className='px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800'> complete </span>}
-                      {!doc.isProfileComplete && <span className='px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800'> incomplete </span>}
+                      <Status green={['complete']} value={doc.isProfileComplete ? 'complete' : 'incomplete'} />
                     </td>
 
-                    {/* <td className='px-6 py-4 whitespace-nowrap text-right text-sm font-medium'>
-                      {doc.charges?.data?.length > 0 && <Link href={doc.charges.data[0].receipt_url}>
-                        <a className='text-indigo-600 hover:text-indigo-900'>
-                          Ver
-                        </a>
-                      </Link>}
-                    </td> */}
-
                     <td className='px-6 py-4 whitespace-nowrap text-sm text-gray-500'>{(Number(doc.amount_received) / 100).toFixed(2)}</td>
-                    <td> <button onClick={() => sendMessage({ text: 'this is a ping', fcmToken: doc.fcmToken })}>Send ping</button></td>
                   </tr>
                 ))}
               </tbody>

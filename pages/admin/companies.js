@@ -1,7 +1,6 @@
 import { useDocuments } from '@/utils/hooks'
-import { PaperClipIcon } from '@heroicons/react/solid'
-
-import { collection, query, where, getDocs, orderBy, limit, doc, getDoc } from 'firebase/firestore'
+import { where } from 'firebase/firestore'
+import Status from '@/components/misc/status'
 
 export default function Companies () {
   const queryConstraints = [
@@ -61,8 +60,8 @@ export default function Companies () {
                         </div>
                         <div className='ml-4'>
                           <div className='text-sm font-medium text-gray-900'>{doc.displayName}</div>
-                          &nbsp;
                           <div className='text-sm font-medium text-gray-900'>{doc.email}</div>
+                          <div className='text-sm font-medium text-gray-900'>{doc.uid}</div>
                         </div>
                       </div>
                     </td>
@@ -73,8 +72,7 @@ export default function Companies () {
                     </td> */}
 
                     <td className='px-6 py-4 whitespace-nowrap'>
-                      {doc.isProfileComplete && <span className='px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800'> complete </span>}
-                      {!doc.isProfileComplete && <span className='px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800'> incomplete </span>}
+                      <Status green={['complete']} value={doc.isProfileComplete ? 'complete' : 'incomplete'} />
                     </td>
 
                     {/* <td className='px-6 py-4 whitespace-nowrap text-right text-sm font-medium'>
