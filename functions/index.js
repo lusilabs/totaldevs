@@ -170,7 +170,7 @@ exports.handleMatchDoc = functions.firestore.document('matches/{matchID}').onWri
   }
 })
 
-exports.sendEmailOnJobCreate = functions.firestore.document('jobs/{jobID}').onCreate(async (change, context) => {
+exports.sendEmailOnJobCreate = functions.firestore.document('jobs/{jobID}').onCreate(async (snap, context) => {
   const jobID = context.params.jobID
   const { companyName, company, companyEmail } = snap.data()
   admin
@@ -385,4 +385,64 @@ const sendEversignDocuments = async (signers, fields, match) => {
     originalSigners: signers,
     originalFields: fields
   })
+}
+
+const SLACK_HOOK_URL = isDevelopment ? config.slack.dev_hook : config.slack.prod_hook
+
+const slackMapping = {
+  matches: {
+    listeningFields: ['status'],
+    payloadFields: ['status', 'companyName', 'devName', 'explorerName']
+  },
+  jobs: {
+    listeningFields: ['status'],
+    payloadFields: ['companyName', 'companyEmail'],
+    dumpDocument: true
+  },
+  eversignDocuments: {
+    listeningFields: ['document_completed'],
+    payloadFields: ['signers']
+  },
+  profiles: {
+    listeningFields: ['isProfileComplete'],
+    payloadFields: ['isProfileComplete', 'providerData']
+  },
+  users: {
+    listeningFields: ['email', 'stripeAccountID'],
+    payloadFields: ['email', 'role', 'stripeAccountID', 'hasAcceptedInvite']
+  }
+}
+
+const didFieldChange = (before, after) => (field) => {
+  return (before && before[field] !== after[field])
+}
+
+for (const [document, config] of Object.entries(slackMapping)) {
+  exports[`${document}SlackNotifier`] = functions.firestore
+    .document(`${document}/{docID}`)
+    .onWrite((change, context) => {
+      const before = change.before.exists ? change.before.data() : {}
+      const after = change.after.exists ? change.after.data() : {}
+      if (!after) return // case where it got deleted.
+      if (!config.listeningFields.some(didFieldChange(before, after))) return null
+      const jsonPayload = {
+        document,
+        action: !change.before.exists ? 'created' : 'updated',
+        documentID: context.params.docID,
+        ...(config.dumpDocument ? JSON.parse(JSON.stringify(after)) : {}),
+        ...config.payloadFields.reduce(
+          (result, field) => ({ ...result, [field]: didFieldChange(before, after)(field) ? `${before[field]} -> ${after[field]}` : after[field] }), {}
+        )
+      }
+      const payload = JSON.stringify(jsonPayload, null, 4)
+
+      fetch(SLACK_HOOK_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ text: `\`\`\`${payload}\`\`\`` })
+      })
+      return null
+    })
 }
