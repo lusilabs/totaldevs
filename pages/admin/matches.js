@@ -7,7 +7,7 @@ export const AdminMatches = ({ userDoc }) => {
   const [matches, _ml, _rm, setMatchesState] = useDocuments({ docs: 'matches' })
 
   const tableProps = {
-    columns: ['title', 'devName', 'companyName', 'explorerName', 'status', 'resume'],
+    columns: ['title', 'devName', 'dev', 'companyName', 'company', 'explorerName', 'explorer', 'status', 'resume'],
     type: 'matches',
     data: matches,
     getterMapping: {
