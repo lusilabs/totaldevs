@@ -299,13 +299,12 @@ const triggerOnUpdate = ({ document, fieldToSearch, valueToSearch, destinationFi
 
 exports.updateMatchDocOnServer = functions.https.onCall(async (data, ctx) => {
   const uid = isAuthedAndAppChecked(ctx)
-  logger.info(data)
-  const { matchID, finalSalary, startDate, initialPayment } = data
+  const { matchID } = data
   const mref = admin
     .firestore()
     .collection('matches')
     .doc(matchID)
-  await mref.update({ finalSalary, startDate, initialPayment })
+  await mref.update({ ...data })
 })
 
 exports.updateJob = functions.firestore.document('jobs/{id}').onUpdate(async (change, context) => {
@@ -372,6 +371,7 @@ exports.updateDocument = functions.firestore.document('eversignDocuments/{id}').
   if (document.document_completed) {
     console.log(document.match, 'starting stripe process')
     // Start stripe stuff
+    // todo@stripe-checkout change match.status -> 'dev_accepted'
   }
 })
 

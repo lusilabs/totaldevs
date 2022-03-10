@@ -20,7 +20,7 @@ function JobList ({ userDoc, ...props }) {
     docs: 'matches',
     queryConstraints: [
       where('company', '==', userDoc.uid),
-      where('status', 'in', ['waiting_on_dev', 'waiting_on_dev'])
+      where('status', 'in', ['waiting_on_dev', 'dev_interested', 'dev_accepted'])
     ]
   }, [userDoc.uid])
   const { created, edited } = router.query

@@ -42,7 +42,7 @@ const RecommendRole = ({ userDoc, selectedDev, selectedJob }) => {
       jobData: selectedJob,
       status: 'requesting_dev_status'
     }, { merge: true })
-    toast.success(`${selectedDev.displayName} has been notified.`)
+    toast.success(`${selectedDev.displayName ?? 'company'} has been notified.`)
   }
   return (
     <Button

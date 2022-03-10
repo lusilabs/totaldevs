@@ -20,6 +20,13 @@ const handleAcceptMatch = async match => {
   window.location.assign(data.url)
 }
 
+const buttonColors = {
+  dev_interested: 'green',
+  dev_accepted: 'green',
+  rejected: 'gray',
+  locked: 'gray'
+}
+
 export default function MatchView ({ userDoc, ...props }) {
   const router = useRouter()
   const [routerMatchID, setRouterMatchID] = useState()
@@ -47,29 +54,30 @@ export default function MatchView ({ userDoc, ...props }) {
       setIsButtonLocked(!!matchDoc.locked)
       reset({ startDate: matchDoc.startDate, finalSalary: matchDoc.finalSalary }) // this refires the defaultValues on the form to fill them up once the db data loads.
       setInitialPayment(matchDoc.initialPayment)
+      setButtonColor(buttonColors[matchDoc.status])
     }
   }, [matchDoc])
 
   const [profileDoc, profileLoaded, _pr, setProfileDoc] = useDocument({ collection: 'profiles', docID: matchDoc?.dev }, [matchDoc])
 
-  const handleClick = () => {
+  const handleClick = async () => {
+    setSaving(true)
     const { status } = matchDoc
     switch (status) {
-      case 'ready_to_pay':
-        handleAcceptMatch(routerMatchID)
+      case 'dev_accepted':
+        await handleAcceptMatch(routerMatchID)
         break
-      case 'waiting_on_dev':
-        // handle
+      case 'dev_interested':
+        await updateMatchDocOnServer({ matchID: routerMatchID, status: 'position_offered', locked: true })
         break
       case 'rejected':
-        // handle
-        break
-      case 'ongoing':
-        // handle
+      case 'position_offered':
+      case 'locked':
         break
       default:
         console.error(`No such status ${status}`)
     }
+    setSaving(false)
   }
 
   const handleDeclineMatch = () => {
@@ -121,6 +129,7 @@ export default function MatchView ({ userDoc, ...props }) {
                   type='number'
                   id='finalSalary'
                   name='finalSalary'
+                  disabled={matchDoc?.locked}
                   className='mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
                   {...register('finalSalary', {
                     required: true,
@@ -139,6 +148,7 @@ export default function MatchView ({ userDoc, ...props }) {
                   type='text'
                   id='startDate'
                   name='startDate'
+                  disabled={matchDoc?.locked}
                   className='mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
                   {...register('startDate', { required: true })}
                 />
@@ -160,7 +170,7 @@ export default function MatchView ({ userDoc, ...props }) {
               </div>
 
               <div className='col-span-6'>
-                <Button disabled={saving || isButtonLocked} loading={saving} type='submit' color='primary' fluid>
+                <Button disabled={saving || matchDoc?.locked} loading={saving} type='submit' color='primary' fluid>
                   {saving && <span>saving...</span>}
                   {!saving && <span>save</span>}
                 </Button>
@@ -181,7 +191,8 @@ export default function MatchView ({ userDoc, ...props }) {
             <div className='m-4'>
               <Button disabled={saving || isButtonLocked} loading={saving} onClick={handleClick} color={buttonColor}>
                 {saving && <span>sending...</span>}
-                {!saving && <span>accept and send job offer</span>}
+                {!saving && matchDoc?.status !== 'dev_accepted' && <span>accept and send job offer</span>}
+                {!saving && matchDoc?.status === 'dev_accepted' && <span>pay now</span>}
               </Button>
             </div>
 

@@ -244,6 +244,18 @@ const handleInvoiceUpdate = async invoice => {
     .then(snap => {
       const doc = snap.docs[0]
       doc.ref.update({ status: invoice.status })
+      if (invoice.status === 'paid') {
+        admin
+          .firestore()
+          .collection('jobs')
+          .doc(doc.job)
+          .update({ status: 'locked' })
+        admin
+          .firestore()
+          .collection('matches')
+          .doc(doc.match)
+          .update({ status: 'locked' })
+      }
     })
 }
 

@@ -35,8 +35,8 @@ function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
   const [matches, _ml, _mr, setMatches] = useDocuments({
     docs: 'matches',
     queryConstraints: [
-      where('job', '==', jobID),
-      where('status', '==', 'waiting_on_dev')
+      where('job', '==', jobID)
+      // where('status', 'in', ['waiting_on_dev', 'dev_interested', 'dev_accepted'])
     ]
   }, [jobID])
 
@@ -132,8 +132,6 @@ function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
         companyEmail: userDoc.email,
         company: userDoc.uid,
         hasAcceptedTerms: data.hasAcceptedTerms,
-        companyName: userDoc.displayName,
-        companyEmail: userDoc.email,
         createdAt: new Date().toISOString()
       })
     }
