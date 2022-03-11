@@ -250,11 +250,6 @@ const handleInvoiceUpdate = async invoice => {
           .collection('jobs')
           .doc(doc.job)
           .update({ status: 'locked' })
-        admin
-          .firestore()
-          .collection('matches')
-          .doc(doc.match)
-          .update({ status: 'locked' })
       }
     })
 }
