@@ -2,6 +2,7 @@ const functions = require('firebase-functions')
 const admin = require('firebase-admin')
 const fetch = require('node-fetch')
 const crypto = require('crypto')
+const fs = require('fs').promises
 
 admin.initializeApp()
 const logger = functions.logger
@@ -406,6 +407,50 @@ const sendEversignDocuments = async (signers, fields, match) => {
     originalFields: fields
   })
 }
+
+exports.sendCompanyInvite = functions.https.onCall(async ({ position, devProfile, pitch, explorer, email, bcc }, ctx) => {
+  const iref = await admin
+    .firestore()
+    .collection('invites')
+    .doc(`${email}:company`)
+  if (iref.get().exists) return { error: 'that email has already been invited' }
+  const rawHTML = await fs.readFile('templates/invite.html', 'utf-8')
+  const data = [
+    { tag: '@opening_1@', value: `${position ? (' looking for a ' + position) : ''}` },
+    {
+      tag: '@opening_2@',
+      value: `${devProfile
+        ? `, check out this <a href="https://totaldevs.com/resumes?profileID=${devProfile}">potential candidate</a>`
+        : ''}`
+    },
+    { tag: '@pitch@', value: pitch },
+    { tag: '@explorer@', value: explorer }
+  ]
+  const processedHTML = data.reduce((html, { tag, value }) => html.replace(tag, value), rawHTML)
+  const subject = 'Have you considered recruiting talent from Latin America?🤔, we might have the perfect fit for your position.'
+  const bccData = bcc ? { bcc: [ctx.auth.token.email, 'talent@totaldevs.com'] } : {}
+  const mail = await admin
+    .firestore()
+    .collection('mail')
+    .add({
+      message: {
+        html: processedHTML,
+        subject: subject
+      },
+      to: [email],
+      createdAt: new Date().toISOString(),
+      ...bccData
+    })
+  iref.set({
+    mailID: mail.id,
+    referrer: ctx.auth.token.email,
+    referrerID: ctx.auth.uid,
+    isActive: false,
+    redeemed: false,
+    usd: 0,
+    createdAt: new Date().toISOString()
+  }, { merge: true })
+})
 
 const SLACK_HOOK_URL = isDevelopment ? config.slack.dev_hook : config.slack.prod_hook
 
