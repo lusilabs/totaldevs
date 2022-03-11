@@ -407,7 +407,7 @@ exports.sendCompanyInvite = functions.https.onCall(async ({ position, devProfile
   ]
   const processedHTML = data.reduce((html, { tag, value }) => html.replace(tag, value), rawHTML)
   const subject = 'Have you considered recruiting talent from Latin America?🤔, we might have the perfect fit for your position.'
-  const bccData = bcc ? { bcc: [ctx.auth.token.email] } : {}
+  const bccData = bcc ? { bcc: [ctx.auth.token.email, 'talent@totaldevs.com'] } : {}
   const mail = await admin
     .firestore()
     .collection('mail')
