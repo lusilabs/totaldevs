@@ -1,0 +1,71 @@
+---
+title: "you just got a job offer!"
+preheader: "please visit your dashboard to find out more about this offer"
+bodyClass: bg-gray-100
+---
+
+<extends src="src/layouts/main.html">
+  <block name="template">
+    <table class="w-full font-sans">
+      <tr>
+        <td align="center" class="bg-gray-100">
+          <table class="w-600 sm:w-full">
+            <tr>
+              <td class="p-48 sm:py-32 sm:px-24 text-center">
+                <a href="https://totaldevs.com">
+                  <img src="https://totaldevs.com/logo.png" width="75" alt="Totaldevs">
+                </a>
+              </td>
+            </tr>
+            <tr>
+              <td align="center" class="sm:px-24">
+                <table class="w-full">
+                  <tr>
+                    <td class="bg-white text-gray-800 text-base text-left p-48 sm:px-24 leading-24 rounded">
+                      <p>hello!</p>
+                      <p class="text-2xl sm:leading-32 text-black font-semibold m-0 mb-24">you got a job offer!</p>
+                      <p class="m-0 mb-24">visit your dashboard to find out more about this offer</p>
+                      <div class="leading-full">
+                        <a
+                          href="https://totaldevs.com/projects"
+                          class="inline-block py-16 px-24 rounded text-base font-semibold text-center no-underline text-white bg-blue-500 hover:bg-blue-600"
+                        >
+                          <!--[if mso]><i style="letter-spacing: 24px; mso-font-width: -100%; mso-text-raise:30px;">&#8202;</i><![endif]-->
+                          <span style="mso-text-raise: 16px;">View offer &rarr;</span>
+                          <!--[if mso]><i style="letter-spacing: 24px; mso-font-width: -100%;">&#8202;</i><![endif]-->
+                        </a>
+                      </div>
+                      <table class="w-full">
+                        <tr>
+                          <td class="py-32">
+                            <div class="bg-gray-200 h-px leading-px">&zwnj;</div>
+                          </td>
+                        </tr>
+                      </table>
+                      <p class="m-0 mb-16">not sure why you received this email? please <a href="https://totaldevs.com" class="text-blue-500 underline hover:no-underline">let us know</a>.</p>
+                      <p class="m-0 mb-16">thanks, <br>totaldevs</p>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="h-48"></td>
+                  </tr>
+                  <tr>
+                    <td class="text-center text-gray-600 text-xs px-24">
+                      <p class="m-0 mb-4 uppercase">Powered by Maizzle</p>
+                      <p class="m-0 italic">The framework for rapid email prototyping</p>
+                      <p class="cursor-default">
+                        <a href="https://maizzle.com/docs/" class="text-blue-500 no-underline hover:underline">Docs</a> &bull;
+                        <a href="https://github.com/maizzle" class="text-blue-500 no-underline hover:underline">Github</a> &bull;
+                        <a href="https://twitter.com/maizzlejs" class="text-blue-500 no-underline hover:underline">Twitter</a>
+                      </p>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </block>
+</extends>

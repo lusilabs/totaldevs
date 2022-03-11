@@ -37,6 +37,7 @@
     "semantic-ui-react": "^2.0.4"
   },
   "devDependencies": {
+    "@maizzle/cli": "^1.4.0",
     "autoprefixer": "^10.4.0",
     "postcss": "^8.4.4",
     "tailwindcss": "^2.2.19"

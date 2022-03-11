@@ -1,75 +1,67 @@
 import { useForm } from 'react-hook-form'
 import { Button, Dropdown } from 'semantic-ui-react'
 import React, { useState, useEffect } from 'react'
-import { db } from '@/utils/config'
-import { doc, setDoc, addDoc, increment, collection, getDoc, where } from 'firebase/firestore'
+import { functions } from '@/utils/config'
+import { where } from 'firebase/firestore'
+import { httpsCallable } from 'firebase/functions'
 import router from 'next/router'
 import { toast } from 'react-toastify'
 import { useDocuments } from '@/utils/hooks'
 
-const generateText = ({ position, resumeURL } = {}) => {
-  console.log({ position, resumeURL })
-  return `Hi, we noticed you had an open position${position ? ` looking for ${position}s` : ''}, we might have the perfect fit for you${resumeURL ? ` , check out this potential candidate ${resumeURL}` : ''} ! Hiring talent from Latin America can save you up to 50% without compromising on quality. We provide pre-screened and professional talent from an exclusive developer community. Open up a free job posting at https://totaldevs.com. We handle all the difficult paperwork and payment processes. Questions? book a 15min meeting https://calendly.com/carlo-totaldevs/1-on-1`
-}
+const sendCompanyInvite = httpsCallable(functions, 'sendCompanyInvite')
+
+const GREETINGS = 'Hello!'
+const OPENING_PART_1 = 'We noticed you had an open position'
+const OPENING_PART_2 = 'We might have the perfect fit for you'
+const DEFAULT_PITCH = `Hiring talent from Latin America can save you up to 50% without compromising on quality. 
+We provide pre-screened and professional talent from an exclusive developer community. 
+We handle all the difficult paperwork and payment processes.`
+const CLOSURE = 'Open up a free job posting at https://totaldevs.com. Questions? book a 15min meeting https://calendly.com/carlo-totaldevs/1-on-1'
 
 function AddInvite ({ userDoc, ...props }) {
   const [searchQuery, setSearchQuery] = useState('')
   const [saving, setSaving] = useState(false)
   const [position, setPosition] = useState('')
-  const [resumeURL, setResumeURL] = useState()
-  const [textArea, setTextArea] = useState(generateText())
+  const [devProfile, setDevProfile] = useState()
+  const [pitch, setPitch] = useState(DEFAULT_PITCH)
   const [displayName, setDisplayName] = useState()
   const [profiles, _pl, _pr, setProfiles] = useDocuments({
     docs: 'profiles',
     queryConstraints: [
-      // where('displayName', '>=', displayName),
-      // where('displayName', '<', displayName),
       where('isProfileComplete', '==', true)
-      // where('jobSearch', '!=', 'blocked')
     ]
   }, [displayName])
 
+  const preview = () => {
+    const rawPreview = [GREETINGS, '</br></br>',
+      OPENING_PART_1 + `${position ? (' looking for a ' + position) : ''}.`,
+      OPENING_PART_2 + `${devProfile ? ', check out this potential candidate (linked to dev resume)' : ''}.`, '</br></br>',
+      pitch, '</br></br>',
+      CLOSURE].join(' ')
+    return <div dangerouslySetInnerHTML={{ __html: rawPreview }} />
+  }
+
   const onSubmit = async data => {
     setSaving(true)
-    const ref = doc(db, 'invites', `${data.email}:company`)
-    const d = await getDoc(ref)
-    if (d.exists()) {
-      toast.error('that email has already been invited')
-      setSaving(false)
-      return
-    }
-    await setDoc(ref, {
-      text: data.inviteText,
-      referrer: userDoc.email,
-      referrerID: userDoc.uid,
-      redeemed: false,
-      createdAt: new Date().toISOString()
-    }, { merge: true })
-    const mref = collection(db, 'mail')
-    await addDoc(mref, {
-      message: {
-        text: data.inviteText,
-        subject: 'Have you considered recruiting talent from Latin America?🤔, we might have the perfect fit for your position.'
-      },
-      to: [data.email],
-      createdAt: new Date().toISOString()
+    const response = await sendCompanyInvite({
+      position,
+      devProfile,
+      pitch,
+      explorer: userDoc.displayName,
+      email: data.email,
+      bcc: data.bcc
     })
-    await setDoc(ref, {
-      text: data.inviteText,
-      referrer: userDoc.email,
-      referrerID: userDoc.uid,
-      isActive: false,
-      redeemed: false,
-      usd: 0,
-      createdAt: new Date().toISOString()
-    }, { merge: true })
     setSaving(false)
+    if (response?.data?.error) {
+      toast.error(response.data.error)
+    }
     router.push('/invites?created=true')
   }
 
-  const { register, handleSubmit, watch, formState: { errors } } = useForm({
+  const { register, handleSubmit, formState: { errors } } = useForm({
     defaultValues: {
-      inviteText: textArea
+      pitch: DEFAULT_PITCH,
+      bcc: false
     }
   })
 
@@ -80,21 +72,7 @@ function AddInvite ({ userDoc, ...props }) {
     return () => clearTimeout(timer)
   }, [searchQuery])
 
-  const handleDropdownChange = (e, v) => {
-    const resume = `https://totaldevs.com/resumes?profileID=${v.value}`
-    setResumeURL(resume)
-    setTextArea(generateText({ position, resumeURL: resume }))
-  }
-
-  // console.log(watch(['email', 'inviteText']))
-
-  const handlePositionChange = e => {
-    const pos = e.target.value
-    setPosition(pos)
-    setTextArea(generateText({ position: pos, resumeURL }))
-  }
-
-  const handleTextAreaChange = e => setTextArea(e.target.value)
+  const handleTextAreaChange = e => setPitch(e.target.value)
 
   return (
     <div className='m-4 md:col-span-2 shadow-xl'>
@@ -115,6 +93,15 @@ function AddInvite ({ userDoc, ...props }) {
                   {...register('email', { required: true, minLength: 3, pattern: /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/i })}
                 />
                 {errors.email && <div className='m-2 text-sm text-red-500'>a valid email is required</div>}
+                <input
+                  {...register('bcc')}
+                  id='bcc'
+                  type='checkbox'
+                  className='ml-1 h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded'
+                />
+                <label htmlFor='bcc' className='ml-2 text-md text-gray-700'>
+                  add self bcc
+                </label>
               </div>
 
               <div className='col-span-6 sm:col-span-3'>
@@ -125,7 +112,7 @@ function AddInvite ({ userDoc, ...props }) {
                   id='position'
                   name='position'
                   autoComplete='position-name'
-                  onChange={handlePositionChange}
+                  onChange={(e) => setPosition(e.target.value)}
                   className='mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-gray-700'
                 >
                   <option value='frontend engineer'>frontend engineer</option>
@@ -161,11 +148,10 @@ function AddInvite ({ userDoc, ...props }) {
                     (developer name)
                   </label>
                   <Dropdown
-                    options={profiles?.map(({ displayName, id }) => ({ key: displayName, value: id, text: displayName }))}
+                    options={[{ key: 0, value: null, text: 'None' },
+                      ...profiles?.map(({ displayName, id }) => ({ key: displayName, value: id, text: displayName }))]}
                     onSearchChange={(e, v) => setSearchQuery(v.searchQuery)}
-              // searchQuery={searchQuery[0]}
-              // value={j.stack}
-                    onChange={(e, v) => handleDropdownChange(e, v)}
+                    onChange={(e, v) => setDevProfile(v.value)}
                     fluid
                     selection
                     search
@@ -174,18 +160,28 @@ function AddInvite ({ userDoc, ...props }) {
 
               <div className='col-span-6'>
                 <label htmlFor='inviteText' className='block text-sm font-medium text-gray-700'>
-                  write something to them
+                  pitch
                 </label>
                 <div className='mt-1'>
                   <textarea
-                    id='inviteText'
-                    name='inviteText'
+                    id='pitch'
+                    name='pitch'
                     rows={8}
-                    value={textArea}
+                    value={pitch}
                     className='shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block w-full sm:text-sm border border-gray-300 rounded-md'
                     {...register('inviteText', { required: false, maxLength: 1024, onChange: handleTextAreaChange })}
                   />
                   {errors.inviteText && <div className='m-2 text-sm text-red-500'>invalid characters detected or max num chars 1024 exceeded.</div>}
+                </div>
+              </div>
+              <div className='col-span-6'>
+                <label htmlFor='preview' className='block text-sm font-medium text-gray-700'>
+                  preview
+                </label>
+                <div className='mt-1'>
+                  {
+                    preview()
+                  }
                 </div>
               </div>
 
