@@ -18,7 +18,7 @@ const STRIPE_REFRESH_URL = isDevelopment ? config.stripe.refresh_url_dev : confi
 // const OWNER_STRIPE_CHECKOUT_SUCCESS_URL = isDevelopment ? config.stripe.owner_checkout_success_url_dev : config.stripe.owner_checkout_success_url_prod
 // const OWNER_STRIPE_CHECKOUT_CANCEL_URL = isDevelopment ? config.stripe.owner_checkout_cancel_url_dev : config.stripe.owner_checkout_cancel_url_prod
 // const OWNER_PORTAL_RETURN_URL = isDevelopment ? config.stripe.owner_portal_return_dev : config.stripe.owner_portal_return_prod
-// const CUSTOMER_PORTAL_RETURN_URL = isDevelopment ? config.stripe.customer_portal_return_dev : config.stripe.customer_portal_return_prod
+const CUSTOMER_PORTAL_RETURN_URL = isDevelopment ? config.stripe.customer_portal_return_dev : config.stripe.customer_portal_return_prod
 const stripe = Stripe(STRIPE_SECRET)
 
 const NUM_DEFAULT_INVITES = 3
@@ -99,6 +99,33 @@ exports.generateExpressDashboardLink = functions.https.onCall(async (_, ctx) => 
   const { stripeAccountID } = ref.data()
   const { url } = await stripe.accounts.createLoginLink(stripeAccountID)
   return url
+})
+
+exports.generateCompanyDashboardLink = functions.https.onCall(async (data, ctx) => {
+  const uid = isAuthedAndAppChecked(ctx)
+  let customer, stripeAccount
+  const sref = await admin
+    .firestore()
+    .collection('subscriptions')
+    .where('match', '==', data.matchID)
+    .limit(1)
+    .get()
+    .then(async snap => {
+      const doc = snap.docs[0]
+      const data = doc.data()
+      customer = data.customer
+      const uref = await admin
+        .firestore()
+        .collection('users')
+        .doc(data.dev)
+        .get()
+      stripeAccount = uref.data().stripeAccountID
+    })
+  const portalSession = await stripe.billingPortal.sessions.create({
+    customer,
+    return_url: CUSTOMER_PORTAL_RETURN_URL
+  }, { stripeAccount })
+  return portalSession
 })
 
 const createStripeConnectExpressAccount = async user => {
