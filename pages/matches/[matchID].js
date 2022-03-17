@@ -35,9 +35,7 @@ const [matchDoc, matchLoaded, _dr, setMatchDoc] = useDocument({ collection: 'mat
     {(matchLoaded && profileLoaded) && 
     <div className='m-4'>
       <h3 className='text-gray-500'>dev resume</h3>
-      <div className='flex justify-center min-w-full w-full'>
-        <TotalResume profileID={profileDoc.uid} />
-      </div>
+      <TotalResume profileID={profileDoc.uid} />
       <div className='bg-white shadow overflow-hidden sm:rounded-lg m-4'>
       <h3 className='text-gray-500 m-4 p-4'>
       <a href={profileDoc.calendlyURL}>book a meeting here</a>
