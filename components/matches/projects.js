@@ -55,7 +55,7 @@ export const ProjectsToCheck = ({ userDoc }) => {
       'company name': (row) => row.companyName,
       'current status': (row) => row.status
     },
-    CustomMovileView: CustomMobileProjectView
+    CustomMobileView: CustomMobileProjectView
   }
 
   return (

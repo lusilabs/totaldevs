@@ -79,7 +79,7 @@ const MobileLayout = ({ getOrderedData, onSelect, setSelectedRow, columns, selec
   )
 }
 
-export const Table = ({ columns, data, renderMapping = {}, getterMapping = {}, onSelect, orderBy, type, checkScreen, CustomMovileView }) => {
+export const Table = ({ columns, data, renderMapping = {}, getterMapping = {}, onSelect, orderBy, type, checkScreen, CustomMobileView }) => {
   const [selectedRow, setSelectedRow] = useState()
   const mediaQuery = useMediaQuery()
 
@@ -108,7 +108,7 @@ export const Table = ({ columns, data, renderMapping = {}, getterMapping = {}, o
 
   const layoutProps = { getOrderedData, onSelect, setSelectedRow, columns, selectedRow, renderField }
   if (checkScreen && mediaQuery) {
-    return CustomMovileView ? <CustomMovileView {...layoutProps} /> : <MobileLayout {...layoutProps} />
+    return CustomMobileView ? <CustomMobileView {...layoutProps} /> : <MobileLayout {...layoutProps} />
   } else {
     return <DesktopLayout {...layoutProps} />
   }
