@@ -121,11 +121,12 @@ exports.generateCompanyDashboardLink = functions.https.onCall(async (data, ctx) 
         .get()
       stripeAccount = uref.data().stripeAccountID
     })
-  const portalSession = await stripe.billingPortal.sessions.create({
+  const { url } = await stripe.billingPortal.sessions.create({
     customer,
     return_url: CUSTOMER_PORTAL_RETURN_URL
+    // on_behalf_of: stripeAccount
   }, { stripeAccount })
-  return portalSession
+  return url
 })
 
 const createStripeConnectExpressAccount = async user => {
@@ -141,6 +142,17 @@ const createStripeConnectExpressAccount = async user => {
     }
   }
   const account = await stripe.accounts.create(data)
+  // configure the customer portal..
+  const configuration = await stripe.billingPortal.configurations.create({
+    features: {
+      payment_method_update: { enabled: true },
+      invoice_history: { enabled: true }
+    },
+    business_profile: {
+      privacy_policy_url: 'https://totaldevs.com/privacy'
+    },
+    default_return_url: CUSTOMER_PORTAL_RETURN_URL
+  })
   return account
 }
 

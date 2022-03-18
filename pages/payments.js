@@ -56,10 +56,10 @@ const Match = ({ match, handleNavigateToCompanyDashboard, ...props }) => {
         <img src={match.photoURL} alt={match.photoURL} className='w-full h-full object-center object-cover lg:w-full lg:h-full' />
       </div>
       <div className='mt-4 flex justify-between items-start'>
-        <p className='mt-1 text-md text-gray-500'>{match.title}</p>
-        <p className='text-md font-medium text-gray-900'>$ {match.salaryMin} {match.salaryMax && ` - ${match.salaryMax}`} </p>
+        <p className='mt-1 text-md text-gray-500'>{match.devName}</p>
+        <p className='text-md font-medium text-gray-900'>$ {match.jobData?.finalSalary}</p>
         {match.status === 'locked' && <span className='px-2 inline-flex text-md leading-5 font-semibold rounded-full bg-green-100 text-green-800'> up to date.  </span>}
-        {match.status === 'matching' && <span className='px-2 inline-flex text-md leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800'> matching </span>}
+        {match.status !== 'payment_due' && <span className='px-2 inline-flex text-md leading-5 font-semibold rounded-full bg-red-100 text-red-800'> payment due </span>}
       </div>
     </div>
   )
