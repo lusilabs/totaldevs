@@ -2,7 +2,7 @@ import EditDevProfile from '@/components/devprofile'
 import EditExplorerProfile from '@/components/explorerprofile'
 import EditCompanyProfile from '@/components/companyprofile'
 
-export default function DevProfile (props) {
+export default function Profile (props) {
   return (
     <>
       {props.userDoc.role === 'dev' && <EditDevProfile {...props} />}

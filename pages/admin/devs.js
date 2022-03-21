@@ -1,6 +1,7 @@
 import { useDocuments } from '@/utils/hooks'
 import { where } from 'firebase/firestore'
 import Status from '@/components/misc/status'
+import Link from 'next/link'
 
 export default function Devs () {
   const queryConstraints = [
@@ -41,6 +42,13 @@ export default function Devs () {
                     scope='col'
                     className='px-6 py-3 text-left text-xs font-medium text-gray-500 tracking-wider'
                   >
+                    edit
+                  </th>
+
+                  <th
+                    scope='col'
+                    className='px-6 py-3 text-left text-xs font-medium text-gray-500 tracking-wider'
+                  >
                     USD
                   </th>
 
@@ -72,6 +80,10 @@ export default function Devs () {
 
                     <td className='px-6 py-4 whitespace-nowrap'>
                       <Status green={['complete']} value={doc.isProfileComplete ? 'complete' : 'incomplete'} />
+                    </td>
+
+                    <td className='px-6 py-4 whitespace-nowrap'>
+                      <Link href={`editprofile?profileID=${doc.uid}`}><a>edit</a></Link>
                     </td>
 
                     <td className='px-6 py-4 whitespace-nowrap text-sm text-gray-500'>{(Number(doc.amount_received) / 100).toFixed(2)}</td>
