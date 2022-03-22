@@ -167,7 +167,8 @@ function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
       toast.error('Please upload a < 3 MB pdf.')
       return
     }
-    const fileRef = ref(storage, `pdfs/${file.name}-${Date.now()}`)
+    const timestamp = Date.now()
+    const fileRef = ref(storage, `pdfs/${file.name.replace('.pdf', `${timestamp}.pdf`)}`)
     uploadBytes(fileRef, file).then(_ => {
       getDownloadURL(fileRef).then(url => {
         setPdfURL(url)
