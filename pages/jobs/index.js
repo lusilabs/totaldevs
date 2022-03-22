@@ -9,7 +9,6 @@ import { db } from '@/utils/config'
 import { useDocuments } from '@/utils/hooks'
 import Link from 'next/link'
 import CreateButton from '@/components/createbutton'
-import { map } from 'next-pwa/cache'
 
 function JobList ({ userDoc, ...props }) {
   const router = useRouter()

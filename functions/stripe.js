@@ -17,7 +17,7 @@ const STRIPE_CHECKOUT_CANCEL_URL = isDevelopment ? config.stripe.checkout_cancel
 // const OWNER_STRIPE_CHECKOUT_SUCCESS_URL = isDevelopment ? config.stripe.owner_checkout_success_url_dev : config.stripe.owner_checkout_success_url_prod
 // const OWNER_STRIPE_CHECKOUT_CANCEL_URL = isDevelopment ? config.stripe.owner_checkout_cancel_url_dev : config.stripe.owner_checkout_cancel_url_prod
 // const OWNER_PORTAL_RETURN_URL = isDevelopment ? config.stripe.owner_portal_return_dev : config.stripe.owner_portal_return_prod
-// const CUSTOMER_PORTAL_RETURN_URL = isDevelopment ? config.stripe.customer_portal_return_dev : config.stripe.customer_portal_return_prod
+const CUSTOMER_PORTAL_RETURN_URL = isDevelopment ? config.stripe.customer_portal_return_dev : config.stripe.customer_portal_return_prod
 const stripe = Stripe(STRIPE_SECRET)
 const NUM_DEFAULT_INVITES = 3
 const APPLICATION_FEE_PERCENT = 4
@@ -100,6 +100,34 @@ exports.generateExpressDashboardLink = functions.https.onCall(async (_, ctx) => 
   return url
 })
 
+exports.generateCompanyDashboardLink = functions.https.onCall(async (data, ctx) => {
+  const uid = isAuthedAndAppChecked(ctx)
+  let customer, stripeAccount
+  const sref = await admin
+    .firestore()
+    .collection('subscriptions')
+    .where('match', '==', data.matchID)
+    .limit(1)
+    .get()
+    .then(async snap => {
+      const doc = snap.docs[0]
+      const data = doc.data()
+      customer = data.customer
+      const uref = await admin
+        .firestore()
+        .collection('users')
+        .doc(data.dev)
+        .get()
+      stripeAccount = uref.data().stripeAccountID
+    })
+  const { url } = await stripe.billingPortal.sessions.create({
+    customer,
+    return_url: CUSTOMER_PORTAL_RETURN_URL
+    // on_behalf_of: stripeAccount
+  }, { stripeAccount })
+  return url
+})
+
 const createStripeConnectExpressAccount = async user => {
   const data = {
     type: 'express',
@@ -113,6 +141,17 @@ const createStripeConnectExpressAccount = async user => {
     }
   }
   const account = await stripe.accounts.create(data)
+  // configure the customer portal..
+  const configuration = await stripe.billingPortal.configurations.create({
+    features: {
+      payment_method_update: { enabled: true },
+      invoice_history: { enabled: true }
+    },
+    business_profile: {
+      privacy_policy_url: 'https://totaldevs.com/privacy'
+    },
+    default_return_url: CUSTOMER_PORTAL_RETURN_URL
+  })
   return account
 }
 
