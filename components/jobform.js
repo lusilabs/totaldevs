@@ -46,6 +46,7 @@ function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
       setDropdownOptions(jobDoc.stack?.map(name => ({ key: name, value: name, text: name })) ?? [])
       setPdfName(jobDoc.pdfName)
       setPdfURL(jobDoc.pdfURL)
+      console.log(jobDoc)
       setPhotoURL(jobDoc.photoURL)
       reset(jobDoc) // this refires the defaultValues on the form to fill them up once the db data loads.
     }
@@ -54,8 +55,9 @@ function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
   useEffect(() => {
     const retrieveJob = async () => {
       const ref = doc(db, 'jobs', jobID)
-      const d = await getDoc(ref)
-      setJobDoc(d.data())
+      const jdoc = await getDoc(ref)
+      const data = jdoc.data()
+      setJobDoc(data)
     }
     if (jobID) retrieveJob()
     else setIsEditing(true)
@@ -90,6 +92,8 @@ function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
     if (!photoURL) {
       url = await generateRandomPhoto()
       setPhotoURL(url)
+    } else {
+      url = photoURL
     }
     await sleep(2000)
     if (jobID) {
@@ -462,7 +466,7 @@ function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
                     <div className='w-0 flex-1 flex items-center'>
                       {pdfName && <> <svg className='flex-shrink-0 h-5 w-5 text-gray-400' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='currentColor' aria-hidden='true'>
                         <path fillRule='evenodd' d='M8 4a3 3 0 00-3 3v4a5 5 0 0010 0V7a1 1 0 112 0v4a7 7 0 11-14 0V7a5 5 0 0110 0v4a3 3 0 11-6 0V7a1 1 0 012 0v4a1 1 0 102 0V7a3 3 0 00-3-3z' clipRule='evenodd' />
-                                     </svg>
+                      </svg>
                         <span className='ml-2 flex-1 w-0 truncate'>
                           {pdfName}
                         </span>
@@ -472,7 +476,7 @@ function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
                             download
                           </a>
                         </div>
-                                  </>}
+                      </>}
                     </div>
                   </div>
                   <div className='mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md'>
@@ -534,7 +538,7 @@ function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
             </div>
           </div>
         </form>
-                    </>}
+      </>}
     </div>
   )
 }
