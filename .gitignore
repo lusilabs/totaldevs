@@ -4,7 +4,6 @@
 todo*
 firebase-export-*
 /emulators
-.runtimeconfig.json
 
 # dependencies
 /node_modules

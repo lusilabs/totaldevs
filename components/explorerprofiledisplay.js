@@ -7,8 +7,8 @@ export default function ExplorerProfileDisplay ({ userDoc, setIsEditing }) {
           <img className='h-8 w-8 rounded-full' src={userDoc.photoURL} alt='' />
           <div>
             {/* stripe account standing */}
-            {userDoc.stripeVerified && <span className='px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800'> verified </span>}
-            {!userDoc.stripeVerified && <span className='px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800'> verification pending </span>}
+            {userDoc.isStripeVerified && <span className='px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800'> verified </span>}
+            {!userDoc.isStripeVerified && <span className='px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800'> verification pending </span>}
               &nbsp;
               &nbsp;
             {/* profile standing */}

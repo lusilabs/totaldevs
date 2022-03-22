@@ -85,7 +85,7 @@ exports.createUserDoc = functions.auth.user().onCreate(async user => {
 })
 
 exports.handleMatchDoc = functions.firestore.document('matches/{matchID}').onWrite(async (change, context) => {
-  // const matchID = context.params.matchID
+  const matchID = context.params.matchID
   const newMatch = !change.before.exists
   const prev = change.before.exists ? change.before.data() : null
   const curr = change.after.exists ? change.after.data() : null
@@ -111,7 +111,7 @@ exports.handleMatchDoc = functions.firestore.document('matches/{matchID}').onWri
         emailText: 'visit https://totaldevs.com/projects to view your match!',
         emailSubject: 'you just got a new job match! 🤩'
       },
-      dev_interested: {
+      waiting_on_dev: {
         role: 'company',
         text: 'there is a new match for your job posting!',
         url: `/jobs/${doc.job}`,
@@ -140,7 +140,16 @@ exports.handleMatchDoc = functions.firestore.document('matches/{matchID}').onWri
           email: doc.companyEmail
         }
       ]
-      await sendEversignDocuments(signers, fields, context.params.matchID)
+      sendEversignDocuments(signers, fields, context.params.matchID)
+      admin.firestore()
+        .collection('subscriptions')
+        .add({
+          dev: doc.dev,
+          company: doc.company,
+          explorer: doc.explorer,
+          match: matchID,
+          job: doc.job
+        })
     }
     admin
       .firestore()
@@ -180,7 +189,7 @@ exports.sendEmailOnJobCreate = functions.firestore.document('jobs/{jobID}').onCr
     .add({
       message: {
         text: JSON.stringify(snap.data()),
-        subject: companyEmail + ' ' + companyName + ' ' + company + ' just posted a new position!'
+        subject: companyEmail + ' ' + companyName + ' ' + company + ' just posted a new position!' + `jobID ${jobID}`
       },
       to: ['talent@totaldevs.com'],
       createdAt: new Date().toISOString()
@@ -289,6 +298,16 @@ const triggerOnUpdate = ({ document, fieldToSearch, valueToSearch, destinationFi
     })
 }
 
+exports.updateMatchDocOnServer = functions.https.onCall(async (data, ctx) => {
+  const uid = isAuthedAndAppChecked(ctx)
+  const { matchID } = data
+  const mref = admin
+    .firestore()
+    .collection('matches')
+    .doc(matchID)
+  await mref.update({ ...data })
+})
+
 exports.updateJob = functions.firestore.document('jobs/{id}').onUpdate(async (change, context) => {
   const jobid = context.params.id
   const job = change.after.data()
@@ -353,6 +372,7 @@ exports.updateDocument = functions.firestore.document('eversignDocuments/{id}').
   if (document.document_completed) {
     console.log(document.match, 'starting stripe process')
     // Start stripe stuff
+    // todo@stripe-checkout change match.status -> 'dev_accepted'
   }
 })
 

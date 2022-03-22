@@ -15,7 +15,7 @@ const ConfirmAvailability = ({ userDoc, selectedMatch, refreshMatches }) => {
     setDoc(match, {
       status
     }, { merge: true })
-    toast.success(`${notifyee} has been notified.`)
+    toast.success(`${notifyee ?? 'user'} has been notified.`)
     refreshMatches(status)
   }
   return (
@@ -23,14 +23,15 @@ const ConfirmAvailability = ({ userDoc, selectedMatch, refreshMatches }) => {
       <Button
         type='button' color='green' className='text-md'
         onClick={updateMatch('dev_interested', selectedMatch.companyName)}
+        disabled={!['dev_interested', 'dev_unavailable'].includes(selectedMatch.status)}
       >
-        Available, can schedule meeting with client
+        available, can schedule meeting with client
       </Button>
       <Button
         type='button' color='red' className='text-md'
         onClick={updateMatch('dev_unavailable', selectedMatch.explorerName)}
       >
-        Not available at the moment
+        not available at the moment
       </Button>
     </div>
   )
