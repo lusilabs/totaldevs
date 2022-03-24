@@ -9,22 +9,28 @@ import Status from '@/components/misc/status'
 export default function JobDisplay ({ jobDoc, matches, setIsEditing }) {
   return (
     <>
-      <h3 className='text-gray-500'>matches</h3>
-      <div className='flex flex-col m-4'>
-        {matches.length === 0 && <span className='px-4 p-2 flex justify-center text-md leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800'> looking for a match... </span>}
-        {matches.length > 0 && matches.map((m, ix) =>
-          <Link key={m.dev ?? ix} href={`/matches/${m.id}`}>
-            <div className='flex cursor-pointer justify-between items-center px-4 py-5 bg-white shadow overflow-hidden sm:rounded-lg m-1'>
-              <img className='h-8 w-8 rounded-full' src={m.devPhotoURL} alt='' />
-              <div className='fixed left-24'>{m.devName}</div>
-              <div>
-                <Status green={['position_offered']} yellow={['dev_interested', 'dev_accepted']} red={['rejected']} value={jobDoc.status} />
-              </div>
-            </div>
-          </Link>
-        )}
-      </div>
-      
+      {matches &&
+        <>
+          <h3 className='text-gray-500'>matches</h3>
+          <div className='flex flex-col m-4'>
+            {matches.length === 0 && <span className='px-4 p-2 flex justify-center text-md leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800'> looking for a match... </span>}
+            {matches.length > 0 && matches.map((m, ix) =>
+              <Link key={m.dev ?? ix} href={`/matches/${m.id}`}>
+                <div className='flex cursor-pointer justify-between items-center px-4 py-5 bg-white shadow overflow-hidden sm:rounded-lg m-1'>
+                  <img className='h-8 w-8 rounded-full' src={m.devPhotoURL} alt='' />
+                  <div className='fixed left-24'>{m.devName}</div>
+                  <div>
+                    {m.status !== 'dev_interested' && <span className='px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800'> OK </span>}
+                    {m.status === 'dev_interested' && <span className='px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800'> action required </span>}
+                    {/* {!jobDoc.status && <span className='px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800'> unpublished </span>} */}
+
+                  </div>
+                </div>
+              </Link>
+            )}
+          </div>
+        </>}
+
       <h3 className='text-gray-500'>posting</h3>
 
       <div className='bg-white shadow overflow-hidden sm:rounded-lg m-4'>
