@@ -118,15 +118,16 @@ export const JobsToMatch = ({ userDoc }) => {
             setSelectedDev(null)
           }}
         />
-        {startTable.entity && <Button
-          type='button' color='blue' className='text-md'
-          onClick={() => {
-            startTable.tableProps.onSelect(null)
-            nextTable.tableProps.onSelect(null)
-          }}
-                              >
-          select another {startTable.tableProps.type}?
-        </Button>}
+        {startTable.entity &&
+          <Button
+            type='button' color='blue' className='text-md'
+            onClick={() => {
+              startTable.tableProps.onSelect(null)
+              nextTable.tableProps.onSelect(null)
+            }}
+          >
+            select another {startTable.tableProps.type}?
+          </Button>}
         {selectedJob && selectedDev && <RecommendRole {...{ userDoc, selectedJob, selectedDev }} />}
       </div>
       {!startTable.entity && <Table {...{ ...startTable.tableProps, getterMapping, renderMapping }} />}
@@ -141,10 +142,11 @@ export const JobsToMatch = ({ userDoc }) => {
               />
             </div>
             {
-                            nextTable.entity && <div className='col-span-6 sm:col-span-3 '>
-                              <DetailedView {...{ ...nextTable }} />
-                                                </div>
-                        }
+              nextTable.entity &&
+                <div className='col-span-6 sm:col-span-3 '>
+                  <DetailedView {...{ ...nextTable }} />
+                </div>
+            }
           </div>
         </>}
     </div>

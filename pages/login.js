@@ -26,11 +26,20 @@ export default function Login ({ setIsPageLoading }) {
   const handleProviderLogin = async provider => {
     const providerInstance = new SUPPORTED_PROVIDERS[provider]()
     setIsPageLoading(true)
-    const result = await signInWithPopup(auth, providerInstance)
-    if (result.user && result.user.uid) {
-      await sleep(3000)// give time to firestore for the userDoc to be populated
-      await handleUserLogin({ role: selectedRole, convert: isConverting })
-      router.push('/')
+    try {
+      const result = await signInWithPopup(auth, providerInstance)
+      if (result.user && result.user.uid) {
+        await sleep(3000)// give time to firestore for the userDoc to be populated
+        await handleUserLogin({ role: selectedRole, convert: isConverting })
+        router.push('/')
+      }
+    } catch (err) {
+      console.error(err)
+      if (err.code === 'auth/account-exists-with-different-credential') {
+        toast.error('An account already exists with that email, try logging in with another provider')
+      } else {
+        toast.error(err.code)
+      }
     }
     setIsPageLoading(false)
   }

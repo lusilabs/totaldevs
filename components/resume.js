@@ -9,14 +9,16 @@ const TotalResume = ({ profileID }) => {
     <>
       {!profileLoaded && <SuspensePlaceholders />}
       {profileLoaded && profileDoc.isProfileComplete &&
-        <div className='m-6 max-w-xl'>
-          <AboutMeSection profileDoc={profileDoc} />
-          <hr />
-          <ExperienceSection profileDoc={profileDoc} />
-          <hr />
-          <ProjectsSection profileDoc={profileDoc} />
-          <hr />
-          {profileDoc.degrees?.length > 1 && <EducationSection profileDoc={profileDoc} />}
+        <div className='flex justify-center max-w-fit w-full'>
+          <div className='flex-auto m-6 max-w-3xl'>
+            <AboutMeSection profileDoc={profileDoc} />
+            <hr />
+            <ExperienceSection profileDoc={profileDoc} />
+            <hr />
+            <ProjectsSection profileDoc={profileDoc} />
+            <hr />
+            {profileDoc.degrees?.length > 1 && <EducationSection profileDoc={profileDoc} />}
+          </div>
         </div>}
       {profileLoaded && !profileDoc.isProfileComplete && <h1> Under construction... </h1>}
     </>

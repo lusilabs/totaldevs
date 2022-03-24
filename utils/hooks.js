@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { storage, db } from '@/utils/config'
 import { collection, query, where, getDocs, orderBy, limit, doc, getDoc, onSnapshot } from 'firebase/firestore'
 
-export function useDocuments ({ userDoc, docs, queryConstraints = [], ...props }, dependencies = []) {
+export function useDocuments({ userDoc, docs, queryConstraints = [], ...props }, dependencies = []) {
   const [documents, setDocuments] = useState([])
   const [documentsLoaded, setDocumentsLoaded] = useState(false)
   const retrieveDocuments = async () => {
@@ -26,7 +26,7 @@ export function useDocuments ({ userDoc, docs, queryConstraints = [], ...props }
   return [documents, documentsLoaded, refresh, setDocuments]
 }
 
-export function useDocument ({ collection, docID }, dependencies = []) {
+export function useDocument({ collection, docID }, dependencies = []) {
   const [document, setDocument] = useState({})
   const [loaded, setLoaded] = useState(false)
 
@@ -46,4 +46,20 @@ export function useDocument ({ collection, docID }, dependencies = []) {
   const refresh = () => setLoaded(false)
 
   return [document, loaded, refresh]
+}
+
+export const useMediaQuery = (mediaQuery = '(max-width: 700px)') => {
+  const [matchesQuery, setMatchesQuery] = useState(false)
+
+  useEffect(() => {
+    const mediaWatcher = window.matchMedia(mediaQuery)
+    setMatchesQuery(mediaWatcher.matches)
+    const queryMatchEventListener = (e) => setMatchesQuery(e.matches)
+    mediaWatcher.addEventListener('change', queryMatchEventListener)
+    return () => {
+      mediaWatcher.removeEventListener('change', queryMatchEventListener)
+    }
+  })
+
+  return matchesQuery
 }
