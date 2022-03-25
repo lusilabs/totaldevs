@@ -5,7 +5,10 @@ import { useEffect, useState } from 'react'
 function SignUpFlow ({ handleCreateJobPosting, ...props }) {
   const router = useRouter()
 
-  const { convert = false } = router.query
+  useEffect(() => {
+    const { convert = false, signup } = router.query
+    if (convert) toast.success('job posted successfully!')
+  }, [])
 
   const handleClickOnRole = async role => {
     router.push(`/login?role=${role}&convert=${convert}`)

@@ -23,9 +23,9 @@ function JobList ({ userDoc, ...props }) {
       where('status', 'in', ['dev_interested', 'waiting_on_dev'])
     ]
   }, [userDoc.uid])
-  const { created, edited } = router.query
 
   useEffect(() => {
+    const { created, edited } = router.query
     if (created) toast.success('job posting created successfully.')
     if (edited) toast.success('job posting edited successfully.')
   }, [])
@@ -51,7 +51,7 @@ function JobList ({ userDoc, ...props }) {
         {!isLoading && jobs && jobs.length > 0 && jobs.map((j, ix) => <Job key={ix} job={j} numPendingRequests={matchesMap[j.id]} {...props} />)}
         {!isLoading && jobs && jobs.length === 0 && <div className='text-md text-gray-600'>no jobs posted yet.</div>}
         <div className='fixed top-16 right-8 lg:bottom-8 lg:right-4 text-md' onClick={() => router.push('/jobs/add')}>
-          <CreateButton extraClasses='bg-green-500' text='new job' />
+          <CreateButton extraClasses='bg-green-500' text='new posting' />
         </div>
       </div>
     </div>
