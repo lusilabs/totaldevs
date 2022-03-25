@@ -1,35 +1,29 @@
 import { PaperClipIcon } from '@heroicons/react/solid'
 import { useEffect } from 'react'
 import Link from 'next/link'
+import Status from '@/components/misc/status'
 // import { functions } from '@/utils/config'
 // import { httpsCallable } from 'firebase/functions'
-
 // const checkStripeAccountStanding = httpsCallable(functions, 'stripe-checkStripeAccountStanding')
 
 export default function JobDisplay ({ jobDoc, matches, setIsEditing }) {
   return (
     <>
-      {matches &&
-        <>
-          <h3 className='text-gray-500'>matches</h3>
-          <div className='flex flex-col m-4'>
-            {matches.length === 0 && <> <span className='flex justify-center p-2 px-4 font-semibold text-yellow-800 bg-yellow-100 rounded-full text-md leading-5'> explorers are looking for a match... (no action required, we will notify you) </span> </>}
-            {matches.length > 0 && matches.map((m, ix) =>
-              <Link key={m.dev ?? ix} href={`/matches/${m.id}`}>
-                <div className='flex items-center justify-between px-4 py-5 m-1 overflow-hidden bg-white shadow cursor-pointer sm:rounded-lg'>
-                  <img className='w-8 h-8 rounded-full' src={m.devPhotoURL} alt='' />
-                  <div className='fixed left-24'>{m.devName}</div>
-                  <div>
-                    {m.status !== 'dev_interested' && <span className='inline-flex px-2 text-xs font-semibold text-green-800 bg-green-100 rounded-full leading-5'> OK </span>}
-                    {m.status === 'dev_interested' && <span className='inline-flex px-2 text-xs font-semibold text-yellow-800 bg-yellow-100 rounded-full leading-5'> action required </span>}
-                    {/* {!jobDoc.status && <span className='inline-flex px-2 text-xs font-semibold text-red-800 bg-red-100 rounded-full leading-5'> unpublished </span>} */}
-
-                  </div>
-                </div>
-              </Link>
-            )}
-          </div>
-        </>}
+      <h3 className='text-gray-500'>matches</h3>
+      <div className='flex flex-col m-4'>
+        {matches.length === 0 && <span className='px-4 p-2 flex justify-center text-md leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800'>explorers are looking for a match... (no action required, we will notify you)</span>}
+        {matches.length > 0 && matches.map((m, ix) =>
+          <Link key={m.dev ?? ix} href={`/matches/${m.id}`}>
+            <div className='flex cursor-pointer justify-between items-center px-4 py-5 bg-white shadow overflow-hidden sm:rounded-lg m-1'>
+              <img className='h-8 w-8 rounded-full' src={m.devPhotoURL} alt='' />
+              <div className='fixed left-24'>{m.devName}</div>
+              <div>
+                <Status green={['position_offered']} yellow={['dev_interested', 'dev_accepted']} red={['rejected']} value={jobDoc.status} />
+              </div>
+            </div>
+          </Link>
+        )}
+      </div>
 
       <h3 className='text-gray-500'>posting</h3>
 

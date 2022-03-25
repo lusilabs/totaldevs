@@ -67,7 +67,10 @@ stripe listen --forward-to localhost:5001/{projectID}/{region}/{exportsName}-{fu
 Trigger and resend events
 
 `stripe trigger {eventType}`
-`stripe events resent {eventID}`
+`stripe events resend {eventID}`
+
+for connect accounts:
+`stripe events resend {eventID} --account=acct_1KCe5c2cSEZKTEoo`
 
 View examples:
 `stripe samples list`

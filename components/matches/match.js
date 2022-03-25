@@ -40,16 +40,17 @@ const RecommendRole = ({ userDoc, selectedDev, selectedJob }) => {
       devEmail: selectedDev.email,
       devPhotoURL: selectedDev.photoURL,
       jobData: selectedJob,
-      status: 'requesting_dev_status'
+      status: 'requesting_dev_status',
+      photoURL: selectedJob.photoURL
     }, { merge: true })
-    toast.success(`${selectedDev.displayName} has been notified.`)
+    toast.success(`${selectedDev.displayName ?? 'company'} has been notified.`)
   }
   return (
     <Button
       type='button' color='green' className='text-md'
       onClick={createAssignment}
     >
-      Ping Developer for Role
+      ping developer for role
     </Button>
   )
 }

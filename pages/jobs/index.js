@@ -9,7 +9,6 @@ import { db } from '@/utils/config'
 import { useDocuments } from '@/utils/hooks'
 import Link from 'next/link'
 import CreateButton from '@/components/createbutton'
-import { map } from 'next-pwa/cache'
 
 function JobList ({ userDoc, ...props }) {
   const router = useRouter()
@@ -20,7 +19,7 @@ function JobList ({ userDoc, ...props }) {
     docs: 'matches',
     queryConstraints: [
       where('company', '==', userDoc.uid),
-      where('status', 'in', ['dev_interested', 'waiting_on_dev'])
+      where('status', 'in', ['waiting_on_dev', 'dev_interested', 'dev_accepted'])
     ]
   }, [userDoc.uid])
 

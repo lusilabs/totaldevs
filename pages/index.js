@@ -22,7 +22,6 @@ export default function Index ({ userDoc, handleCreateJobPosting, ...props }) {
   useEffect(() => {
     logEvent(analytics, 'New visit v2. how do I log more data?')
   }, [])
-
   // this doesn't work for popUp login, I think I needed to do 'loginWithRedirect', not using for now.
   // this may be only for email login.
   // const checkUserCreate = async () => {

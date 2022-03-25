@@ -10,7 +10,7 @@ function PendingBanners ({ userDoc, setIsPageLoading, ...props }) {
 
   useEffect(() => {
     setIsProfileBannerActive(!userDoc.isProfileComplete)
-    setIsStripeBannerActive(userDoc.isProfileComplete && !userDoc.stripeVerified)
+    setIsStripeBannerActive(userDoc.isProfileComplete && !userDoc.isStripeVerified)
     setIsInviteBannerActive(userDoc.numInvitesLeft > 0)
     setIsCalendlyBannerActive(!userDoc.calendlyURL)
   }, [userDoc])

@@ -104,7 +104,8 @@ function LoginForm ({ handleProviderLogin, allowRecovery, handleEmailPasswordLog
                     type='submit'
                     style={{ transition: 'all .15s ease' }}
                   >
-                    {allowRecovery ? 'login' : 'sign up'}
+                    {allowRecovery && 'login'}
+                    {!allowRecovery && 'sign up'}
                   </button>
                 </div>
               </form>

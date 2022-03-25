@@ -45,8 +45,8 @@ export default function DevProfileDisplay ({ userDoc, setIsEditing, readOnly, se
               <i className='fa fa-credit-card' aria-hidden='true' />
               <dt className='ml-4 text-lg font-medium text-gray-500'>payments</dt>
             </div>
-            {userDoc.stripeVerified && <span className='px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800'> verified </span>}
-            {!userDoc.stripeVerified && <span className='px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800'> verify now </span>}
+            {userDoc.isStripeVerified && <span className='px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800'> verified </span>}
+            {!userDoc.isStripeVerified && <span className='px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800'> verify now </span>}
 
             <EditButton setIsEditing={handleDevStripeOnboarding} />
           </div>
