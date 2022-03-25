@@ -57,7 +57,14 @@ const RecommendRole = ({ userDoc, selectedDev, selectedJob }) => {
 
 export const JobsToMatch = ({ userDoc }) => {
   const [jobs, jobsLoaded, _jr] = useDocuments({ docs: 'jobs' })
-  const [devs, devsLoaded, _dr] = useDocuments({ docs: 'users', queryConstraints: [where('role', '==', 'dev'), where('isProfileComplete', '==', true)] })
+  const [devs, devsLoaded, _dr] = useDocuments({
+    docs: 'users',
+    queryConstraints: [
+      where('role', '==', 'dev'),
+      where('isProfileComplete', '==', true),
+      where('jobSearch', '!=', 'blocked')
+    ]
+  })
   const [selectedJob, setSelectedJob] = useState(null)
   const [selectedDev, setSelectedDev] = useState(null)
   const [start, setStart] = useState('Dev')

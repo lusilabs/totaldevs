@@ -35,8 +35,8 @@ function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
   const [matches, _ml, _mr, setMatches] = useDocuments({
     docs: 'matches',
     queryConstraints: [
-      where('job', '==', jobID)
-      // where('status', 'in', ['waiting_on_dev', 'dev_interested', 'dev_accepted'])
+      where('job', '==', jobID),
+      where('status', '!=', 'waiting_on_dev')
     ]
   }, [jobID])
 
@@ -464,7 +464,7 @@ function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
                     <div className='flex items-center flex-1 w-0'>
                       {pdfName && <> <svg className='flex-shrink-0 w-5 h-5 text-gray-400' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='currentColor' aria-hidden='true'>
                         <path fillRule='evenodd' d='M8 4a3 3 0 00-3 3v4a5 5 0 0010 0V7a1 1 0 112 0v4a7 7 0 11-14 0V7a5 5 0 0110 0v4a3 3 0 11-6 0V7a1 1 0 012 0v4a1 1 0 102 0V7a3 3 0 00-3-3z' clipRule='evenodd' />
-                                     </svg>
+                      </svg>
                         <span className='ml-2 flex-1 w-0 truncate'>
                           {pdfName}
                         </span>
@@ -474,7 +474,7 @@ function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
                             download
                           </a>
                         </div>
-                                  </>}
+                      </>}
                     </div>
                   </div>
                   <div className='flex justify-center px-6 pt-5 pb-6 mt-1 border-2 border-gray-300 border-dashed rounded-md'>
@@ -536,7 +536,7 @@ function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
             </div>
           </div>
         </form>
-                    </>}
+      </>}
     </div>
   )
 }

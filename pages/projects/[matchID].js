@@ -6,40 +6,40 @@ import { Button } from 'semantic-ui-react'
 import JobDisplay from '@/components/jobdisplay'
 import { db } from '@/utils/config'
 
-const ConfirmAvailability = ({ matchDoc, router }) => {
+const ConfirmAvailability = ({ userDoc, matchDoc, refreshMatches }) => {
+  if (!matchDoc) {
+    return null
+  }
   const updateMatch = (status, notifyee) => () => {
-    const match = doc(db, 'matches', matchDoc.id)
+    const match = doc(db, 'matches', `${matchDoc.id}`)
     setDoc(match, {
       status
     }, { merge: true })
-
-    toast.success(`${notifyee} has been notified.`)
-    router.push('/projects')
+    toast.success(`${notifyee ?? 'user'} has been notified.`)
+    refreshMatches(status)
   }
-
   return (
-    <>
-      <div className='m-4'>
-        <Button
-          fluid type='button' color='green' className='text-md'
-          onClick={updateMatch('dev_interested', matchDoc.companyName)}
-        >
-          Available, can schedule meeting with client
-        </Button>
-      </div>
-      <div className='m-4'>
-        <Button
-          fluid type='button' color='red' className='text-md'
-          onClick={updateMatch('dev_unavailable', matchDoc.explorerName)}
-        >
-          Not available at the moment
-        </Button>
-      </div>
-    </>
+    <div className='py-5 flex justify-around'>
+      <Button
+        type='button' color='red' className='text-md'
+        onClick={updateMatch('dev_unavailable', matchDoc.explorerName)}
+      >
+        not available
+      </Button>
+
+      <Button
+        type='button' color='green' className='text-md'
+        onClick={updateMatch('dev_interested', matchDoc.companyName)}
+        disabled={['dev_interested'].includes(matchDoc.status) || !userDoc.isStripeVerified}
+      >
+        accept match
+      </Button>
+    </div>
   )
 }
 
-const ViewProject = ({ props }) => {
+
+const ViewProject = props => {
   const router = useRouter()
   const { matchID } = router.query
   const [matchDoc, setMatchDoc] = useState()
@@ -56,8 +56,8 @@ const ViewProject = ({ props }) => {
   }
   return (
     <div className='m-4'>
-      <JobDisplay {...{ jobDoc: matchDoc.jobData }} />
-      <ConfirmAvailability {...{ matchDoc, router }} />
+      <JobDisplay {...{ jobDoc: matchDoc.jobData }} {...props} />
+      <ConfirmAvailability {...{ matchDoc, router }} {...props} />
     </div>
   )
 }

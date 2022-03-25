@@ -38,37 +38,6 @@ const CustomMobileProjectView = ({ getOrderedData }) => {
   )
 }
 
-const ConfirmAvailability = ({ userDoc, selectedMatch, refreshMatches }) => {
-  if (!selectedMatch) {
-    return null
-  }
-  const updateMatch = (status, notifyee) => () => {
-    const match = doc(db, 'matches', `${selectedMatch.id}`)
-    setDoc(match, {
-      status
-    }, { merge: true })
-    toast.success(`${notifyee ?? 'user'} has been notified.`)
-    refreshMatches(status)
-  }
-  return (
-    <div className='py-5'>
-      <Button
-        type='button' color='green' className='text-md'
-        onClick={updateMatch('dev_interested', selectedMatch.companyName)}
-        disabled={!['dev_interested', 'dev_unavailable'].includes(selectedMatch.status)}
-      >
-        available, can schedule meeting with client
-      </Button>
-      <Button
-        type='button' color='red' className='text-md'
-        onClick={updateMatch('dev_unavailable', selectedMatch.explorerName)}
-      >
-        not available at the moment
-      </Button>
-    </div>
-  )
-}
-
 export const ProjectsToCheck = ({ userDoc }) => {
   const [matches, matchesLoaded, _rm, setMatchesState] = useDocuments({
     docs: 'matches', queryConstraints: [where('dev', '==', userDoc.uid)]

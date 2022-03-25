@@ -144,15 +144,23 @@ export default function MatchView ({ userDoc, ...props }) {
                 <label htmlFor='startDate' className='block text-sm font-medium text-gray-700'>
                   starting date
                 </label>
-                <input
+                {/* <input
                   type='text'
                   id='startDate'
                   name='startDate'
                   disabled={matchDoc?.locked}
                   className='mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
+                /> */}
+              <input type="date"
+                    value="2018-07-22"
+                  id='startDate'
+                  name='startDate'
+                  disabled={matchDoc?.locked}
+                    min="2018-01-01" max="2018-12-31"
+                  className='mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
                   {...register('startDate', { required: true })}
-                />
-                {errors.startDate && <div className='m-2 text-sm text-red-500'>please select a starting date</div>}
+                  />
+                              {errors.startDate && <div className='m-2 text-sm text-red-500'>please select a starting date</div>}
               </div>
 
               <div className='col-span-6 sm:col-span-2'>
