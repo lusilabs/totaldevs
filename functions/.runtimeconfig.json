@@ -1,15 +1,16 @@
 {
   "stripe": {
     "refresh_url_dev": "http://localhost:3000/?stripe_redirect_failure=true",
-    "return_url_dev": "http://localhost:3000/?stripe_redirect_success=true",
     "secret_key_dev": "sk_test_51K5wctKId0epTCbqKe7PzedDO9zHmaLo0zoD9lh5QouTRNXUxMaLXRqefHorZ6gOA0JCtTlUcCrhJvwN25uQbo2e00TSenHmIu",
+    "return_url_dev": "http://localhost:3000/?stripe_redirect_success=true"
   },
   "eversign": {
-    "api_key": "fake",
-    "dev_company_template_id": "fake",
-    "business_id": "fake"
+    "business_id": "412523",
+    "api_key": "a79025d1f5334adba6625968aebe697e",
+    "dev_company_template_id": "a9e0d75df53c4b8d8714a9110c3f1ab3"
   },
   "slack": {
+    "prod_hook": "https://hooks.slack.com/services/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",
     "dev_hook": "https://hooks.slack.com/services/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"
   }
 }

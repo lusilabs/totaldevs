@@ -23,7 +23,7 @@ const CompanyPayments = props => {
   const handleNavigateToCompanyDashboard = async matchID => {
     props.setIsPageLoading(true)
     const { data: url } = await generateCompanyDashboardLink({ matchID })
-    window.location.assign(url)
+    window.open(url, '_blank')
   }
   const [isLoading, setIsLoading] = useState(true)
   const [matches, matchesLoaded, _mr, _sm] = useDocuments({
@@ -39,11 +39,11 @@ const CompanyPayments = props => {
   }, [matchesLoaded])
 
   return (
-    <div className='max-w-2xl mx-auto py-4 px-4 sm:py-8 sm:px-6 lg:max-w-7xl lg:px-8'>
+    <div className='max-w-2xl px-4 py-4 mx-auto sm:py-8 sm:px-6 lg:max-w-7xl lg:px-8'>
       <div className='mt-8 grid grid-cols-2 gap-y-2 gap-x-6 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8'>
         {isLoading && <SuspensePlaceholders />}
         {!isLoading && matches && matches.length > 0 && matches.map((m, ix) => <Match key={ix} match={m} handleNavigateToCompanyDashboard={handleNavigateToCompanyDashboard} {...props} />)}
-        {!isLoading && matches && matches.length === 0 && <div className='text-md text-gray-600'>no matches yet.</div>}
+        {!isLoading && matches && matches.length === 0 && <div className='flex flex-col items-center mt-8'> <h4 className='text-center text-indigo-600'>you will see payments here once you have job matches</h4> <img className='w-40 h-40' src='/astronaut.png' /> </div>}
       </div>
     </div>
   )
@@ -51,15 +51,15 @@ const CompanyPayments = props => {
 
 const Match = ({ match, handleNavigateToCompanyDashboard, ...props }) => {
   return (
-    <div className='group relative cursor-pointer' onClick={() => handleNavigateToCompanyDashboard(match.id)}>
-      <div className='w-full min-h-80 bg-gray-200 aspect-w-1 aspect-h-1 rounded-md overflow-hidden group-hover:opacity-75 lg:h-80 lg:aspect-none hover:z-0'>
-        <img src={match.photoURL} alt={match.photoURL} className='w-full h-full object-center object-cover lg:w-full lg:h-full' />
+    <div className='relative cursor-pointer group' onClick={() => handleNavigateToCompanyDashboard(match.id)}>
+      <div className='w-full overflow-hidden bg-gray-200 min-h-80 aspect-w-1 aspect-h-1 rounded-md group-hover:opacity-75 lg:h-80 lg:aspect-none hover:z-0'>
+        <img src={match.photoURL} alt={match.photoURL} className='object-cover object-center w-full h-full lg:w-full lg:h-full' />
       </div>
-      <div className='mt-4 flex justify-between items-start'>
-        <p className='mt-1 text-md text-gray-500'>{match.devName}</p>
-        <p className='text-md font-medium text-gray-900'>$ {match.jobData?.finalSalary}</p>
-        {match.status === 'locked' && <span className='px-2 inline-flex text-md leading-5 font-semibold rounded-full bg-green-100 text-green-800'> up to date.  </span>}
-        {match.status !== 'payment_due' && <span className='px-2 inline-flex text-md leading-5 font-semibold rounded-full bg-red-100 text-red-800'> payment due </span>}
+      <div className='flex items-start justify-between mt-4'>
+        <p className='mt-1 text-gray-500 text-md'>{match.devName}</p>
+        <p className='font-medium text-gray-900 text-md'>$ {match.jobData?.finalSalary}</p>
+        {match.status === 'locked' && <span className='inline-flex px-2 font-semibold text-green-800 bg-green-100 rounded-full text-md leading-5'> up to date.  </span>}
+        {match.status !== 'payment_due' && <span className='inline-flex px-2 font-semibold text-red-800 bg-red-100 rounded-full text-md leading-5'> payment due </span>}
       </div>
     </div>
   )
@@ -69,13 +69,13 @@ const DevExplorerPayments = props => {
   const handleNavigateToDevDashboard = async () => {
     props.setIsPageLoading(true)
     const { data: url } = await generateExpressDashboardLink()
-    window.location.assign(url)
+    window.open(url, '_blank')
   }
   return (
     <>
       {props.userDoc.isStripeVerified && <Banner color='bg-indigo-600' handleClick={handleNavigateToDevDashboard} buttonText='go to stripe' text='payments are handled by stripe' />}
       <div className='flex flex-col items-center mt-8'>
-        {!props.userDoc.isStripeVerified && <h4 className='text-indigo-600 text-center'> please verify your account to view your payments </h4>}
+        {!props.userDoc.isStripeVerified && <h4 className='text-center text-indigo-600'> please verify your account to view your payments </h4>}
         <img className='w-60 h-60' src='/astronaut.png' />
       </div>
     </>

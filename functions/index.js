@@ -222,7 +222,7 @@ exports.handleUserLogin = functions.https.onCall(async (data, ctx) => {
     .doc(uid)
     .get()
   const { role } = uref.data()
-  if (!role || data.convert) {
+  if (!role || data.converted) {
     const uref2 = admin
       .firestore()
       .collection('users')

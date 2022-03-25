@@ -10,6 +10,7 @@ import { toast } from 'react-toastify'
 
 const SUPPORTED_PROVIDERS = { google: GoogleAuthProvider, github: GithubAuthProvider, facebook: FacebookAuthProvider }
 const handleUserLogin = httpsCallable(functions, 'handleUserLogin')
+
 function CompleteSignupFlow ({ userDoc, setIsPageLoading, ...props }) {
   const currentUser = auth.currentUser
   const [converted, setConverted] = useState(false)
@@ -19,6 +20,7 @@ function CompleteSignupFlow ({ userDoc, setIsPageLoading, ...props }) {
     toast.success('job posted successfully!')
     setConverted(convert)
   }, [])
+
   const handleLinkWithRedirect = provider => {
     const providerInstance = new SUPPORTED_PROVIDERS[provider]()
     setIsPageLoading(true)

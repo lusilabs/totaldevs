@@ -113,7 +113,11 @@ function EditDevProfile ({ userDoc, ...props }) {
   const handleUploadPhoto = e => {
     const file = e.target.files[0]
     const fileRef = ref(storage, `images/${file.name}`)
-    if (!file.name.match(/.(jpg|jpeg|png|gif)$/i) || file.size > 1000000) {
+    if (!file.name.match(/.(jpg|jpeg|png|gif)$/i)) {
+      toast.error('Please upload jpg, jpeg, png or gif file type.')
+      return
+    }
+    if (file.size > 1000000) {
       toast.error('Please upload a < 1 MB image.')
       return
     }
@@ -142,7 +146,7 @@ function EditDevProfile ({ userDoc, ...props }) {
             </Button>
           </div>
 
-          <div className='px-4 py-3 text-right sm:px-6 mb-8'>
+          <div className='px-4 py-3 mb-8 text-right sm:px-6'>
             <Button onClick={() => setIsEditing(false)} fluid className='text-md'>
               cancel
             </Button>

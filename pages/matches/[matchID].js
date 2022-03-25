@@ -110,7 +110,7 @@ export default function MatchView ({ userDoc, ...props }) {
 
           <div className='m-4 overflow-hidden bg-white shadow sm:rounded-lg'>
             <h3 className='p-4 m-4 text-gray-500 text-center'>
-              <i className='mr-4 fa fa-calendar text-blue-500' aria-hidden='true' /><a href={profileDoc.calendlyURL}>book a meeting here</a>
+              <i className='mr-4 fa fa-calendar text-blue-500' aria-hidden='true' /><a href={profileDoc.calendlyURL} target='_blank'>book a meeting here</a>
             </h3>
           </div>
 
