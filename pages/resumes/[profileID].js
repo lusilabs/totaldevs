@@ -25,7 +25,7 @@ const TotalResume = () => {
       {profileDoc.degrees?.length > 1 && <EducationSection profileDoc={profileDoc} />}
     </div>
     }
-    {profileLoaded && !profileDoc.isProfileComplete && <h1> Under construction... </h1>}
+    {profileLoaded && !profileDoc.isProfileComplete && <h1> under construction... </h1>}
     </>
   )
 }

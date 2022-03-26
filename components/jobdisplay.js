@@ -5,7 +5,7 @@ import Status from '@/components/misc/status'
 // import { httpsCallable } from 'firebase/functions'
 // const checkStripeAccountStanding = httpsCallable(functions, 'stripe-checkStripeAccountStanding')
 
-export default function JobDisplay ({ userDoc, jobDoc, matches = [], setIsEditing }) {
+export default function JobDisplay ({ userDoc, jobDoc = {}, matches = [], setIsEditing }) {
   return (
     <>
       {userDoc.role !== 'dev' && <>
@@ -18,13 +18,13 @@ export default function JobDisplay ({ userDoc, jobDoc, matches = [], setIsEditin
                 <img className='h-8 w-8 rounded-full' src={m.devPhotoURL} alt='' />
                 <div className='fixed left-24'>{m.devName}</div>
                 <div>
-                  <Status green={['position_offered']} yellow={['dev_interested', 'dev_accepted']} red={['rejected']} value={jobDoc.status} />
+                  <Status green={['position_offered', 'dev_accepted']} yellow={['dev_interested']} red={['rejected']} value={m.status} />
                 </div>
               </div>
             </Link>
           )}
         </div>
-                                 </>}
+      </>}
 
       <h3 className='text-gray-500'>posting</h3>
 

@@ -6,8 +6,8 @@ export default function ProfileEducation ({ degrees, setDegrees }) {
     projectsClone[ix][e.target.id] = e.target.value
     setDegrees(projectsClone)
   }
-  const handleAddNewProject = () => setDegrees(js => [...js, { stack: [] }])
-  const handleRemoveProject = (e, ix) => {
+  const handleAddNewDegree = () => setDegrees(js => [...js, { stack: [] }])
+  const handleRemoveDegree = (e, ix) => {
     e.preventDefault()
     const projectsClone = [...degrees]
     projectsClone.splice(ix, 1)
@@ -16,7 +16,10 @@ export default function ProfileEducation ({ degrees, setDegrees }) {
 
   return (
     <div>
-      <h3 className='text-gray-500 m-4 p-4'>degrees</h3>
+      <div className='flex justify-between p-2'>
+        <h3 className='text-gray-500 m-4 p-4'>degrees</h3>
+        <CreateButton onClick={handleAddNewDegree} text='+' extraClasses='bg-indigo-400 text-md' />
+      </div>
       {degrees.length === 0 && <>
         <div className='text-red-400 text-lg shadow m-4 p-4 text-center flex flex-col'>
           no degrees registered
@@ -33,7 +36,7 @@ export default function ProfileEducation ({ degrees, setDegrees }) {
 
           </div> */}
         </div>
-                               </>}
+      </>}
       {degrees.length > 0 && degrees.map((d, ix) =>
 
         <div key={ix} className='relative m-4 p-4 md:m-6 md:p-6 rounded-lg overflow-hidden shadow grid grid-cols-6 gap-6 pb-12'>
@@ -110,7 +113,7 @@ export default function ProfileEducation ({ degrees, setDegrees }) {
           </div>
 
           <button
-            onClick={e => handleRemoveProject(e, ix)}
+            onClick={e => handleRemoveDegree(e, ix)}
             className='bg-red-200 h-6 px-4 absolute bottom-2 left-2 rounded-full'
           >remove
           </button>
@@ -118,7 +121,6 @@ export default function ProfileEducation ({ degrees, setDegrees }) {
         </div>
       )}
 
-      <CreateButton onClick={handleAddNewProject} text='+' extraClasses='bg-indigo-400 fixed top-16 right-8 lg:bottom-8 lg:right-4 text-md' />
     </div>
   )
 }

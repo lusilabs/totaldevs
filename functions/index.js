@@ -95,10 +95,18 @@ exports.handleMatchDoc = functions.firestore.document('matches/{matchID}').onWri
 
   if (hasStatusChanged || newMatch) {
     const statusMapping = {
+      dev_interested: {
+        role: 'company',
+        text: 'there is a new match for your job posting!',
+        url: `/matches/${matchID}`,
+        email: 'companyEmail',
+        emailText: `visit https://totaldevs.com/matches/${matchID} to view the match!`,
+        emailSubject: 'there is a new match for your job posting! 🤩'
+      },
       position_offered: {
         role: 'dev',
         text: 'you got a job offer!',
-        url: '/projects',
+        url: `/matches/${matchID}`,
         email: 'devEmail',
         emailText: 'visit https://totaldevs.com/projects to view your offer!',
         emailSubject: 'you just got a job offer! 🤩'
@@ -110,14 +118,6 @@ exports.handleMatchDoc = functions.firestore.document('matches/{matchID}').onWri
         email: 'devEmail',
         emailText: 'visit https://totaldevs.com/projects to view your match!',
         emailSubject: 'you just got a new job match! 🤩'
-      },
-      waiting_on_dev: {
-        role: 'company',
-        text: 'there is a new match for your job posting!',
-        url: `/jobs/${doc.job}`,
-        emailText: `visit https://totaldevs.com/jobs/${doc.job} to view it.`,
-        emailSubject: 'there is a new match for your job posting! 🤩',
-        email: 'companyEmail'
       }
     }
 

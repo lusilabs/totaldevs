@@ -35,6 +35,12 @@ export default function MatchView ({ userDoc, ...props }) {
   const [buttonColor, setButtonColor] = useState('green')
   const [initialPayment, setInitialPayment] = useState()
 
+  const today = new Date()
+  let tomorrow = new Date(today.setDate(today.getDate() + 1))
+  tomorrow = tomorrow.toLocaleDateString('en-ca')
+  let threeMonths = new Date(today.setDate(today.getDate() + 90))
+  threeMonths = threeMonths.toLocaleDateString('en-ca')
+
   const handleInitialPaymentChange = e => {
     const value = e.target.value
     setInitialPayment((value * INITIAL_PAYMENT_PCT).toFixed(2))
@@ -43,7 +49,6 @@ export default function MatchView ({ userDoc, ...props }) {
   const [matchDoc, matchLoaded, _dr, setMatchDoc] = useDocument({ collection: 'matches', docID: routerMatchID })
   useEffect(() => {
     const { matchID, success, cancel, session } = router.query
-    console.log({ matchID, success, cancel, session })
     setRouterMatchID(matchID)
   })
 
@@ -51,8 +56,9 @@ export default function MatchView ({ userDoc, ...props }) {
 
   useEffect(() => {
     if (matchDoc) {
-      setIsButtonLocked(!!matchDoc.locked)
       reset({ startDate: matchDoc.startDate, finalSalary: matchDoc.finalSalary }) // this refires the defaultValues on the form to fill them up once the db data loads.
+      const isFormComplete = matchDoc.startDate && matchDoc.finalSalary
+      setIsButtonLocked(!!matchDoc.locked || !isFormComplete)
       setInitialPayment(matchDoc.initialPayment)
       setButtonColor(buttonColors[matchDoc.status])
     }
@@ -64,11 +70,17 @@ export default function MatchView ({ userDoc, ...props }) {
     setSaving(true)
     const { status } = matchDoc
     switch (status) {
-      case 'dev_accepted':
+      case 'dev_accepted': // accepting match
+        await sleep(2000)
         await handleAcceptMatch(routerMatchID)
+        toast.success('position successfully filled!')
+        router.push('/matches')
         break
-      case 'dev_interested':
+      case 'dev_interested': // offering position
+        await sleep(2000)
         await updateMatchDocOnServer({ matchID: routerMatchID, status: 'position_offered', locked: true })
+        toast.success('job offer sent!')
+        router.push('/matches')
         break
       case 'rejected':
       case 'position_offered':
@@ -108,7 +120,7 @@ export default function MatchView ({ userDoc, ...props }) {
             <TotalResume profileID={profileDoc.uid} />
           </div>
 
-          <div className='m-4 overflow-hidden bg-white shadow sm:rounded-lg'>
+          <div className='m-6 overflow-hidden bg-white shadow sm:rounded-lg'>
             <h3 className='p-4 m-4 text-gray-500 text-center'>
               <i className='mr-4 fa fa-calendar text-blue-500' aria-hidden='true' /><a href={profileDoc.calendlyURL} target='_blank'>book a meeting here</a>
             </h3>
@@ -151,16 +163,17 @@ export default function MatchView ({ userDoc, ...props }) {
                   disabled={matchDoc?.locked}
                   className='mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
                 /> */}
-              <input type="date"
-                    value="2018-07-22"
-                  id='startDate'
-                  name='startDate'
-                  disabled={matchDoc?.locked}
-                    min="2018-01-01" max="2018-12-31"
-                  className='mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
-                  {...register('startDate', { required: true })}
-                  />
-                              {errors.startDate && <div className='m-2 text-sm text-red-500'>please select a starting date</div>}
+              <input 
+                type="date"
+                id='startDate'
+                name='startDate'
+                disabled={matchDoc?.locked}
+                min={tomorrow}
+                max={threeMonths}
+                className='mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
+                {...register('startDate', { required: true })}
+              />
+                {errors.startDate && <div className='m-2 text-sm text-red-500'>please select a starting date</div>}
               </div>
 
               <div className='col-span-6 sm:col-span-2'>
@@ -178,7 +191,7 @@ export default function MatchView ({ userDoc, ...props }) {
               </div>
 
               <div className='col-span-6'>
-                <Button disabled={saving || matchDoc?.locked} loading={saving} type='submit' color='primary' fluid>
+                <Button disabled={saving || matchDoc?.locked} loading={saving} type='submit' color='blue' fluid>
                   {saving && <span>saving...</span>}
                   {!saving && <span>save</span>}
                 </Button>
