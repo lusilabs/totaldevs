@@ -29,7 +29,7 @@ const buttonColors = {
   locked: 'gray'
 }
 
-export default function MatchView ({ userDoc, ...props }) {
+export default function MatchView({ userDoc, ...props }) {
   const router = useRouter()
   const [routerMatchID, setRouterMatchID] = useState()
   const [isButtonLocked, setIsButtonLocked] = useState()
@@ -37,6 +37,12 @@ export default function MatchView ({ userDoc, ...props }) {
   const [buttonColor, setButtonColor] = useState('green')
   const [initialPayment, setInitialPayment] = useState()
   const [waitingOnDev, setWaitingOnDev] = useState()
+
+  const today = new Date()
+  let tomorrow = new Date(today.setDate(today.getDate() + 1))
+  tomorrow = tomorrow.toLocaleDateString('en-ca')
+  let threeMonths = new Date(today.setDate(today.getDate() + 90))
+  threeMonths = threeMonths.toLocaleDateString('en-ca')
 
   const today = new Date()
   let tomorrow = new Date(today.setDate(today.getDate() + 1))
@@ -74,15 +80,17 @@ export default function MatchView ({ userDoc, ...props }) {
     setSaving(true)
     const { status } = matchDoc
     switch (status) {
-      case 'documents_signed': // accepting match
+      case 'dev_accepted': // accepting match
         await sleep(2000)
         await handleAcceptMatch(routerMatchID)
+        toast.success('position successfully filled!')
+        router.push('/matches')
         break
       case 'dev_interested': // offering position
         await sleep(2000)
         await updateMatchDocOnServer({ matchID: routerMatchID, status: 'position_offered', locked: true })
         toast.success('job offer sent!')
-        router.push('/jobs')
+        router.push('/matches')
         break
       case 'rejected':
       case 'position_offered':
@@ -167,16 +175,16 @@ export default function MatchView ({ userDoc, ...props }) {
                   disabled={matchDoc?.locked}
                   className='mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
                 /> */}
-              <input 
-                type="date"
-                id='startDate'
-                name='startDate'
-                disabled={matchDoc?.locked}
-                min={tomorrow}
-                max={threeMonths}
-                className='mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
-                {...register('startDate', { required: true })}
-              />
+                <input
+                  type="date"
+                  id='startDate'
+                  name='startDate'
+                  disabled={matchDoc?.locked}
+                  min={tomorrow}
+                  max={threeMonths}
+                  className='mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
+                  {...register('startDate', { required: true })}
+                />
                 {errors.startDate && <div className='m-2 text-sm text-red-500'>please select a starting date</div>}
               </div>
 

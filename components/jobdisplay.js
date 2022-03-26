@@ -5,7 +5,7 @@ import Status from '@/components/misc/status'
 // import { httpsCallable } from 'firebase/functions'
 // const checkStripeAccountStanding = httpsCallable(functions, 'stripe-checkStripeAccountStanding')
 
-export default function JobDisplay ({ userDoc, jobDoc = {}, matches = [], setIsEditing }) {
+export default function JobDisplay({ userDoc, jobDoc = {}, matches = [], setIsEditing }) {
   return (
     <>
       {userDoc.role !== 'dev' &&
