@@ -241,6 +241,15 @@ exports.handleUserLogin = functions.https.onCall(async (data, ctx) => {
           to: ['talent@totaldevs.com'],
           createdAt: new Date().toISOString()
         })
+      // we have to add the company data to the job they just posted anonymously
+      admin
+        .firestore()
+        .collection('jobs')
+        .where('uid', '==', uid)
+        .get()
+        .then(snap => {
+          snap.docs.forEach(doc => doc.ref.update({ company: uid, companyEmail: data.email }))
+        })
     }
   } else {
   // try redeeming invites by updating the user doc, so the listener can fire.
