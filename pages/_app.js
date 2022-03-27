@@ -98,7 +98,7 @@ const adminNavigation = [
 ]
 
 const adminUserNavigation = [
-  { name: 'success', href: '/admin/success' }
+  // { name: 'success', href: '/admin/success' }
 ]
 
 const anonNavigation = []
