@@ -67,8 +67,8 @@ export const JobsToMatch = ({ userDoc }) => {
   })
   const [selectedJob, setSelectedJob] = useState(null)
   const [selectedDev, setSelectedDev] = useState(null)
-  const [start, setStart] = useState('Dev')
-  const [next, setNext] = useState('Position')
+  const [start, setStart] = useState('dev')
+  const [next, setNext] = useState('position')
 
   const getterMapping = {
     stack: (row) => row.stack?.join(', '),
