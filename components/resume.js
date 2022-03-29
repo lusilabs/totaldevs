@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { SuspensePlaceholders } from '@/components/suspense'
 
 const TotalResume = ({ profileID }) => {
-  const [profileDoc, profileLoaded, _pr] = useDocument({ collection: 'profiles', docID: profileID }, [profileID])
+  const [profileDoc, profileLoaded, _pr, _sp] = useDocument({ collection: 'profiles', docID: profileID }, [profileID])
   return (
     <>
       {!profileLoaded && <SuspensePlaceholders />}

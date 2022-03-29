@@ -7,6 +7,8 @@ import { Button } from 'semantic-ui-react'
 import JobDisplay from '@/components/jobdisplay'
 import { db } from '@/utils/config'
 import { SuspensePlaceholders } from '@/components/suspense'
+import Banner from '@/components/banner'
+
 
 const ConfirmAvailability = ({ userDoc, matchDoc, setMatch }) => {
   const updateMatch = (status, notifyee) => async () => {
@@ -16,7 +18,7 @@ const ConfirmAvailability = ({ userDoc, matchDoc, setMatch }) => {
   }
   const waitingOnCompany = ['dev_interested', 'dev_accepted'].includes(matchDoc.status)
   const positionOffered = matchDoc.status === 'position_offered'
-  const canContinue = matchDoc.status === 'waiting_on_dev'
+  const canContinue = matchDoc.status === 'requesting_dev_status'
   return (
     <div className='py-5 flex justify-around'>
       <Button
@@ -29,11 +31,11 @@ const ConfirmAvailability = ({ userDoc, matchDoc, setMatch }) => {
         type='button' color='green' className='text-md'
         onClick={updateMatch('dev_interested', matchDoc.companyName)}
         // disabled={['dev_interested'].includes(matchDoc.status) || !userDoc.isStripeVerified}
-        disabled={waitingOnCompany}
+        disabled={waitingOnCompany || !userDoc.isStripeVerified}
       >
-        {canContinue && 'available for meetings'}
-        {positionOffered && 'accept position & initial payment'}
-        {waitingOnCompany && 'waiting on company'}
+        {canContinue && <div>{'available for meetings'}</div>}
+        {positionOffered && <div>{'accept position & initial payment'}</div>}
+        {waitingOnCompany && <div>{'waiting on company'}</div>}
       </Button>
     </div>
   )
@@ -47,10 +49,12 @@ const ViewProject = props => {
     const { matchID } = router.query
     setSelectedMatchID(matchID)
   }, [])
+  const waitingOnCompany = ['dev_interested', 'dev_accepted'].includes(matchDoc.status)
   return (
     <div className='m-4'>
       {!loaded && <SuspensePlaceholders />}
       {loaded && <>
+        {waitingOnCompany && <Banner name='no-action-required' color='bg-indigo-600' text='waiting on company, no action required' />}
         <JobDisplay {...{ jobDoc: matchDoc.jobData }} {...props} />
         <MatchSpecificFields matchDoc={matchDoc} />
         <ConfirmAvailability {...{ matchDoc, router }} setMatch={setMatch} {...props} />
