@@ -15,8 +15,10 @@ function CompleteSignupFlow ({ userDoc, setIsPageLoading, ...props }) {
   const currentUser = auth.currentUser
   const [converted, setConverted] = useState(false)
   const router = useRouter()
+
   useEffect(() => {
     const { convert = false, signup } = router.query
+    sleep(3000)
     toast.success('job posted successfully!')
     setConverted(convert)
   }, [])
