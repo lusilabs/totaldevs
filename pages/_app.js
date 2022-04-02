@@ -103,7 +103,7 @@ const adminUserNavigation = [
 
 const anonNavigation = []
 const anonUserNavigation = [
-  { name: 'register', href: '/login?role=company' },
+  { name: 'sign up', href: '/signup/complete?convert=undefined' },
   { name: 'logout', href: '/', handleClick: () => signOut(auth) }
 ]
 

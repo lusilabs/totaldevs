@@ -49,7 +49,7 @@ const ExperienceSection = ({ profileDoc }) => {
           <div className='flex justify-between'>
             <p><strong>{j.role} </strong>
               at&nbsp;
-              <a href={j.companyURL}>{j.companyName}</a>
+              <a href={j.companyURL} target='_blank'>{j.companyName}</a>
             </p>
             {j.fromYear} / {j.toYear}
           </div>
@@ -75,7 +75,7 @@ const ProjectsSection = ({ profileDoc }) => {
             <p><strong>{p.role} </strong>
               &nbsp;
               &nbsp;
-              <a href={p.projectURL}>{p.projectName}</a>
+              <a href={p.projectURL} target='_blank'>{p.projectName}</a>
             </p>
             <a href={p.projectRepoURL}>repo</a>
           </div>
@@ -99,7 +99,7 @@ const EducationSection = ({ profileDoc }) => {
             <p><strong>{d.degreeName} </strong>
               &nbsp;
               &nbsp;
-              <a href={d.universityURL}>{d.universityName}</a>
+              <a href={d.universityURL} target='_blank'>{d.universityName}</a>
             </p>
             {d.endYear}
           </div>

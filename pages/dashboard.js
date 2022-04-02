@@ -4,6 +4,7 @@ import { useDocuments } from '@/utils/hooks'
 import { setDoc, doc, limit, where } from '@firebase/firestore'
 import { SuspensePlaceholders } from '@/components/suspense'
 import { SpeakerphoneIcon } from '@heroicons/react/outline'
+import Banner from '@/components/banner'
 
 function Dashboard ({ userDoc, setIsPageLoading, ...props }) {
   const queryConstraints = [
@@ -20,10 +21,13 @@ function Dashboard ({ userDoc, setIsPageLoading, ...props }) {
     setDoc(aref, { seen: true }, { merge: true })
     if (!action.noop) router.push(action.url)
   }
+  console.log({ userDoc })
 
   return (
     <div>
+
       {!actionsLoaded && <SuspensePlaceholders />}
+      {actionsLoaded && !userDoc?.email && <Banner name='profile-complete' color='bg-red-400' text='sign up to keep in touch' buttonText='click here' href='/signup/complete?convert=undefined' />}
       {actionsLoaded && actions.length === 0 && <EmptyDashboardView />}
       {/* {actionsLoaded && actions.length > 0 && actions.map((a, aix) => <ActionView action={a} key={a.id} handleClickOnAction={handleClickOnAction} />)} */}
       {actionsLoaded && actions.length > 0 && <ActionView actions={actions} handleClickOnAction={handleClickOnAction} />}
