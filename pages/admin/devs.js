@@ -42,6 +42,13 @@ export default function Devs () {
                     scope='col'
                     className='px-6 py-3 text-left text-xs font-medium text-gray-500 tracking-wider'
                   >
+                    view
+                  </th>
+
+                  <th
+                    scope='col'
+                    className='px-6 py-3 text-left text-xs font-medium text-gray-500 tracking-wider'
+                  >
                     edit
                   </th>
 
@@ -80,6 +87,10 @@ export default function Devs () {
 
                     <td className='px-6 py-4 whitespace-nowrap'>
                       <Status green={['complete']} value={doc.isProfileComplete ? 'complete' : 'incomplete'} />
+                    </td>
+
+                    <td className='px-6 py-4 whitespace-nowrap'>
+                      <Link href={`/resumes?profileID=${doc.uid}`}><a>view</a></Link>
                     </td>
 
                     <td className='px-6 py-4 whitespace-nowrap'>
