@@ -8,23 +8,24 @@ import Status from '@/components/misc/status'
 export default function JobDisplay ({ userDoc, jobDoc = {}, matches = [], setIsEditing }) {
   return (
     <>
-      {userDoc.role !== 'dev' && <>
-        <h3 className='text-gray-500'>matches</h3>
-        <div className='flex flex-col m-4'>
-          {matches.length === 0 && <span className='px-4 p-2 flex justify-center text-md leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800'>explorers are looking for a match... (no action required, we will notify you)</span>}
-          {matches.length > 0 && matches.map((m, ix) =>
-            <Link key={m.dev ?? ix} href={`/matches/${m.id}`}>
-              <div className='flex cursor-pointer justify-between items-center px-4 py-5 bg-white shadow overflow-hidden sm:rounded-lg m-1'>
-                <img className='h-8 w-8 rounded-full' src={m.devPhotoURL} alt='' />
-                <div className='fixed left-24'>{m.devName}</div>
-                <div>
-                  <Status green={['position_offered', 'dev_accepted']} yellow={['dev_interested']} red={['rejected']} value={m.status} />
+      {userDoc.role !== 'dev' &&
+        <>
+          <h3 className='text-gray-500'>matches</h3>
+          <div className='flex flex-col m-4'>
+            {matches.length === 0 && <span className='px-4 p-2 flex justify-center text-md leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800'>explorers are looking for a match... (no action required, we will notify you)</span>}
+            {matches.length > 0 && matches.map((m, ix) =>
+              <Link key={m.dev ?? ix} href={`/matches/${m.id}`}>
+                <div className='flex cursor-pointer justify-between items-center px-4 py-5 bg-white shadow overflow-hidden sm:rounded-lg m-1'>
+                  <img className='h-8 w-8 rounded-full' src={m.devPhotoURL} alt='' />
+                  <div className='fixed left-24'>{m.devName}</div>
+                  <div>
+                    <Status green={['position_offered', 'dev_interested']} yellow={['dev_interested']} red={['rejected']} value={m.status} />
+                  </div>
                 </div>
-              </div>
-            </Link>
-          )}
-        </div>
-      </>}
+              </Link>
+            )}
+          </div>
+        </>}
 
       <h3 className='text-gray-500'>posting</h3>
 

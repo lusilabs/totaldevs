@@ -145,6 +145,7 @@ exports.handleMatchDoc = functions.firestore.document('matches/{matchID}').onWri
         .collection('subscriptions')
         .add({
           dev: doc.dev,
+          devName: doc.devName,
           company: doc.company,
           explorer: doc.explorer,
           match: matchID,
@@ -380,7 +381,11 @@ exports.updateDocument = functions.firestore.document('eversignDocuments/{id}').
   const document = change.after.data()
   if (document.document_completed) {
     console.log(document.match, 'starting stripe process')
-    // Start stripe stuff
+    const mref = admin
+      .firestore()
+      .collection('matches')
+      .doc(document.match)
+    await mref.update({ status: 'documents_signed' })
     // todo@stripe-checkout change match.status -> 'dev_accepted'
   }
 })
@@ -395,20 +400,28 @@ exports.eversignWebhook = functions.https.onRequest((req, res) => {
       .collection('rawEversignEvents')
       .add(event)
   }
-
   res.status(200).send()
 })
 
 const sendEversignDocuments = async (signers, fields, match) => {
-  const response = await fetch(`https://api.eversign.com/api/document?access_key=${EVERSIGN_API_KEY}&business_id=${EVERSIGN_BUSINESS_ID}`,
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ ...EVERSIGN_COMPANY_DEV_TEMPLATE_PAYLOAD, signers, fields })
-    })
-  const data = await response.json()
+  let data = {}
+  if (isDevelopment) {
+    data = {
+      ...EVERSIGN_COMPANY_DEV_TEMPLATE_PAYLOAD,
+      document_hash: crypto.randomUUID().replaceAll('-', ''),
+      fields: [fields]
+    }
+  } else {
+    const response = await fetch(`https://api.eversign.com/api/document?access_key=${EVERSIGN_API_KEY}&business_id=${EVERSIGN_BUSINESS_ID}`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ ...EVERSIGN_COMPANY_DEV_TEMPLATE_PAYLOAD, signers, fields })
+      })
+    data = await response.json()
+  }
   await admin.firestore().collection('eversignDocuments').doc(data.document_hash).set({
     rawDocumentResponse: { ...data, fields: data.fields[0] },
     match,

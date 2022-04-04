@@ -22,7 +22,8 @@ const handleAcceptMatch = async match => {
 
 const buttonColors = {
   dev_interested: 'green',
-  dev_accepted: 'green',
+  documents_signed: 'green',
+  billing: 'green',
   rejected: 'gray',
   locked: 'gray'
 }
@@ -58,7 +59,7 @@ export default function MatchView ({ userDoc, ...props }) {
     if (matchDoc) {
       reset({ startDate: matchDoc.startDate, finalSalary: matchDoc.finalSalary }) // this refires the defaultValues on the form to fill them up once the db data loads.
       const isFormComplete = matchDoc.startDate && matchDoc.finalSalary
-      setIsButtonLocked(!!matchDoc.locked || !isFormComplete)
+      setIsButtonLocked(!['documents_signed', 'dev_interested'].includes(matchDoc.status) || !isFormComplete)
       setInitialPayment(matchDoc.initialPayment)
       setButtonColor(buttonColors[matchDoc.status])
     }
@@ -70,17 +71,15 @@ export default function MatchView ({ userDoc, ...props }) {
     setSaving(true)
     const { status } = matchDoc
     switch (status) {
-      case 'dev_accepted': // accepting match
+      case 'documents_signed': // accepting match
         await sleep(2000)
         await handleAcceptMatch(routerMatchID)
-        toast.success('position successfully filled!')
-        router.push('/matches')
         break
       case 'dev_interested': // offering position
         await sleep(2000)
         await updateMatchDocOnServer({ matchID: routerMatchID, status: 'position_offered', locked: true })
         toast.success('job offer sent!')
-        router.push('/matches')
+        router.push('/jobs')
         break
       case 'rejected':
       case 'position_offered':
@@ -212,8 +211,10 @@ export default function MatchView ({ userDoc, ...props }) {
             <div className='m-4'>
               <Button disabled={saving || isButtonLocked} loading={saving} onClick={handleClick} color={buttonColor}>
                 {saving && <span>sending...</span>}
-                {!saving && matchDoc?.status !== 'dev_accepted' && <span>accept and send job offer</span>}
-                {!saving && matchDoc?.status === 'dev_accepted' && <span>pay now</span>}
+                {!saving && matchDoc?.status === 'dev_interested' && <span>accept and send job offer</span>}
+                {!saving && matchDoc?.status === 'documents_signed' && <span>pay now</span>}
+                {!saving && matchDoc?.status === 'position_offered' && <span>waiting for signed documents</span>}
+                {!saving && matchDoc?.status === 'billing' && <span>staffed position!</span>}
               </Button>
             </div>
 
