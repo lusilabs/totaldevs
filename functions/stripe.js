@@ -142,7 +142,7 @@ const createStripeConnectExpressAccount = async user => {
   }
   const account = await stripe.accounts.create(data)
   // configure the customer portal..
-  const configuration = await stripe.billingPortal.configurations.create({
+  const billingPortal = await stripe.billingPortal.configurations.create({
     features: {
       payment_method_update: { enabled: true },
       invoice_history: { enabled: true }
@@ -151,31 +151,25 @@ const createStripeConnectExpressAccount = async user => {
       privacy_policy_url: 'https://totaldevs.com/privacy'
     },
     default_return_url: CUSTOMER_PORTAL_RETURN_URL
-  })
+  }, { stripeAccount: account.id })
   return account
 }
 
 exports.constructStripeModels = functions.firestore.document('subscriptions/{subID}').onCreate(async (snap, context) => {
   const subID = context.params.subID
-  // const { dev, company, match, job } = snap.data()
-  const dev = 'pEQ78TklYpmlRuTXLn4sJP13QW5u'
-  const company = 'YLAU8mWyJzeWoV1CdW6Y3DJmihkK'
-  const match = 'pEQ78TklYpmlRuTXLn4sJP13QW5u:A35hntpKLEaOBNiIniZM'
-  const job = 'A35hntpKLEaOBNiIniZM'
+  const { dev, company, match, job } = snap.data()
   const uref = await admin
     .firestore()
     .collection('users')
     .doc(dev)
     .get()
   const { stripeAccountID } = uref.data()
-
   const cref = await admin
     .firestore()
     .collection('users')
     .doc(company)
     .get()
   const { email, displayName, uid } = cref.data()
-
   const { id: customer } = await stripe.customers.create({
     email,
     name: displayName,
@@ -184,13 +178,18 @@ exports.constructStripeModels = functions.firestore.document('subscriptions/{sub
       matchID: match
     }
   }, { stripeAccount: stripeAccountID })
-
   const jref = await admin
     .firestore()
     .collection('jobs')
     .doc(job)
     .get()
-  const { finalSalary, photoURL, description, title } = jref.data()
+  const { photoURL, description, title } = jref.data()
+  const mref = await admin
+    .firestore()
+    .collection('matches')
+    .doc(match)
+    .get()
+  const { finalSalary } = mref.data()
   const images = [photoURL]
   const { id: product } = await stripe.products.create({
     name: title, description, images
@@ -283,12 +282,18 @@ const handleInvoiceUpdate = async invoice => {
     .then(snap => {
       const doc = snap.docs[0]
       doc.ref.update({ status: invoice.status })
+      const subData = doc.data()
       if (invoice.status === 'paid') {
         admin
           .firestore()
           .collection('jobs')
-          .doc(doc.job)
+          .doc(subData.job)
           .update({ status: 'locked' })
+        admin
+          .firestore()
+          .collection('matches')
+          .doc(subData.match)
+          .update({ status: 'billing' })
       }
     })
 }

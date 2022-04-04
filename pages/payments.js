@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react'
 import { SuspensePlaceholders } from '@/components/suspense'
 import { query, collection, where, orderBy, limit, getDocs } from '@firebase/firestore'
 import { useDocuments } from '@/utils/hooks'
+import Status from '@/components/misc/status'
 
 const generateExpressDashboardLink = httpsCallable(functions, 'stripe-generateExpressDashboardLink')
 const generateCompanyDashboardLink = httpsCallable(functions, 'stripe-generateCompanyDashboardLink')
@@ -24,42 +25,42 @@ const CompanyPayments = props => {
     props.setIsPageLoading(true)
     const { data: url } = await generateCompanyDashboardLink({ matchID })
     window.open(url, '_blank')
+    props.setIsPageLoading(false)
   }
   const [isLoading, setIsLoading] = useState(true)
-  const [matches, matchesLoaded, _mr, _sm] = useDocuments({
-    docs: 'matches',
+  const [subscriptions, subscriptionsLoaded, _sr, _ss] = useDocuments({
+    docs: 'subscriptions',
     queryConstraints: [
-      where('company', '==', props.userDoc?.uid)
-      // where('status', 'in', ['locked'])
+      where('company', '==', props.userDoc?.uid),
+      where('status', 'in', ['paid', 'payment_due'])
     ]
   }, [props.userDoc?.uid])
 
   useEffect(() => {
-    setIsLoading(!matchesLoaded)
-  }, [matchesLoaded])
+    setIsLoading(!subscriptionsLoaded)
+  }, [subscriptionsLoaded])
 
   return (
     <div className='max-w-2xl px-4 py-4 mx-auto sm:py-8 sm:px-6 lg:max-w-7xl lg:px-8'>
       <div className='mt-8 grid grid-cols-2 gap-y-2 gap-x-6 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8'>
         {isLoading && <SuspensePlaceholders />}
-        {!isLoading && matches && matches.length > 0 && matches.map((m, ix) => <Match key={ix} match={m} handleNavigateToCompanyDashboard={handleNavigateToCompanyDashboard} {...props} />)}
-        {!isLoading && matches && matches.length === 0 && <div className='flex flex-col items-center mt-8'> <h4 className='text-center text-indigo-600'>you will see payments here once you have job matches</h4> <img className='w-40 h-40' src='/astronaut.png' /> </div>}
+        {!isLoading && subscriptions?.length > 0 && subscriptions.map((s, ix) => <Subscription key={ix} subscription={s} handleNavigateToCompanyDashboard={handleNavigateToCompanyDashboard} {...props} />)}
+        {!isLoading && !subscriptions?.length && <div className='flex flex-col items-center mt-8'> <h4 className='text-center text-indigo-600'>you will see payments here once you have billing job</h4> <img className='w-40 h-40' src='/astronaut.png' /> </div>}
       </div>
     </div>
   )
 }
 
-const Match = ({ match, handleNavigateToCompanyDashboard, ...props }) => {
+const Subscription = ({ subscription, handleNavigateToCompanyDashboard, ...props }) => {
   return (
-    <div className='relative cursor-pointer group' onClick={() => handleNavigateToCompanyDashboard(match.id)}>
+    <div className='relative cursor-pointer group' onClick={() => handleNavigateToCompanyDashboard(subscription.match)}>
       <div className='w-full overflow-hidden bg-gray-200 min-h-80 aspect-w-1 aspect-h-1 rounded-md group-hover:opacity-75 lg:h-80 lg:aspect-none hover:z-0'>
-        <img src={match.photoURL} alt={match.photoURL} className='object-cover object-center w-full h-full lg:w-full lg:h-full' />
+        <img src={subscription.photoURL} alt={subscription.photoURL} className='object-cover object-center w-full h-full lg:w-full lg:h-full' />
       </div>
       <div className='flex items-start justify-between mt-4'>
-        <p className='mt-1 text-gray-500 text-md'>{match.devName}</p>
-        <p className='font-medium text-gray-900 text-md'>$ {match.jobData?.finalSalary}</p>
-        {match.status === 'locked' && <span className='inline-flex px-2 font-semibold text-green-800 bg-green-100 rounded-full text-md leading-5'> up to date.  </span>}
-        {match.status !== 'payment_due' && <span className='inline-flex px-2 font-semibold text-red-800 bg-red-100 rounded-full text-md leading-5'> payment due </span>}
+        <p className='mt-1 text-gray-500 text-md'>{subscription.devName}</p>
+        <p className='font-medium text-gray-900 text-md'>$ {subscription.finalSalary}</p>
+        <Status red={['payment due']} green={['paid']} value={subscription.status.replace('_')} />
       </div>
     </div>
   )
@@ -70,6 +71,7 @@ const DevExplorerPayments = props => {
     props.setIsPageLoading(true)
     const { data: url } = await generateExpressDashboardLink()
     window.open(url, '_blank')
+    props.setIsPageLoading(false)
   }
   return (
     <>

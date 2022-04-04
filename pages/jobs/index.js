@@ -19,7 +19,7 @@ function JobList ({ userDoc, ...props }) {
     docs: 'matches',
     queryConstraints: [
       where('company', '==', userDoc.uid),
-      where('status', 'in', ['waiting_on_dev', 'dev_interested', 'dev_accepted'])
+      where('status', 'in', ['dev_interested', 'dev_accepted', 'positioned_offered', 'documents_signed', 'billing'])
     ]
   }, [userDoc.uid])
 

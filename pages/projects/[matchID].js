@@ -14,25 +14,22 @@ const ConfirmAvailability = ({ userDoc, matchDoc, setMatch }) => {
     await setDoc(mref, { status }, { merge: true })
     toast.success(`${notifyee ?? 'company'} has been notified.`)
   }
-  const waitingOnCompany = ['dev_interested', 'dev_accepted'].includes(matchDoc.status)
-  const positionOffered = matchDoc.status === 'position_offered'
-  const canContinue = matchDoc.status === 'waiting_on_dev'
+  const waitingOnCompany = ['dev_interested', 'position_offered'].includes(matchDoc.status)
+  const canContinue = matchDoc.status === 'requesting_dev_status'
   return (
     <div className='py-5 flex justify-around'>
       <Button
         type='button' color='red' className='text-md'
         onClick={updateMatch('dev_unavailable', matchDoc.explorerName)}
-      >
+        >
         not available
       </Button>
       <Button
         type='button' color='green' className='text-md'
         onClick={updateMatch('dev_interested', matchDoc.companyName)}
-        // disabled={['dev_interested'].includes(matchDoc.status) || !userDoc.isStripeVerified}
         disabled={waitingOnCompany}
       >
         {canContinue && 'available for meetings'}
-        {positionOffered && 'accept position & initial payment'}
         {waitingOnCompany && 'waiting on company'}
       </Button>
     </div>
@@ -52,7 +49,6 @@ const ViewProject = props => {
       {!loaded && <SuspensePlaceholders />}
       {loaded && <>
         <JobDisplay {...{ jobDoc: matchDoc.jobData }} {...props} />
-        <MatchSpecificFields matchDoc={matchDoc} />
         <ConfirmAvailability {...{ matchDoc, router }} setMatch={setMatch} {...props} />
       </>}
     </div>
