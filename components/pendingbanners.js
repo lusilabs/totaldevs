@@ -19,7 +19,7 @@ function PendingBanners ({ userDoc, setIsPageLoading, ...props }) {
     <div>
       {userDoc.role !== 'company' && isStripeBannerActive &&
         <Banner
-          name='dev-stripe-onboarding' color='bg-yellow-600' text='verify your account to start matching'
+          name='dev-stripe-onboarding' color='bg-yellow-600' text='verify your account to accept matches'
           buttonText='click here' handleClick={() => handleDevStripeOnboarding(userDoc, setIsPageLoading)}
         />}
       {isProfileBannerActive && ['dev', 'explorer'].includes(userDoc.role) &&

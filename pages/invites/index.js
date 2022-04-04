@@ -45,18 +45,11 @@ function Invites ({ userDoc, ...props }) {
         <div className='text-md m-10 mt-12 pt-6'>
 
           <p>
-
-            help your friends get a job with international software companies! 🎉
-          </p>
-          <p>
-            you will get 1% per month! 💸💸
-          </p>
-
-          <p>
-            there is no limit to how many companies you can invite.
-          </p>
-          <p>
+            help your friends get a job with international software companies!
             you will receive 1% per month for each dev hired by the company!  🤑 🤑
+          </p>
+          <p>
+            there is no limit to how many companies you can invite.  you will get 1% per company per month once they have a match! 💸💸
           </p>
 
         </div>
@@ -145,19 +138,19 @@ function Invites ({ userDoc, ...props }) {
                         <td className='px-6 py-4 whitespace-nowrap'>
                           {inv.redeemed && <span className='px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800'>
                             redeemed
-                          </span>}
+                                           </span>}
                           {!inv.redeemed && <span className='px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800'>
                             pending
-                          </span>}
+                                            </span>}
                         </td>
 
                         <td className='px-6 py-4 whitespace-nowrap'>
                           {inv.isActive && <span className='px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800'>
                             active
-                          </span>}
+                                           </span>}
                           {!inv.isActive && <span className='px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800'>
                             inactive
-                          </span>}
+                                            </span>}
                         </td>
 
                         <td className='px-6 py-4 whitespace-nowrap '>
@@ -175,12 +168,12 @@ function Invites ({ userDoc, ...props }) {
           </div>
           {userDoc.numInvitesLeft > 0 && <div className='fixed top-16 right-8 lg:bottom-8 lg:right-4 text-md' onClick={() => router.push('invites/add/dev')}>
             <CreateButton text='dev' extraClasses='bg-green-500 hover:bg-green-700' />
-          </div>}
+                                         </div>}
           <div className='fixed top-16 right-32 lg:bottom-8 lg:right-32 text-md' onClick={() => router.push('invites/add/company')}>
             <CreateButton text='company' extraClasses='bg-indigo-500 hover:bg-indigo-700' />
           </div>
         </div>
-      </div>}
+                     </div>}
     </>
   )
 }

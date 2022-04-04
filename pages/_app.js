@@ -64,7 +64,7 @@ const pageNavigationByRole = {
     { name: 'invites', href: '/invites', current: false, Icon: <CurrencyDollarIcon className='w-4 h-4 text-green-400' /> }
   ],
   company: [
-    { name: 'jobs', href: '/jobs', current: false },
+    { name: 'postings', href: '/jobs', current: false },
     { name: 'payments', href: '/payments', current: false }
   ],
   explorer: [

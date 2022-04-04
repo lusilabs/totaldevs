@@ -6,6 +6,8 @@ import { Table } from '@/components/base/table'
 import { useDocuments } from '@/utils/hooks'
 import { useRouter } from 'next/router'
 import Status from '@/components/misc/status'
+import { toast } from 'react-toastify'
+import { Button, Dropdown } from 'semantic-ui-react'
 
 const JobCard = ({ status, jobData, id }) => {
   return (
@@ -30,7 +32,7 @@ const CustomMobileProjectView = ({ getOrderedData }) => {
     <div className='max-w-2xl mx-auto py-4 px-4 sm:py-8 sm:px-6 lg:max-w-7xl lg:px-8'>
       <div className='mt-8 grid grid-cols-2 gap-y-2 gap-x-6 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8'>
         {rows && rows.length > 0 && rows.map((match, ix) => <JobCard key={ix} {...match} />)}
-        {rows && rows.length === 0 && <div className='text-md text-gray-600'>no offers yet.</div>}
+        {rows && rows.length === 0 && <div> <h4 className='text-center text-indigo-600'>you will see jobs here once you have matched with a company</h4> <img className='w-40 h-40' src='/astronaut.png' /> </div>}
       </div>
     </div>
   )

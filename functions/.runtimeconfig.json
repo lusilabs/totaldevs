@@ -1,15 +1,24 @@
 {
-  "stripe": {
-    "refresh_url_dev": "http://localhost:3000/?stripe_redirect_failure=true",
-    "return_url_dev": "http://localhost:3000/?stripe_redirect_success=true",
-    "secret_key_dev": "sk_test_51K5wctKId0epTCbqKe7PzedDO9zHmaLo0zoD9lh5QouTRNXUxMaLXRqefHorZ6gOA0JCtTlUcCrhJvwN25uQbo2e00TSenHmIu",
-  },
   "eversign": {
-    "api_key": "fake",
-    "dev_company_template_id": "fake",
-    "business_id": "fake"
+    "api_key": "a79025d1f5334adba6625968aebe697e",
+    "business_id": "412523",
+    "dev_company_template_id": "a9e0d75df53c4b8d8714a9110c3f1ab3"
   },
   "slack": {
+    "prod_hook": "https://hooks.slack.com/services/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",
     "dev_hook": "https://hooks.slack.com/services/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"
+  },
+  "stripe": {
+    "secret_key_prod": "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",
+    "secret_key_dev": "sk_test_51K5wctKId0epTCbqKe7PzedDO9zHmaLo0zoD9lh5QouTRNXUxMaLXRqefHorZ6gOA0JCtTlUcCrhJvwN25uQbo2e00TSenHmIu",
+    "return_url_dev": "http://localhost:3001/?stripe_redirect_success=true",
+    "checkout_success_url_dev": "http://localhost:3001/?stripe_redirect_success=true",
+    "checkout_cancel_url_dev": "http://localhost:3001/?stripe_redirect_failure=true",
+    "customer_portal_return_dev": "http://localhost:3001/payments",
+    "webhook_secret_prod": "whsec_Y2r6PTVdA67VLS1f60gS4eWzL55fLRrw",
+    "webhook_secret_dev": "whsec_7890289dd772277159d1634bc75fff7f4b93ac66b7b36e6e6cfb1ac787e0b50b",
+    "refresh_url_dev": "http://localhost:3001/?stripe_redirect_failure=true",
+    "refresh_url_prod": "https://totaldevs.com/?stripe_redirect_failure=true",
+    "return_url_prod": "https://totaldevs.com/?stripe_redirect_success=true"
   }
 }

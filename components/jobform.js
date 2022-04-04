@@ -35,8 +35,8 @@ function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
   const [matches, _ml, _mr, setMatches] = useDocuments({
     docs: 'matches',
     queryConstraints: [
-      where('job', '==', jobID)
-      // where('status', 'in', ['waiting_on_dev', 'dev_interested', 'dev_accepted'])
+      where('job', '==', jobID),
+      where('status', 'not-in', ['requesting_dev_status'])
     ]
   }, [jobID])
 
@@ -146,6 +146,7 @@ function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
 
   const handleSearchChange = async (e, { searchQuery: query }) => setSearchQuery(query)
   const handleChange = (e, { value }) => setStack(value)
+  const handleDropdownOnClose = (e, data) => setSearchQuery('')
   const fetchAndSetDropdownOptions = async url => {
     const response = await fetch(url)
     const { items } = await response.json()
@@ -177,9 +178,9 @@ function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
   return (
     <div className='m-4 md:col-span-2'>
       {!isEditing && <JobDisplay userDoc={userDoc} jobDoc={jobDoc} matches={matches} {...props} setIsEditing={setIsEditing} />}
-      {isEditing && <><h3 className='text-gray-500'>{jobID && <span>re</span>}post your open position for free 🚀  ! </h3>
+      {isEditing && <><h2 className='text-center text-indigo-500'>{jobID && <span>re</span>} post your position for free 🚀</h2> <div className='text-center text-gray-500'> (fields in parentheses are optional) </div>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <div className='shadow overflow-hidden rounded-lg'>
+          <div className='mt-4 overflow-hidden rounded-lg shadow'>
             <div className='px-4 py-5 bg-white sm:p-6'>
               <div className='grid grid-cols-6 gap-6'>
                 <div className='col-span-6 sm:col-span-2'>
@@ -224,9 +225,9 @@ function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
                   <label htmlFor='company-website' className='block text-sm font-medium text-gray-700'>
                     (official job title)
                   </label>
-                  <div className='mt-1 flex rounded-md shadow-sm'>
+                  <div className='flex mt-1 rounded-md shadow-sm'>
                     <input
-                      type='text' name='company-website' id='company-website' className='focus:ring-indigo-500 focus:border-indigo-500 flex-1 block w-full rounded-none rounded-r-md sm:text-sm border-gray-300' placeholder='e.g. support engineer'
+                      type='text' name='company-website' id='company-website' className='flex-1 block w-full border-gray-300 rounded-none focus:ring-indigo-500 focus:border-indigo-500 rounded-r-md sm:text-sm' placeholder='e.g. support engineer'
                       {...register('jobTitle', { required: false, maxLength: 256 })}
                     />
                   </div>
@@ -236,12 +237,12 @@ function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
                   <label htmlFor='company-website' className='block text-sm font-medium text-gray-700'>
                     (job posting url)
                   </label>
-                  <div className='mt-1 flex rounded-md shadow-sm'>
-                    <span className='inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm'>
+                  <div className='flex mt-1 rounded-md shadow-sm'>
+                    <span className='inline-flex items-center px-3 text-sm text-gray-500 border border-r-0 border-gray-300 rounded-l-md bg-gray-50'>
                       https://
                     </span>
                     <input
-                      type='text' name='company-website' id='company-website' className='focus:ring-indigo-500 focus:border-indigo-500 flex-1 block w-full rounded-none rounded-r-md sm:text-sm border-gray-300' placeholder='example.com'
+                      type='text' name='company-website' id='company-website' className='flex-1 block w-full border-gray-300 rounded-none focus:ring-indigo-500 focus:border-indigo-500 rounded-r-md sm:text-sm' placeholder='example.com'
                       {...register('jobURL', { required: false, maxLength: 256 })}
                     />
                   </div>
@@ -253,7 +254,9 @@ function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
                   </label>
                   <Dropdown
                     onChange={handleChange}
+                    onClose={handleDropdownOnClose}
                     onSearchChange={handleSearchChange}
+                    closeOnChange
                     options={dropdownOptions}
                     searchQuery={searchQuery}
                     value={stack}
@@ -274,14 +277,14 @@ function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
                       id='description'
                       name='description'
                       rows={4}
-                      className='shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block w-full sm:text-sm border border-gray-300 rounded-md'
+                      className='block w-full mt-1 border border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md'
                       {...register('description', { required: false, maxLength: 4096 })}
                     />
                   </div>
                 </div>
 
-                <div className='col-span-6 sm:col-span-3 items-center content-start'>
-                  <label htmlFor='visibility' className='block text-sm font-medium text-gray-700 p-2'>
+                <div className='items-center content-start col-span-6 sm:col-span-3'>
+                  <label htmlFor='position' className='block p-2 text-sm font-medium text-gray-700'>
                     position
                   </label>
                   <div className='flex flex-col'>
@@ -294,9 +297,9 @@ function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
                         type='radio'
                         value='public'
                         disabled={jobDoc.locked}
-                        className='ml-1 h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded'
+                        className='w-4 h-4 ml-1 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500'
                       />
-                      <label htmlFor='public' className='ml-2 text-md text-gray-700'>
+                      <label htmlFor='permanent' className='ml-2 text-gray-700 text-md'>
                         permanent
                       </label>
                     </div>
@@ -309,18 +312,19 @@ function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
                         type='radio'
                         value='private'
                         disabled={jobDoc.locked}
-                        className='ml-1 h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded'
+                        className='w-4 h-4 ml-1 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500'
                       />
-                      <label htmlFor='private' className='ml-2 text-md text-gray-700'>
+                      <label htmlFor='one-time' className='ml-2 text-gray-700 text-md'>
                         one-time job
                       </label>
                     </div>
 
+                    {errors.position && <div className='m-2 text-sm text-red-500'>select a type of position</div>}
                   </div>
                 </div>
 
-                <div className='col-span-6 sm:col-span-3 items-center content-start'>
-                  <label htmlFor='visibility' className='block text-sm font-medium text-gray-700 p-2'>
+                <div className='items-center content-start col-span-6 sm:col-span-3'>
+                  <label htmlFor='visibility' className='block p-2 text-sm font-medium text-gray-700'>
                     hours
                   </label>
                   <div className='flex flex-col'>
@@ -332,9 +336,9 @@ function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
                         type='radio'
                         value='full-time'
                         disabled={jobDoc.locked}
-                        className='ml-1 h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded'
+                        className='w-4 h-4 ml-1 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500'
                       />
-                      <label htmlFor='public' className='ml-2 text-md text-gray-700'>
+                      <label htmlFor='full-time' className='ml-2 text-gray-700 text-md'>
                         full-time
                       </label>
                     </div>
@@ -347,9 +351,9 @@ function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
                         type='radio'
                         value='half-time'
                         disabled={jobDoc.locked}
-                        className='ml-1 h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded'
+                        className='w-4 h-4 ml-1 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500'
                       />
-                      <label htmlFor='private' className='ml-2 text-md text-gray-700'>
+                      <label htmlFor='half-time' className='ml-2 text-gray-700 text-md'>
                         half-time
                       </label>
                     </div>
@@ -362,13 +366,14 @@ function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
                         type='radio'
                         value='other'
                         disabled={jobDoc.locked}
-                        className='ml-1 h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded'
+                        className='w-4 h-4 ml-1 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500'
                       />
-                      <label htmlFor='private' className='ml-2 text-md text-gray-700'>
+                      <label htmlFor='other' className='ml-2 text-gray-700 text-md'>
                         other
                       </label>
                     </div>
 
+                    {errors.hours && <div className='m-2 text-sm text-red-500'>select a type of working hours</div>}
                   </div>
                 </div>
 
@@ -376,8 +381,8 @@ function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
                   <label htmlFor='salary' className='block text-sm font-medium text-gray-700'>
                     min monthly salary or payment
                   </label>
-                  <div className='mt-1 relative rounded-md shadow-sm'>
-                    <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none'>
+                  <div className='relative mt-1 rounded-md shadow-sm'>
+                    <div className='absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none'>
                       <span className='text-gray-500 sm:text-sm'>USD$</span>
                     </div>
                     <input
@@ -398,8 +403,8 @@ function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
                   <label htmlFor='salary' className='block text-sm font-medium text-gray-700'>
                     (max monthly salary or payment)
                   </label>
-                  <div className='mt-1 relative rounded-md shadow-sm'>
-                    <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none'>
+                  <div className='relative mt-1 rounded-md shadow-sm'>
+                    <div className='absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none'>
                       <span className='text-gray-500 sm:text-sm'>USD$</span>
                     </div>
                     <input
@@ -417,12 +422,12 @@ function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
                 <div className='col-span-6 sm:col-span-6'>
                   <label className='block text-sm font-medium text-gray-700'>img (leave blank for random dev image)</label>
                   <div className='flex justify-center p-2'>
-                    <img src={photoURL} alt={photoURL} className='rounded-md shadow-lg' />
+                    <img src={photoURL} alt={photoURL} className='shadow-lg rounded-md' />
                   </div>
-                  <div className='mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md'>
-                    <div className='space-y-1 text-center'>
+                  <div className='flex justify-center px-6 pt-5 pb-6 mt-1 border-2 border-gray-300 border-dashed rounded-md'>
+                    <div className='text-center space-y-1'>
                       <svg
-                        className='mx-auto h-12 w-12 text-gray-400'
+                        className='w-12 h-12 mx-auto text-gray-400'
                         stroke='currentColor'
                         fill='none'
                         viewBox='0 0 48 48'
@@ -438,7 +443,7 @@ function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
                       <div className='flex text-sm text-gray-600'>
                         <label
                           htmlFor='photoURL'
-                          className='relative cursor-pointer bg-white rounded-md font-medium text-indigo-600 hover:text-indigo-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500'
+                          className='relative font-medium text-indigo-600 bg-white cursor-pointer rounded-md hover:text-indigo-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500'
                         >
                           <span>upload an img</span>
                           <input type='file' id='photoURL' className='sr-only' {...register('photoURL', { required: false })} onChange={handleUploadPhoto} />
@@ -448,7 +453,7 @@ function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
                       <p className='text-xs text-gray-500'>.(png|jpg|gif) up to 1MB</p>
                     </div>
                   </div>
-                  <div className='text-left text-sm sm:px-6 text-indigo-600'>
+                  <div className='text-sm text-left text-indigo-600 sm:px-6'>
                     <span onClick={generateRandomPhoto}>or generate a random dev photo </span>
                   </div>
                 </div>
@@ -456,28 +461,28 @@ function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
                 <div className='col-span-6 sm:col-span-6'>
                   <label className='block text-sm font-medium text-gray-700'>(extra docs)</label>
                   <div className='flex justify-center p-2'>
-                    <div className='w-0 flex-1 flex items-center'>
-                      {pdfName && <> <svg className='flex-shrink-0 h-5 w-5 text-gray-400' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='currentColor' aria-hidden='true'>
+                    <div className='flex items-center flex-1 w-0'>
+                      {pdfName && <> <svg className='flex-shrink-0 w-5 h-5 text-gray-400' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='currentColor' aria-hidden='true'>
                         <path fillRule='evenodd' d='M8 4a3 3 0 00-3 3v4a5 5 0 0010 0V7a1 1 0 112 0v4a7 7 0 11-14 0V7a5 5 0 0110 0v4a3 3 0 11-6 0V7a1 1 0 012 0v4a1 1 0 102 0V7a3 3 0 00-3-3z' clipRule='evenodd' />
-                      </svg>
+                                     </svg>
                         <span className='ml-2 flex-1 w-0 truncate'>
                           {pdfName}
                         </span>
 
-                        <div className='ml-4 flex-shrink-0'>
+                        <div className='flex-shrink-0 ml-4'>
                           <a href={pdfURL} target='blank' className='font-medium text-indigo-600 hover:text-indigo-500' download={pdfName}>
                             download
                           </a>
                         </div>
-                      </>}
+                                  </>}
                     </div>
                   </div>
-                  <div className='mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md'>
-                    <div className='space-y-1 text-center'>
+                  <div className='flex justify-center px-6 pt-5 pb-6 mt-1 border-2 border-gray-300 border-dashed rounded-md'>
+                    <div className='text-center space-y-1'>
 
                       <svg
                         xmlns='http://www.w3.org/2000/svg'
-                        className='mx-auto h-8 w-8 text-gray-400'
+                        className='w-8 h-8 mx-auto text-gray-400'
                         fill='none' viewBox='0 0 24 24' stroke='currentColor'
                       >
                         <path strokeLinecap='round' strokeLinejoin='round' strokeWidth='2' d='M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13' />
@@ -485,7 +490,7 @@ function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
                       <div className='flex text-sm text-gray-600'>
                         <label
                           htmlFor='pdfURL'
-                          className='relative cursor-pointer bg-white rounded-md font-medium text-indigo-600 hover:text-indigo-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500'
+                          className='relative font-medium text-indigo-600 bg-white cursor-pointer rounded-md hover:text-indigo-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500'
                         >
                           <span>upload</span>
                           <input type='file' id='pdfURL' className='sr-only' {...register('pdfURL', { required: false })} onChange={handleUploadPDF} />
@@ -497,7 +502,7 @@ function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
                   </div>
                 </div>
 
-                <div className='col-span-6 sm:col-span-6 items-center'>
+                <div className='items-center col-span-6 sm:col-span-6'>
                   <div className='flex items-center justify-start'>
 
                     <div>
@@ -506,9 +511,9 @@ function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
                         id='terms'
                         type='checkbox'
                         disabled={jobDoc.locked}
-                        className='ml-1 h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded'
+                        className='w-4 h-4 ml-1 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500'
                       />
-                      <label htmlFor='terms' className='ml-2 text-md text-gray-700'>
+                      <label htmlFor='terms' className='ml-2 text-gray-700 text-md'>
                         I have read and agree to the <a href='/privacy'> Privacy Policy </a> of totaldevs.com
                       </label>
                       {errors.hasAcceptedTerms && <div className='m-2 text-sm text-red-500'>you must accept terms and conditions</div>}
@@ -519,7 +524,7 @@ function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
 
               </div>
             </div>
-            <div className='px-4 py-3 bg-gray-50 text-right sm:px-6 mb-8'>
+            <div className='px-4 py-3 mb-8 text-right bg-gray-50 sm:px-6'>
               <Button disabled={saving} loading={saving} type='submit' color='green' fluid className='text-md'>
                 {saving && <span>posting...</span>}
                 {!saving && <span>{jobID && <span>re</span>}post</span>}
@@ -531,7 +536,7 @@ function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
             </div>
           </div>
         </form>
-      </>}
+                    </>}
     </div>
   )
 }
