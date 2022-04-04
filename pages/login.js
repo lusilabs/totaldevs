@@ -30,7 +30,8 @@ export default function Login ({ setIsPageLoading }) {
       const result = await signInWithPopup(auth, providerInstance)
       if (result.user && result.user.uid) {
         await sleep(3000)// give time to firestore for the userDoc to be populated
-        await handleUserLogin({ role: selectedRole, convert: isConverting })
+        console.log({selectedRole})
+        await handleUserLogin({ role: selectedRole, converted: isConverting })
         router.push('/')
       }
     } catch (err) {
@@ -62,7 +63,7 @@ export default function Login ({ setIsPageLoading }) {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password)
         // const userData = JSON.parse(JSON.stringify(user.toJSON()))
         await sleep(3000)
-        await handleUserLogin({ role: selectedRole, convert: isConverting, email })
+        await handleUserLogin({ role: selectedRole, converted: isConverting, email })
         router.push('/')
         setIsPageLoading(false)
       } catch (e) {

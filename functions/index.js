@@ -85,7 +85,7 @@ exports.createUserDoc = functions.auth.user().onCreate(async user => {
 })
 
 exports.handleMatchDoc = functions.firestore.document('matches/{matchID}').onWrite(async (change, context) => {
-  // const matchID = context.params.matchID
+  const matchID = context.params.matchID
   const newMatch = !change.before.exists
   const prev = change.before.exists ? change.before.data() : null
   const curr = change.after.exists ? change.after.data() : null
@@ -95,10 +95,18 @@ exports.handleMatchDoc = functions.firestore.document('matches/{matchID}').onWri
 
   if (hasStatusChanged || newMatch) {
     const statusMapping = {
+      dev_interested: {
+        role: 'company',
+        text: 'there is a new match for your job posting!',
+        url: `/matches/${matchID}`,
+        email: 'companyEmail',
+        emailText: `visit https://totaldevs.com/matches/${matchID} to view the match!`,
+        emailSubject: 'there is a new match for your job posting! 🤩'
+      },
       position_offered: {
         role: 'dev',
         text: 'you got a job offer!',
-        url: '/projects',
+        url: `/matches/${matchID}`,
         email: 'devEmail',
         emailText: 'visit https://totaldevs.com/projects to view your offer!',
         emailSubject: 'you just got a job offer! 🤩'
@@ -110,14 +118,6 @@ exports.handleMatchDoc = functions.firestore.document('matches/{matchID}').onWri
         email: 'devEmail',
         emailText: 'visit https://totaldevs.com/projects to view your match!',
         emailSubject: 'you just got a new job match! 🤩'
-      },
-      dev_interested: {
-        role: 'company',
-        text: 'there is a new match for your job posting!',
-        url: `/jobs/${doc.job}`,
-        emailText: `visit https://totaldevs.com/jobs/${doc.job} to view it.`,
-        emailSubject: 'there is a new match for your job posting! 🤩',
-        email: 'companyEmail'
       }
     }
 
@@ -140,7 +140,17 @@ exports.handleMatchDoc = functions.firestore.document('matches/{matchID}').onWri
           email: doc.companyEmail
         }
       ]
-      await sendEversignDocuments(signers, fields, context.params.matchID)
+      sendEversignDocuments(signers, fields, context.params.matchID)
+      admin.firestore()
+        .collection('subscriptions')
+        .add({
+          dev: doc.dev,
+          devName: doc.devName,
+          company: doc.company,
+          explorer: doc.explorer,
+          match: matchID,
+          job: doc.job
+        })
     }
     admin
       .firestore()
@@ -180,7 +190,7 @@ exports.sendEmailOnJobCreate = functions.firestore.document('jobs/{jobID}').onCr
     .add({
       message: {
         text: JSON.stringify(snap.data()),
-        subject: companyEmail + ' ' + companyName + ' ' + company + ' just posted a new position!'
+        subject: companyEmail + ' ' + companyName + ' ' + company + ' just posted a new position!' + `jobID ${jobID}`
       },
       to: ['talent@totaldevs.com'],
       createdAt: new Date().toISOString()
@@ -213,7 +223,7 @@ exports.handleUserLogin = functions.https.onCall(async (data, ctx) => {
     .doc(uid)
     .get()
   const { role } = uref.data()
-  if (!role || data.convert) {
+  if (!role || data.converted) {
     const uref2 = admin
       .firestore()
       .collection('users')
@@ -231,6 +241,15 @@ exports.handleUserLogin = functions.https.onCall(async (data, ctx) => {
           },
           to: ['talent@totaldevs.com'],
           createdAt: new Date().toISOString()
+        })
+      // we have to add the company data to the job they just posted anonymously
+      admin
+        .firestore()
+        .collection('jobs')
+        .where('uid', '==', uid)
+        .get()
+        .then(snap => {
+          snap.docs.forEach(doc => doc.ref.update({ company: uid, companyEmail: data.email }))
         })
     }
   } else {
@@ -288,6 +307,16 @@ const triggerOnUpdate = ({ document, fieldToSearch, valueToSearch, destinationFi
       querySnapshot.docs.forEach(doc => (doc.ref.update({ [destinationField]: latestObject })))
     })
 }
+
+exports.updateMatchDocOnServer = functions.https.onCall(async (data, ctx) => {
+  const uid = isAuthedAndAppChecked(ctx)
+  const { matchID } = data
+  const mref = admin
+    .firestore()
+    .collection('matches')
+    .doc(matchID)
+  await mref.update({ ...data })
+})
 
 exports.updateJob = functions.firestore.document('jobs/{id}').onUpdate(async (change, context) => {
   const jobid = context.params.id
@@ -352,7 +381,12 @@ exports.updateDocument = functions.firestore.document('eversignDocuments/{id}').
   const document = change.after.data()
   if (document.document_completed) {
     console.log(document.match, 'starting stripe process')
-    // Start stripe stuff
+    const mref = admin
+      .firestore()
+      .collection('matches')
+      .doc(document.match)
+    await mref.update({ status: 'documents_signed' })
+    // todo@stripe-checkout change match.status -> 'dev_accepted'
   }
 })
 
@@ -366,20 +400,28 @@ exports.eversignWebhook = functions.https.onRequest((req, res) => {
       .collection('rawEversignEvents')
       .add(event)
   }
-
   res.status(200).send()
 })
 
 const sendEversignDocuments = async (signers, fields, match) => {
-  const response = await fetch(`https://api.eversign.com/api/document?access_key=${EVERSIGN_API_KEY}&business_id=${EVERSIGN_BUSINESS_ID}`,
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ ...EVERSIGN_COMPANY_DEV_TEMPLATE_PAYLOAD, signers, fields })
-    })
-  const data = await response.json()
+  let data = {}
+  if (isDevelopment) {
+    data = {
+      ...EVERSIGN_COMPANY_DEV_TEMPLATE_PAYLOAD,
+      document_hash: crypto.randomUUID().replaceAll('-', ''),
+      fields: [fields]
+    }
+  } else {
+    const response = await fetch(`https://api.eversign.com/api/document?access_key=${EVERSIGN_API_KEY}&business_id=${EVERSIGN_BUSINESS_ID}`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ ...EVERSIGN_COMPANY_DEV_TEMPLATE_PAYLOAD, signers, fields })
+      })
+    data = await response.json()
+  }
   await admin.firestore().collection('eversignDocuments').doc(data.document_hash).set({
     rawDocumentResponse: { ...data, fields: data.fields[0] },
     match,

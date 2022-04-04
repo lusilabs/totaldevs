@@ -35,7 +35,7 @@ const EmptyDashboardView = () => {
   return (
     <div className='flex flex-col items-center'>
       <img src='/astronaut.png' className='w-40 mt-4' />
-      <h4 className='text-gray-500'>up to date!</h4>
+      <h4 className='text-gray-500'>welcome to hyperspace!</h4>
     </div>
   )
 }

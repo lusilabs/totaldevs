@@ -4,8 +4,7 @@ import { useEffect, useState } from 'react'
 
 function SignUpFlow ({ handleCreateJobPosting, ...props }) {
   const router = useRouter()
-
-  const { convert = false } = router.query
+  const { convert = false, signup } = router.query
 
   const handleClickOnRole = async role => {
     router.push(`/login?role=${role}&convert=${convert}`)

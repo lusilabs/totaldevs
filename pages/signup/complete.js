@@ -2,17 +2,25 @@ import { GoogleAuthProvider, linkWithRedirect, getRedirectResult, signInWithPopu
 import { auth, db, functions, analytics } from '@/utils/config'
 import { logEvent } from 'firebase/analytics'
 import LoginForm from '@/components/loginform'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { httpsCallable } from 'firebase/functions'
 import sleep from '@/utils/misc'
+import { toast } from 'react-toastify'
 
 const SUPPORTED_PROVIDERS = { google: GoogleAuthProvider, github: GithubAuthProvider, facebook: FacebookAuthProvider }
 const handleUserLogin = httpsCallable(functions, 'handleUserLogin')
+
 function CompleteSignupFlow ({ userDoc, setIsPageLoading, ...props }) {
   const currentUser = auth.currentUser
+  const [converted, setConverted] = useState(false)
   const router = useRouter()
-  const { convert = false, signup } = router.query
+  useEffect(() => {
+    const { convert = false, signup } = router.query
+    toast.success('job posted successfully!')
+    setConverted(convert)
+  }, [])
+
   const handleLinkWithRedirect = provider => {
     const providerInstance = new SUPPORTED_PROVIDERS[provider]()
     setIsPageLoading(true)
@@ -31,15 +39,15 @@ function CompleteSignupFlow ({ userDoc, setIsPageLoading, ...props }) {
 
   useEffect(() => {
     const handleConvertDevToCompany = async () => {
-      if (convert === 'true') {
+      if (converted === 'true') {
         setIsPageLoading(true)
-        await handleUserLogin({ role: 'company', convert })
+        await handleUserLogin({ role: 'company', converted })
         router.push('/')
         setIsPageLoading(false)
       }
     }
     handleConvertDevToCompany()
-  }, [convert])
+  }, [converted])
 
   const handleEmailPasswordLogin = async (email, password) => {
     const credential = EmailAuthProvider.credential(email, password)
@@ -47,7 +55,7 @@ function CompleteSignupFlow ({ userDoc, setIsPageLoading, ...props }) {
     linkWithCredential(auth.currentUser, credential)
       .then(async (userCredential) => {
         await sleep(3000)
-        await handleUserLogin({ role: 'company', convert, email })
+        await handleUserLogin({ role: 'company', converted, email })
         router.push('/jobs?created=true')
         setIsPageLoading(false)
       })
@@ -61,10 +69,10 @@ function CompleteSignupFlow ({ userDoc, setIsPageLoading, ...props }) {
     <div className='flex flex-col p-4'>
       <div className='flex items-center justify-center p-4'>
         <img className='w-24 h-24' src='/astronaut.png' />
-        <h4 className='font-extrabold tracking-tight text-indigo-600 sm:text-4xl'>
-          let's keep in touch.
+        <div className='text-xl font-extrabold tracking-tight text-indigo-600'>
+          tell us where to get in touch
           &nbsp;
-        </h4>
+        </div>
       </div>
       <LoginForm
         handleProviderLogin={handleLinkWithRedirect}

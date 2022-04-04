@@ -10,7 +10,7 @@ function PendingBanners ({ userDoc, setIsPageLoading, ...props }) {
 
   useEffect(() => {
     setIsProfileBannerActive(!userDoc.isProfileComplete)
-    setIsStripeBannerActive(userDoc.isProfileComplete && !userDoc.stripeVerified)
+    setIsStripeBannerActive(userDoc.isProfileComplete && !userDoc.isStripeVerified)
     setIsInviteBannerActive(userDoc.numInvitesLeft > 0)
     setIsCalendlyBannerActive(!userDoc.calendlyURL)
   }, [userDoc])
@@ -19,7 +19,7 @@ function PendingBanners ({ userDoc, setIsPageLoading, ...props }) {
     <div>
       {userDoc.role !== 'company' && isStripeBannerActive &&
         <Banner
-          name='dev-stripe-onboarding' color='bg-yellow-600' text='verify your account to start matching'
+          name='dev-stripe-onboarding' color='bg-yellow-600' text='verify your account to accept matches'
           buttonText='click here' handleClick={() => handleDevStripeOnboarding(userDoc, setIsPageLoading)}
         />}
       {isProfileBannerActive && ['dev', 'explorer'].includes(userDoc.role) &&

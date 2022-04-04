@@ -40,23 +40,31 @@ const RecommendRole = ({ userDoc, selectedDev, selectedJob }) => {
       devEmail: selectedDev.email,
       devPhotoURL: selectedDev.photoURL,
       jobData: selectedJob,
-      status: 'requesting_dev_status'
+      status: 'requesting_dev_status',
+      photoURL: selectedJob.photoURL
     }, { merge: true })
-    toast.success(`${selectedDev.displayName} has been notified.`)
+    toast.success(`${selectedDev.displayName ?? 'company'} has been notified.`)
   }
   return (
     <Button
       type='button' color='green' className='text-md'
       onClick={createAssignment}
     >
-      Ping Developer for Role
+      ping developer for role
     </Button>
   )
 }
 
 export const JobsToMatch = ({ userDoc }) => {
   const [jobs, jobsLoaded, _jr] = useDocuments({ docs: 'jobs' })
-  const [devs, devsLoaded, _dr] = useDocuments({ docs: 'users', queryConstraints: [where('role', '==', 'dev'), where('isProfileComplete', '==', true)] })
+  const [devs, devsLoaded, _dr] = useDocuments({
+    docs: 'users',
+    queryConstraints: [
+      where('role', '==', 'dev'),
+      where('isProfileComplete', '==', true),
+      where('jobSearch', '!=', 'blocked')
+    ]
+  })
   const [selectedJob, setSelectedJob] = useState(null)
   const [selectedDev, setSelectedDev] = useState(null)
   const [start, setStart] = useState('Dev')
