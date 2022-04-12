@@ -44,12 +44,6 @@ export default function MatchView({ userDoc, ...props }) {
   let threeMonths = new Date(today.setDate(today.getDate() + 90))
   threeMonths = threeMonths.toLocaleDateString('en-ca')
 
-  const today = new Date()
-  let tomorrow = new Date(today.setDate(today.getDate() + 1))
-  tomorrow = tomorrow.toLocaleDateString('en-ca')
-  let threeMonths = new Date(today.setDate(today.getDate() + 90))
-  threeMonths = threeMonths.toLocaleDateString('en-ca')
-
   const handleInitialPaymentChange = e => {
     const value = e.target.value
     setInitialPayment((value * INITIAL_PAYMENT_PCT).toFixed(2))
