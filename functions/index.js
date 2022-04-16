@@ -380,13 +380,39 @@ exports.handleEversignEvent = functions.firestore.document('rawEversignEvents/{e
 exports.updateDocument = functions.firestore.document('eversignDocuments/{id}').onUpdate(async (change, context) => {
   const document = change.after.data()
   if (document.document_completed) {
-    console.log(document.match, 'starting stripe process')
     const mref = admin
       .firestore()
       .collection('matches')
       .doc(document.match)
     await mref.update({ status: 'documents_signed' })
-    // todo@stripe-checkout change match.status -> 'dev_accepted'
+    const mref2 = admin
+      .firestore()
+      .collection('matches')
+      .doc(document.match)
+    const { company, companyEmail, devName } = await mref2.data()
+    const url = `/matches/${document.match}`
+    const text = devName +' just signed the contract, are you ready to start?'
+    admin
+      .firestore()
+      .collection('actions')
+      .add({
+        text,
+        url,
+        uid: company,
+        seen: false,
+        color: 'green'
+      })
+    admin
+      .firestore()
+      .collection('mail')
+      .add({
+        message: {
+          text: `${devName} just signed the contract, are you ready to start? Visit https://totaldevs.com to view your match and finish the process.`,
+          subject: text
+        },
+        to: [companyEmail],
+        createdAt: new Date().toISOString()
+      })
   }
 })
 
@@ -431,7 +457,7 @@ const sendEversignDocuments = async (signers, fields, match) => {
 }
 
 exports.sendCompanyInvite = functions.https.onCall(async ({ position, devProfile, pitch, explorer, email, bcc }, ctx) => {
-  const iref = await admin
+  const iref = admin
     .firestore()
     .collection('invites')
     .doc(`${email}:company`)

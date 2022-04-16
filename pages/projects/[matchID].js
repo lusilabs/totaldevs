@@ -14,11 +14,12 @@ const ConfirmAvailability = ({ userDoc, matchDoc, setMatch }) => {
     await setDoc(mref, { status }, { merge: true })
     toast.success(`${notifyee ?? 'company'} has been notified.`)
   }
-  const waitingOnCompany = ['dev_interested', 'position_offered'].includes(matchDoc.status)
+  const waitingOnCompany = ['dev_interested'].includes(matchDoc.status)
   const canContinue = matchDoc.status === 'requesting_dev_status'
+  const waitingForSignedDocuments = matchDoc.status === 'position_offered'
   const isDevAccountReady = userDoc.emailVerified && userDoc.isStripeVerified && userDoc.isProfileComplete
   return (
-    <div className='py-5 flex justify-around'>
+    <div className='flex justify-around py-5'>
       <Button
         type='button' color='red' className='text-md'
         onClick={updateMatch('dev_unavailable', matchDoc.explorerName)}
@@ -29,10 +30,11 @@ const ConfirmAvailability = ({ userDoc, matchDoc, setMatch }) => {
         <Button
           type='button' color='green' className='text-md'
           onClick={updateMatch('dev_interested', matchDoc.companyName)}
-          disabled={waitingOnCompany}
+          disabled={waitingOnCompany || waitingForSignedDocuments}
         >
           {canContinue && 'available for meetings'}
           {waitingOnCompany && 'waiting on company'}
+          {waitingForSignedDocuments && 'waiting for signed documents'}
         </Button>}
       {!isDevAccountReady &&
         <Button
@@ -67,7 +69,7 @@ const ViewProject = props => {
 
 const MatchSpecificFields = ({ matchDoc }) => {
   return (
-    <div className='relative m-4 p-4 md:m-6 md:p-6 rounded-lg overflow-hidden shadow grid grid-cols-6 gap-6 pb-12'>
+    <div className='relative p-4 pb-12 m-4 overflow-hidden rounded-lg shadow md:m-6 md:p-6 grid grid-cols-6 gap-6'>
 
       <div className='col-span-6'>
         <div className='text-lg font-medium text-gray-500'>match specific fields</div>
@@ -83,7 +85,7 @@ const MatchSpecificFields = ({ matchDoc }) => {
           name='finalSalary'
           disabled
           value={matchDoc.finalSalary}
-          className='mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
+          className='block w-full mt-1 border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm sm:text-sm rounded-md'
         />
       </div>
 
@@ -97,7 +99,7 @@ const MatchSpecificFields = ({ matchDoc }) => {
           id='startDate'
           name='startDate'
           disabled
-          className='mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
+          className='block w-full mt-1 border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm sm:text-sm rounded-md'
           value={matchDoc.startDate}
         />
       </div>
@@ -112,7 +114,7 @@ const MatchSpecificFields = ({ matchDoc }) => {
           id='initialPayment'
           name='initialPayment'
           value={matchDoc.initialPayment}
-          className='mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md bg-gray-200'
+          className='block w-full mt-1 bg-gray-200 border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm sm:text-sm rounded-md'
         />
       </div>
 
