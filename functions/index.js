@@ -126,9 +126,18 @@ exports.handleMatchDoc = functions.firestore.document('matches/{matchID}').onWri
         email: 'companyEmail',
         emailText: `${doc.devName} just signed the contract, are you ready to start 🤩? Visit https://totaldevs.com to view your match and finish the process.`,
         emailSubject: `${doc.devName} just signed the contract, are you ready to start 🤩?`,
+      },
+      first_payment: {
+        role: 'dev',
+        text: 'you just got hired!',
+        url: `/projects`,
+        email: 'devEmail',
+        emailText: 'Congratulations, you landed the job! visit https://totaldevs.com to view your job description and starting date. Expect to see an upfront payment reflected in your account in 3-5 business days.',
+        emailSubject: 'you just got hired! 🤩'
       }
     }
 
+    if (!(doc.status) in statusMapping) return
     const obj = statusMapping[doc.status]
     const text = obj.text
     const uid = doc[obj.role]
@@ -316,7 +325,7 @@ const triggerOnUpdate = ({ document, fieldToSearch, valueToSearch, destinationFi
 }
 
 exports.updateMatchDocOnServer = functions.https.onCall(async (data, ctx) => {
-  const uid = isAuthedAndAppChecked(ctx)
+  isAuthedAndAppChecked(ctx)
   const { matchID } = data
   const mref = admin
     .firestore()
@@ -392,7 +401,7 @@ exports.updateDocument = functions.firestore.document('eversignDocuments/{id}').
       .collection('matches')
       .doc(document.match)
     await mref.update({ status: 'documents_signed' })
-    
+
   }
 })
 

@@ -18,6 +18,7 @@ const ConfirmAvailability = ({ userDoc, matchDoc, setMatch }) => {
   const canContinue = matchDoc.status === 'requesting_dev_status'
   const waitingForSignedDocuments = matchDoc.status === 'position_offered'
   const isDevAccountReady = userDoc.emailVerified && userDoc.isStripeVerified && userDoc.isProfileComplete
+  const isActive = matchDoc.status === 'active'
   return (
     <div className='flex justify-around py-5'>
       <Button
@@ -30,8 +31,9 @@ const ConfirmAvailability = ({ userDoc, matchDoc, setMatch }) => {
         <Button
           type='button' color='green' className='text-md'
           onClick={updateMatch('dev_interested', matchDoc.companyName)}
-          disabled={waitingOnCompany || waitingForSignedDocuments}
+          disabled={waitingOnCompany || waitingForSignedDocuments || isActive}
         >
+          {isActive && 'active'}
           {canContinue && 'available for meetings'}
           {waitingOnCompany && 'waiting on company'}
           {waitingForSignedDocuments && 'waiting for signed documents'}

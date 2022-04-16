@@ -245,7 +245,6 @@ exports.createCheckoutSession = functions.https.onCall(async (data, ctx) => {
 const updateStripeAccount = async account => {
   const { id: stripeAccountID, charges_enabled, payouts_enabled } = account
   const isStripeVerified = charges_enabled && payouts_enabled
-  // todo@stripe does detect fraud change those properties? fraud handling
   const uref = await admin
     .firestore()
     .collection('users')
@@ -270,6 +269,11 @@ const handleCheckoutSessionCompleted = session => {
       const doc = snap.docs[0]
       doc.ref.update({ subscription: session.subscription })
     })
+  admin
+    .firestore()
+    .collection('matches')
+    .doc(session.metadata.match)
+    .update({ status: 'first_payment' })
 }
 
 const handleInvoiceUpdate = async invoice => {
@@ -293,8 +297,21 @@ const handleInvoiceUpdate = async invoice => {
           .firestore()
           .collection('matches')
           .doc(subData.match)
-          .update({ status: 'billing' })
+          .update({ status: 'active' })
       }
+    })
+}
+
+const handleSubscriptionCreated = async sub => {
+  admin
+    .firestore()
+    .collection('subscriptions')
+    .where('price', '==', sub.plan.id)
+    .limit(1)
+    .get()
+    .then(snap => {
+      const doc = snap.docs[0]
+      doc.ref.update({ subscription: sub.id })
     })
 }
 
@@ -325,8 +342,11 @@ exports.handleWebhooks = functions.https.onRequest(async (req, resp) => {
       case 'checkout.session.completed':
         handleCheckoutSessionCompleted(event.data.object)
         break
+      case 'customer.subscription.created':
+        await handleSubscriptionCreated(event.data.object)
+        break
       default:
-        logger.error(new Error('Unhandled relevant event!'), { type: event.type })
+        logger.error(new Error('Unhandled event!'), { type: event.type })
     }
   } catch (error) {
     resp.json({
