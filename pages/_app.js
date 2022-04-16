@@ -7,7 +7,7 @@ import { getAuth, isSignInWithEmailLink, signInWithEmailLink, signInAnonymously,
 import { useAuthState } from 'react-firebase-hooks/auth'
 import { httpsCallable } from 'firebase/functions'
 import { useState, useEffect } from 'react'
-import { doc, onSnapshot, where, orderBy, limit, query, collection, getDocs } from 'firebase/firestore'
+import { doc, setDoc, onSnapshot, where, orderBy, limit, query, collection, getDocs } from 'firebase/firestore'
 import { toast, ToastContainer } from 'react-toastify'
 import Router, { useRouter } from 'next/router'
 import NProgress from 'nprogress'
@@ -193,9 +193,9 @@ function MyApp({ Component, pageProps }) {
         // the flow on the same device where they started it.
         // let email = window.localStorage.getItem('emailForSignIn');
         const email = userDoc.email
-        const ref = doc(db, 'users', user.uid)
+        const uref = doc(db, 'users', user.uid)
         if (email) {
-          await ref.update({ emailVerified: true })
+          await setDoc(uref, { emailVerified: true }, { merge: true })
         }
         toast.success('email successfully verified')
       }
