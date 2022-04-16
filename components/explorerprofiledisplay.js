@@ -1,21 +1,23 @@
-
-export default function ExplorerProfileDisplay ({ userDoc, setIsEditing }) {
+export default function ExplorerProfileDisplay ({ userDoc, setIsEditing, sendEmailVerification }) {
   return (
     <div className='bg-white shadow overflow-hidden sm:rounded-lg m-4'>
       <div className='px-4 py-5 sm:px-6'>
         <div className='flex flex-row justify-between items-center'>
           <img className='h-8 w-8 rounded-full' src={userDoc.photoURL} alt='' />
           <div>
-            {/* stripe account standing */}
-            {userDoc.isStripeVerified && <span className='px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800'> verified </span>}
-            {!userDoc.isStripeVerified && <span className='px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800'> verification pending </span>}
-              &nbsp;
-              &nbsp;
             {/* profile standing */}
             {userDoc.isProfileComplete && <span className='px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800'> complete </span>}
             {!userDoc.isProfileComplete && <span className='px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800'> incomplete </span>}
             {/* {!userDoc.status && <span className='px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800'> unpublished </span>} */}
-
+            &nbsp;
+            &nbsp;
+            {userDoc.emailVerified && <span className='px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800'> email verified </span>}
+            {!userDoc.emailVerified && <span onClick={sendEmailVerification} className='px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800 cursor-pointer'> verify email </span>}
+            &nbsp;
+            &nbsp;
+            {/* stripe account standing */}
+            {userDoc.isStripeVerified && <span className='px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800'> payments verified </span>}
+            {!userDoc.isStripeVerified && <span className='px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800 cursor-pointer'> verify payments </span>}
           </div>
           <div>
             <button
