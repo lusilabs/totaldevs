@@ -118,6 +118,14 @@ exports.handleMatchDoc = functions.firestore.document('matches/{matchID}').onWri
         email: 'devEmail',
         emailText: 'visit https://totaldevs.com/projects to view your match!',
         emailSubject: 'you just got a new job match! 🤩'
+      },
+      documents_signed: {
+        role: 'company',
+        text: `${doc.devName} just signed the contract, are you ready to start?`,
+        url: `/matches/${doc.matchID}`,
+        email: 'companyEmail',
+        emailText: `${doc.devName} just signed the contract, are you ready to start 🤩? Visit https://totaldevs.com to view your match and finish the process.`,
+        emailSubject: `${doc.devName} just signed the contract, are you ready to start 🤩?`,
       }
     }
 
@@ -126,7 +134,6 @@ exports.handleMatchDoc = functions.firestore.document('matches/{matchID}').onWri
     const uid = doc[obj.role]
     const email = obj.email === 'companyEmail' ? doc.jobData.companyEmail : doc[obj.email]
     if (doc.status === 'position_offered') {
-      // TODO: update status, and create right templates/signers/fields/webhook url for real stuff
       const fields = [{ identifier: 'specific_text', value: doc.job }]
       const signers = [
         {
@@ -385,34 +392,7 @@ exports.updateDocument = functions.firestore.document('eversignDocuments/{id}').
       .collection('matches')
       .doc(document.match)
     await mref.update({ status: 'documents_signed' })
-    const mref2 = admin
-      .firestore()
-      .collection('matches')
-      .doc(document.match)
-    const { company, companyEmail, devName } = await mref2.data()
-    const url = `/matches/${document.match}`
-    const text = devName +' just signed the contract, are you ready to start?'
-    admin
-      .firestore()
-      .collection('actions')
-      .add({
-        text,
-        url,
-        uid: company,
-        seen: false,
-        color: 'green'
-      })
-    admin
-      .firestore()
-      .collection('mail')
-      .add({
-        message: {
-          text: `${devName} just signed the contract, are you ready to start? Visit https://totaldevs.com to view your match and finish the process.`,
-          subject: text
-        },
-        to: [companyEmail],
-        createdAt: new Date().toISOString()
-      })
+    
   }
 })
 
