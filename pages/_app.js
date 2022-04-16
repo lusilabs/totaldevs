@@ -197,7 +197,8 @@ function MyApp({ Component, pageProps }) {
           await setDoc(uref, { emailVerified: true }, { merge: true })
         }
         toast.success('email successfully verified')
-      } else {
+      }
+      if (!emailLink && userDoc && !userDoc.emailVerified) {
         sendEmailVerification(userDoc, true)
       }
     }
