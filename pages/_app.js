@@ -2,12 +2,12 @@ import 'tailwindcss/tailwind.css'
 import 'semantic-ui-css/semantic.min.css'
 import 'react-toastify/dist/ReactToastify.css'
 import 'nprogress/nprogress.css'
-import { auth, db, functions, analytics } from '@/utils/config'
-import { getAuth, isSignInWithEmailLink, signInWithEmailLink, signInAnonymously, getRedirectResult } from 'firebase/auth'
+import { auth, db, functions, analytics, sendEmailVerification } from '@/utils/config'
+import { isSignInWithEmailLink, signInAnonymously, getRedirectResult } from 'firebase/auth'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import { httpsCallable } from 'firebase/functions'
 import { useState, useEffect } from 'react'
-import { doc, setDoc, onSnapshot, where, orderBy, limit, query, collection, getDocs } from 'firebase/firestore'
+import { doc, setDoc, onSnapshot } from 'firebase/firestore'
 import { toast, ToastContainer } from 'react-toastify'
 import Router, { useRouter } from 'next/router'
 import NProgress from 'nprogress'
@@ -19,7 +19,7 @@ import InvitationRequired from './invitationRequired'
 import sleep from '@/utils/misc'
 import { logEvent } from 'firebase/analytics'
 import LogRocket from 'logrocket'
-import { BellIcon, CurrencyDollarIcon } from '@heroicons/react/outline'
+import { CurrencyDollarIcon } from '@heroicons/react/outline'
 
 LogRocket.init('h3lsgb/totaldevs')
 
@@ -184,8 +184,7 @@ function MyApp({ Component, pageProps }) {
     const awaitEmailVerificationLink = async () => {
       // Confirm the link is a sign-in with email link.
       const emailLink = isSignInWithEmailLink(auth, window.location.href)
-      console.log({ emailLink, verified: userDoc.emailVerified })
-      if (emailLink && !userDoc.emailVerified) {
+      if (emailLink && userDoc && !userDoc.emailVerified) {
         // Additional state parameters can also be passed via URL.
         // This can be used to continue the user's intended action before triggering
         // the sign-in operation.
@@ -198,6 +197,8 @@ function MyApp({ Component, pageProps }) {
           await setDoc(uref, { emailVerified: true }, { merge: true })
         }
         toast.success('email successfully verified')
+      } else {
+        sendEmailVerification(userDoc, true)
       }
     }
     awaitRedirectResults()

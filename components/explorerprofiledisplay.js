@@ -1,4 +1,6 @@
-export default function ExplorerProfileDisplay ({ userDoc, setIsEditing, sendEmailVerification }) {
+import { sendEmailVerification } from 'firebase/auth'
+
+export default function ExplorerProfileDisplay ({ userDoc, setIsEditing }) {
   return (
     <div className='bg-white shadow overflow-hidden sm:rounded-lg m-4'>
       <div className='px-4 py-5 sm:px-6'>
@@ -12,7 +14,7 @@ export default function ExplorerProfileDisplay ({ userDoc, setIsEditing, sendEma
             &nbsp;
             &nbsp;
             {userDoc.emailVerified && <span className='px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800'> email verified </span>}
-            {!userDoc.emailVerified && <span onClick={sendEmailVerification} className='px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800 cursor-pointer'> verify email </span>}
+            {!userDoc.emailVerified && <span onClick={() => sendEmailVerification(userDoc)} className='px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800 cursor-pointer'> verify email </span>}
             &nbsp;
             &nbsp;
             {/* stripe account standing */}

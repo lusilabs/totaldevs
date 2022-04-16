@@ -8,28 +8,11 @@ import { doc, setDoc } from 'firebase/firestore'
 import { toast } from 'react-toastify'
 import Link from 'next/link'
 import ExplorerProfileDisplay from './explorerprofiledisplay'
-import { sendSignInLinkToEmail } from 'firebase/auth'
 
-export default function EditExplorerProfile({ userDoc, ...props }) {
+export default function EditExplorerProfile ({ userDoc, ...props }) {
   const [saving, setSaving] = useState(false)
   const [photoURL, setPhotoURL] = useState(null)
   const [isEditing, setIsEditing] = useState(false)
-
-  const sendEmailVerification = () => {
-    // if (window.localStorage.getItem('emailForSignIn', userDoc.email)) {
-    //   toast.info('verification already sent')
-    //   return
-    // }
-    sendSignInLinkToEmail(auth, userDoc.email, actionCodeSettings)
-      .then(() => {
-        window.localStorage.setItem('emailForSignIn', userDoc.email)
-        toast.success('email verification sent')
-      })
-      .catch(err => {
-        console.error(err)
-        toast.error(err.message)
-      })
-  }
 
   useEffect(() => {
     setPhotoURL(userDoc.photoURL)
@@ -88,7 +71,7 @@ export default function EditExplorerProfile({ userDoc, ...props }) {
 
   return (
     <>
-      {!isEditing && <ExplorerProfileDisplay userDoc={userDoc} {...props} setIsEditing={setIsEditing} sendEmailVerification={sendEmailVerification} />}
+      {!isEditing && <ExplorerProfileDisplay userDoc={userDoc} {...props} setIsEditing={setIsEditing} />}
       {isEditing && <div className='m-4 md:col-span-2 shadow-xl'>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className='shadow overflow-hidden rounded-lg'>
@@ -194,7 +177,7 @@ export default function EditExplorerProfile({ userDoc, ...props }) {
             </div>
           </div>
         </form>
-      </div>}
+                    </div>}
     </>
   )
 }

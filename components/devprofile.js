@@ -33,14 +33,13 @@ const requiredFieldsByModule = {
   isEducationComplete: []// empty means that if it passes onSubmit then it is alright (we use 'required' inside components)
 }
 
-function EditDevProfile({ userDoc, ...props }) {
+function EditDevProfile ({ userDoc, ...props }) {
   const [saving, setSaving] = useState(false)
   const [photoURL, setPhotoURL] = useState(null)
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedStack, setSelectedStack] = useState([])
   const [dropdownOptions, setDropdownOptions] = useState([])
   const [isEditing, setIsEditing] = useState(false)
-  const [photoURL, setPhotoURL] = useState(null)
   const [jobs, setJobs] = useState([])
   const [projects, setProjects] = useState([])
   const [degrees, setDegrees] = useState([])

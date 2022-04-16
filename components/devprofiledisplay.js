@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { functions } from '@/utils/config'
+import { functions, sendEmailVerification } from '@/utils/config'
 import { httpsCallable } from 'firebase/functions'
 import EditButton from '@/components/editbutton'
 
@@ -34,6 +34,10 @@ export default function DevProfileDisplay ({ userDoc, setIsEditing, readOnly, se
                   {/* profile standing */}
                   {userDoc.isProfileComplete && <span className='px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800'> complete </span>}
                   {!userDoc.isProfileComplete && <span className='px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800'> incomplete </span>}
+                  &nbsp;
+                  &nbsp;
+                  {userDoc.emailVerified && <span className='px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800'> email verified </span>}
+                  {!userDoc.emailVerified && <span onClick={() => sendEmailVerification(userDoc)} className='px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800 cursor-pointer'> verify email </span>}
                 </div>
               </>}
           </div>
@@ -46,8 +50,7 @@ export default function DevProfileDisplay ({ userDoc, setIsEditing, readOnly, se
               <dt className='ml-4 text-lg font-medium text-gray-500'>payments</dt>
             </div>
             {userDoc.isStripeVerified && <span className='px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800'> verified </span>}
-            {!userDoc.isStripeVerified && <span className='px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800'> verify now </span>}
-
+            {!userDoc.isStripeVerified && <span onClick={handleDevStripeOnboarding} className='cursor-pointer px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800'> verify now </span>}
             <EditButton setIsEditing={handleDevStripeOnboarding} />
           </div>
 

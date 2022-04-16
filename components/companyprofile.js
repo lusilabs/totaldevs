@@ -16,7 +16,7 @@ const mergeSearchResults = (prev, names) => {
   return deduped
 }
 
-export default function EditCompanyProfile ({ userDoc, ...props }) {
+export default function EditCompanyProfile({ userDoc, ...props }) {
   const [saving, setSaving] = useState(false)
   const [photoURL, setPhotoURL] = useState(null)
   const [resumeURL, setResumeURL] = useState(null)
@@ -116,7 +116,7 @@ export default function EditCompanyProfile ({ userDoc, ...props }) {
 
                 <div className='col-span-6 sm:col-span-3'>
                   <label htmlFor='displayName' className='block text-sm font-medium text-gray-700'>
-                    commpany name
+                    company name
                   </label>
                   <input
                     type='text'
@@ -224,7 +224,7 @@ export default function EditCompanyProfile ({ userDoc, ...props }) {
             </div>
           </div>
         </form>
-                    </div>}
+      </div>}
     </>
   )
 }

@@ -16,22 +16,32 @@ const ConfirmAvailability = ({ userDoc, matchDoc, setMatch }) => {
   }
   const waitingOnCompany = ['dev_interested', 'position_offered'].includes(matchDoc.status)
   const canContinue = matchDoc.status === 'requesting_dev_status'
+  const isDevAccountReady = userDoc.emailVerified && userDoc.isStripeVerified && userDoc.isProfileComplete
   return (
     <div className='py-5 flex justify-around'>
       <Button
         type='button' color='red' className='text-md'
         onClick={updateMatch('dev_unavailable', matchDoc.explorerName)}
-        >
+      >
         not available
       </Button>
-      <Button
-        type='button' color='green' className='text-md'
-        onClick={updateMatch('dev_interested', matchDoc.companyName)}
-        disabled={waitingOnCompany}
-      >
-        {canContinue && 'available for meetings'}
-        {waitingOnCompany && 'waiting on company'}
-      </Button>
+      {isDevAccountReady &&
+        <Button
+          type='button' color='green' className='text-md'
+          onClick={updateMatch('dev_interested', matchDoc.companyName)}
+          disabled={waitingOnCompany}
+        >
+          {canContinue && 'available for meetings'}
+          {waitingOnCompany && 'waiting on company'}
+        </Button>}
+      {!isDevAccountReady &&
+        <Button
+          type='button' color='orange' className='text-md'
+          disabled
+        >
+          complete profile
+        </Button>
+      }
     </div>
   )
 }
