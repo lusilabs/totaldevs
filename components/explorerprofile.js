@@ -10,16 +10,16 @@ import Link from 'next/link'
 import ExplorerProfileDisplay from './explorerprofiledisplay'
 import { sendSignInLinkToEmail } from 'firebase/auth'
 
-export default function EditExplorerProfile ({ userDoc, ...props }) {
+export default function EditExplorerProfile({ userDoc, ...props }) {
   const [saving, setSaving] = useState(false)
   const [photoURL, setPhotoURL] = useState(null)
   const [isEditing, setIsEditing] = useState(false)
 
   const sendEmailVerification = () => {
-    if (window.localStorage.getItem('emailForSignIn', userDoc.email)) {
-      toast.info('verification already sent')
-      return
-    }
+    // if (window.localStorage.getItem('emailForSignIn', userDoc.email)) {
+    //   toast.info('verification already sent')
+    //   return
+    // }
     sendSignInLinkToEmail(auth, userDoc.email, actionCodeSettings)
       .then(() => {
         window.localStorage.setItem('emailForSignIn', userDoc.email)
@@ -194,7 +194,7 @@ export default function EditExplorerProfile ({ userDoc, ...props }) {
             </div>
           </div>
         </form>
-                    </div>}
+      </div>}
     </>
   )
 }
