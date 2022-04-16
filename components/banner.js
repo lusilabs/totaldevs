@@ -1,7 +1,7 @@
 import { SpeakerphoneIcon, XIcon } from '@heroicons/react/outline'
 import Link from 'next/link'
 
-export default function Banner ({ text, buttonText, href, handleClick, handleClose, ...props }) {
+export default function Banner({ text, buttonText, href, handleClick, handleClose, ...props }) {
   return (
     <div className={props.color}>
       <div className='max-w-7xl mx-auto py-3 px-3 sm:px-6 lg:px-8'>
@@ -25,7 +25,7 @@ export default function Banner ({ text, buttonText, href, handleClick, handleClo
               </Link>}
             {handleClick &&
               <a
-                className='flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium bg-white hover:bg-indigo-50'
+                className='flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium bg-white hover:bg-indigo-50 cursor-pointer'
                 onClick={handleClick}
               >
                 {buttonText}
