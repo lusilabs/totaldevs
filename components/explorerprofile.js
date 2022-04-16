@@ -3,16 +3,33 @@ import { Button, Dropdown } from 'semantic-ui-react'
 import React, { useState, useEffect } from 'react'
 import sleep from '@/utils/misc'
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
-import { storage, db } from '@/utils/config'
+import { storage, db, auth, actionCodeSettings } from '@/utils/config'
 import { doc, setDoc } from 'firebase/firestore'
 import { toast } from 'react-toastify'
 import Link from 'next/link'
 import ExplorerProfileDisplay from './explorerprofiledisplay'
+import { sendSignInLinkToEmail } from 'firebase/auth'
 
-export default function EditExplorerProfile ({ userDoc, ...props }) {
+export default function EditExplorerProfile({ userDoc, ...props }) {
   const [saving, setSaving] = useState(false)
   const [photoURL, setPhotoURL] = useState(null)
   const [isEditing, setIsEditing] = useState(false)
+
+  const sendEmailVerification = () => {
+    // if (window.localStorage.getItem('emailForSignIn', userDoc.email)) {
+    //   toast.info('verification already sent')
+    //   return
+    // }
+    sendSignInLinkToEmail(auth, userDoc.email, actionCodeSettings)
+      .then(() => {
+        window.localStorage.setItem('emailForSignIn', userDoc.email)
+        toast.success('email verification sent')
+      })
+      .catch(err => {
+        console.error(err)
+        toast.error(err.message)
+      })
+  }
 
   useEffect(() => {
     setPhotoURL(userDoc.photoURL)
@@ -71,7 +88,7 @@ export default function EditExplorerProfile ({ userDoc, ...props }) {
 
   return (
     <>
-      {!isEditing && <ExplorerProfileDisplay userDoc={userDoc} {...props} setIsEditing={setIsEditing} />}
+      {!isEditing && <ExplorerProfileDisplay userDoc={userDoc} {...props} setIsEditing={setIsEditing} sendEmailVerification={sendEmailVerification} />}
       {isEditing && <div className='m-4 md:col-span-2 shadow-xl'>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className='shadow overflow-hidden rounded-lg'>
@@ -142,6 +159,7 @@ export default function EditExplorerProfile ({ userDoc, ...props }) {
                       className='shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block w-full sm:text-sm border border-gray-300 rounded-md'
                       {...register('bio', { required: true, maxLength: 4096 })}
                     />
+                    {errors.bio && <div className='m-2 text-sm text-red-500'>at least 3 chars</div>}
                   </div>
                 </div>
 

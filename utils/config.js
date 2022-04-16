@@ -52,4 +52,21 @@ if (typeof window !== 'undefined') {
   })
 }
 
-export { app, auth, functions, db, firebaseConfig, storage, analytics, vapidKeyFCM }
+const actionCodeSettings = {
+  // URL you want to redirect back to. The domain (www.example.com) for this
+  // URL must be in the authorized domains list in the Firebase Console.
+  url: 'https://totaldevs.com',
+  // This must be true.
+  handleCodeInApp: true
+  // iOS: {
+  //   bundleId: 'com.example.ios'
+  // },
+  // android: {
+  //   packageName: 'com.example.android',
+  //   installApp: true,
+  //   minimumVersion: '12'
+  // },
+  // dynamicLinkDomain: 'example.page.link'
+}
+
+export { app, auth, functions, db, firebaseConfig, storage, analytics, vapidKeyFCM, actionCodeSettings }

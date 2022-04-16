@@ -3,11 +3,12 @@ import 'semantic-ui-css/semantic.min.css'
 import 'react-toastify/dist/ReactToastify.css'
 import 'nprogress/nprogress.css'
 import { auth, db, functions, analytics } from '@/utils/config'
+import { getAuth, isSignInWithEmailLink, signInWithEmailLink } from "firebase/auth";
 import { useAuthState } from 'react-firebase-hooks/auth'
 import { httpsCallable } from 'firebase/functions'
 import { useState, useEffect } from 'react'
 import { doc, onSnapshot, where, orderBy, limit, query, collection, getDocs } from 'firebase/firestore'
-import { ToastContainer } from 'react-toastify'
+import { toast, ToastContainer } from 'react-toastify'
 import { signInAnonymously, getRedirectResult } from 'firebase/auth'
 import Router, { useRouter } from 'next/router'
 import NProgress from 'nprogress'
@@ -109,7 +110,7 @@ const anonUserNavigation = [
 
 const handleAnonUserConversion = httpsCallable(functions, 'handleAnonUserConversion')
 
-function MyApp ({ Component, pageProps }) {
+function MyApp({ Component, pageProps }) {
   const router = useRouter()
   const [user, isUserLoading, error] = useAuthState(auth)
   const [userDoc, setUserDoc] = useState()
@@ -126,7 +127,7 @@ function MyApp ({ Component, pageProps }) {
   }, [router.asPath])
 
   useEffect(() => {
-    let unsubscribe = () => {}
+    let unsubscribe = () => { }
     if (user && user.uid) {
       const ref = doc(db, 'users', user.uid)
       unsubscribe = onSnapshot(ref, doc => {
@@ -182,6 +183,23 @@ function MyApp ({ Component, pageProps }) {
       }
     }
     awaitRedirectResults()
+    // Confirm the link is a sign-in with email link.
+    const emailLink = isSignInWithEmailLink(auth, window.location.href)
+    console.log({ emailLink })
+    if (emailLink) {
+      // Additional state parameters can also be passed via URL.
+      // This can be used to continue the user's intended action before triggering
+      // the sign-in operation.
+      // Get the email if available. This should be available if the user completes
+      // the flow on the same device where they started it.
+      // let email = window.localStorage.getItem('emailForSignIn');
+      const email = userDoc.email
+      const ref = doc(db, 'users', user.uid)
+      if (email) {
+        ref.update({ emailVerified: true })
+      }
+      toast.success('email successfully verified')
+    }
   }, [userDoc])
 
   if (!onAnonRoutes && user && userDoc && userDoc.role === 'dev' && !userDoc.hasAcceptedInvite) {

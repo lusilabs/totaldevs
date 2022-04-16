@@ -253,7 +253,7 @@ exports.handleUserLogin = functions.https.onCall(async (data, ctx) => {
         })
     }
   } else {
-  // try redeeming invites by updating the user doc, so the listener can fire.
+    // try redeeming invites by updating the user doc, so the listener can fire.
     const uref2 = admin
       .firestore()
       .collection('users')
