@@ -2,7 +2,7 @@ import { ShareIcon, OfficeBuildingIcon, UserIcon } from '@heroicons/react/outlin
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 
-function SignUpFlow ({ handleCreateJobPosting, ...props }) {
+function SignUpFlow({ handleCreateJobPosting, ...props }) {
   const router = useRouter()
   const { convert = false, signup } = router.query
 

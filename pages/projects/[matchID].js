@@ -7,6 +7,8 @@ import { Button } from 'semantic-ui-react'
 import JobDisplay from '@/components/jobdisplay'
 import { db } from '@/utils/config'
 import { SuspensePlaceholders } from '@/components/suspense'
+import Banner from '@/components/banner'
+
 
 const ConfirmAvailability = ({ userDoc, matchDoc, setMatch }) => {
   const updateMatch = (status, notifyee) => async () => {
@@ -14,7 +16,7 @@ const ConfirmAvailability = ({ userDoc, matchDoc, setMatch }) => {
     await setDoc(mref, { status }, { merge: true })
     toast.success(`${notifyee ?? 'company'} has been notified.`)
   }
-  const waitingOnCompany = ['dev_interested', 'documents_signed'].includes(matchDoc.status)
+  const waitingOnCompany = ['dev_interested', 'dev_accepted'].includes(matchDoc.status)
   const canContinue = matchDoc.status === 'requesting_dev_status'
   const waitingForSignedDocuments = matchDoc.status === 'position_offered'
   const isDevAccountReady = userDoc.emailVerified && userDoc.isStripeVerified && userDoc.isProfileComplete
@@ -58,10 +60,12 @@ const ViewProject = props => {
     const { matchID } = router.query
     setSelectedMatchID(matchID)
   }, [])
+  const waitingOnCompany = ['dev_interested', 'dev_accepted'].includes(matchDoc.status)
   return (
     <div className='m-4'>
       {!loaded && <SuspensePlaceholders />}
       {loaded && <>
+        {waitingOnCompany && <Banner name='no-action-required' color='bg-indigo-600' text='waiting on company, no action required' />}
         <JobDisplay {...{ jobDoc: matchDoc.jobData }} {...props} />
         <ConfirmAvailability {...{ matchDoc, router }} setMatch={setMatch} {...props} />
       </>}

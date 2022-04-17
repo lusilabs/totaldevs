@@ -2,7 +2,7 @@ import { PaperClipIcon } from '@heroicons/react/solid'
 import Link from 'next/link'
 import Status from '@/components/misc/status'
 
-export default function JobDisplay ({ userDoc, jobDoc = {}, matches = [], setIsEditing }) {
+export default function JobDisplay({ userDoc, jobDoc = {}, matches = [], setIsEditing }) {
   return (
     <>
       {userDoc.role !== 'dev' &&

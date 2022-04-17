@@ -10,6 +10,7 @@ import sleep from '@/utils/misc'
 import { useRouter } from 'next/router'
 import TotalResume from '@/components/resume'
 import { SuspensePlaceholders } from '@/components/suspense'
+import Banner from '@/components/banner'
 
 const createCheckoutSession = httpsCallable(functions, 'stripe-createCheckoutSession')
 const updateMatchDocOnServer = httpsCallable(functions, 'updateMatchDocOnServer')
@@ -35,6 +36,7 @@ export default function MatchView({ userDoc, ...props }) {
   const [saving, setSaving] = useState()
   const [buttonColor, setButtonColor] = useState('green')
   const [initialPayment, setInitialPayment] = useState()
+  const [waitingOnDev, setWaitingOnDev] = useState()
 
   const today = new Date()
   let tomorrow = new Date(today.setDate(today.getDate() + 1))
@@ -64,6 +66,7 @@ export default function MatchView({ userDoc, ...props }) {
       setIsButtonLocked(!['documents_signed', 'dev_interested'].includes(matchDoc.status) || !isFormComplete || !isCompanyReady)
       setInitialPayment(matchDoc.initialPayment)
       setButtonColor(buttonColors[matchDoc.status])
+      setWaitingOnDev(['position_offered'].includes(matchDoc.status))
     }
   }, [matchDoc])
 
@@ -73,15 +76,17 @@ export default function MatchView({ userDoc, ...props }) {
     setSaving(true)
     const { status } = matchDoc
     switch (status) {
-      case 'documents_signed': // accepting match
+      case 'dev_accepted': // accepting match
         await sleep(2000)
         await handleConfirmMatch(routerMatchID)
+        toast.success('position successfully filled!')
+        router.push('/matches')
         break
       case 'dev_interested': // offering position
         await sleep(2000)
         await updateMatchDocOnServer({ matchID: routerMatchID, status: 'position_offered', locked: true })
         toast.success('job offer sent!')
-        router.push('/jobs')
+        router.push('/matches')
         break
       case 'rejected':
       case 'position_offered':
@@ -115,7 +120,9 @@ export default function MatchView({ userDoc, ...props }) {
     <>
       {!(matchLoaded && profileLoaded) && <SuspensePlaceholders />}
       {(matchLoaded && profileLoaded) &&
+
         <div className='m-4'>
+          {waitingOnDev && <Banner name='no-action-required' color='bg-indigo-600' text='waiting on dev, no action required' />}
           <h3 className='text-gray-500'>dev resume</h3>
 
           <div className='flex justify-center'>
