@@ -1,18 +1,15 @@
 import { PaperClipIcon } from '@heroicons/react/solid'
 import Link from 'next/link'
 import Status from '@/components/misc/status'
-// import { functions } from '@/utils/config'
-// import { httpsCallable } from 'firebase/functions'
-// const checkStripeAccountStanding = httpsCallable(functions, 'stripe-checkStripeAccountStanding')
 
-export default function JobDisplay ({ userDoc, jobDoc = {}, matches = [], setIsEditing }) {
+export default function JobDisplay({ userDoc, jobDoc = {}, matches = [], setIsEditing }) {
   return (
     <>
       {userDoc.role !== 'dev' &&
         <>
           <h3 className='text-gray-500'>matches</h3>
           <div className='flex flex-col m-4'>
-            {matches.length === 0 && <span className='px-4 p-2 flex justify-center text-md leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800'>explorers are looking for a match... (no action required, we will notify you)</span>}
+            {matches.length === 0 && <span className='px-4 p-2 flex justify-center text-md leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800'>explorers are looking for a match... (no action required)</span>}
             {matches.length > 0 && matches.map((m, ix) =>
               <Link key={m.dev ?? ix} href={`/matches/${m.id}`}>
                 <div className='flex cursor-pointer justify-between items-center px-4 py-5 bg-white shadow overflow-hidden sm:rounded-lg m-1'>

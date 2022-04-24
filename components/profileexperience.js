@@ -10,7 +10,7 @@ const mergeSearchResults = (prev, names) => {
   return deduped
 }
 
-export default function ProfileExperience ({ jobs, setJobs }) {
+export default function ProfileExperience({ jobs, setJobs }) {
   const [dropdownOptions, setDropdownOptions] = useState(jobs.map(j => j.stack?.map(name => ({ key: name, value: name, text: name })) ?? []))
   const [searchQuery, setSearchQuery] = useState(['', 0])
 

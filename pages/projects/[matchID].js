@@ -7,6 +7,8 @@ import { Button } from 'semantic-ui-react'
 import JobDisplay from '@/components/jobdisplay'
 import { db } from '@/utils/config'
 import { SuspensePlaceholders } from '@/components/suspense'
+import Banner from '@/components/banner'
+
 
 const ConfirmAvailability = ({ userDoc, matchDoc, setMatch }) => {
   const updateMatch = (status, notifyee) => async () => {
@@ -16,22 +18,36 @@ const ConfirmAvailability = ({ userDoc, matchDoc, setMatch }) => {
   }
   const waitingOnCompany = ['dev_interested', 'position_offered'].includes(matchDoc.status)
   const canContinue = matchDoc.status === 'requesting_dev_status'
+  const waitingForSignedDocuments = matchDoc.status === 'position_offered'
+  const isDevAccountReady = userDoc.emailVerified && userDoc.isStripeVerified && userDoc.isProfileComplete
+  const isActive = matchDoc.status === 'active'
   return (
-    <div className='py-5 flex justify-around'>
+    <div className='flex justify-around py-5'>
       <Button
         type='button' color='red' className='text-md'
         onClick={updateMatch('dev_unavailable', matchDoc.explorerName)}
-        >
+      >
         not available
       </Button>
-      <Button
-        type='button' color='green' className='text-md'
-        onClick={updateMatch('dev_interested', matchDoc.companyName)}
-        disabled={waitingOnCompany}
-      >
-        {canContinue && 'available for meetings'}
-        {waitingOnCompany && 'waiting on company'}
-      </Button>
+      {isDevAccountReady &&
+        <Button
+          type='button' color='green' className='text-md'
+          onClick={updateMatch('dev_interested', matchDoc.companyName)}
+          disabled={waitingOnCompany || waitingForSignedDocuments || isActive}
+        >
+          {isActive && 'active'}
+          {canContinue && 'available for meetings'}
+          {waitingOnCompany && 'waiting on company'}
+          {waitingForSignedDocuments && 'waiting for signed documents'}
+        </Button>}
+      {!isDevAccountReady &&
+        <Button
+          type='button' color='orange' className='text-md'
+          disabled
+        >
+          complete profile
+        </Button>
+      }
     </div>
   )
 }
@@ -44,10 +60,12 @@ const ViewProject = props => {
     const { matchID } = router.query
     setSelectedMatchID(matchID)
   }, [])
+  const waitingOnCompany = ['dev_interested', 'documents_signed'].includes(matchDoc.status)
   return (
     <div className='m-4'>
       {!loaded && <SuspensePlaceholders />}
       {loaded && <>
+        {waitingOnCompany && <Banner name='no-action-required' color='bg-indigo-600' text='waiting on company, no action required' />}
         <JobDisplay {...{ jobDoc: matchDoc.jobData }} {...props} />
         <ConfirmAvailability {...{ matchDoc, router }} setMatch={setMatch} {...props} />
       </>}
@@ -57,7 +75,7 @@ const ViewProject = props => {
 
 const MatchSpecificFields = ({ matchDoc }) => {
   return (
-    <div className='relative m-4 p-4 md:m-6 md:p-6 rounded-lg overflow-hidden shadow grid grid-cols-6 gap-6 pb-12'>
+    <div className='relative p-4 pb-12 m-4 overflow-hidden rounded-lg shadow md:m-6 md:p-6 grid grid-cols-6 gap-6'>
 
       <div className='col-span-6'>
         <div className='text-lg font-medium text-gray-500'>match specific fields</div>
@@ -73,7 +91,7 @@ const MatchSpecificFields = ({ matchDoc }) => {
           name='finalSalary'
           disabled
           value={matchDoc.finalSalary}
-          className='mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
+          className='block w-full mt-1 border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm sm:text-sm rounded-md'
         />
       </div>
 
@@ -87,7 +105,7 @@ const MatchSpecificFields = ({ matchDoc }) => {
           id='startDate'
           name='startDate'
           disabled
-          className='mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
+          className='block w-full mt-1 border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm sm:text-sm rounded-md'
           value={matchDoc.startDate}
         />
       </div>
@@ -102,7 +120,7 @@ const MatchSpecificFields = ({ matchDoc }) => {
           id='initialPayment'
           name='initialPayment'
           value={matchDoc.initialPayment}
-          className='mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md bg-gray-200'
+          className='block w-full mt-1 bg-gray-200 border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm sm:text-sm rounded-md'
         />
       </div>
 

@@ -1,6 +1,6 @@
 import Link from 'next/link'
 
-export default function AboutMe ({ register, errors, saving, photoURL, handleUploadPhoto }) {
+export default function AboutMe({ register, errors, saving, photoURL, handleUploadPhoto }) {
   return (
 
     <div className='m-4 md:col-span-2 shadow-xl'>

@@ -10,12 +10,13 @@ import sleep from '@/utils/misc'
 import { useRouter } from 'next/router'
 import TotalResume from '@/components/resume'
 import { SuspensePlaceholders } from '@/components/suspense'
+import Banner from '@/components/banner'
 
 const createCheckoutSession = httpsCallable(functions, 'stripe-createCheckoutSession')
 const updateMatchDocOnServer = httpsCallable(functions, 'updateMatchDocOnServer')
 const INITIAL_PAYMENT_PCT = 0.20
 
-const handleAcceptMatch = async match => {
+const handleConfirmMatch = async match => {
   const { data } = await createCheckoutSession({ match })
   window.location.assign(data.url)
 }
@@ -28,19 +29,22 @@ const buttonColors = {
   locked: 'gray'
 }
 
-export default function MatchView ({ userDoc, ...props }) {
+export default function MatchView({ userDoc, ...props }) {
   const router = useRouter()
   const [routerMatchID, setRouterMatchID] = useState()
   const [isButtonLocked, setIsButtonLocked] = useState()
   const [saving, setSaving] = useState()
   const [buttonColor, setButtonColor] = useState('green')
   const [initialPayment, setInitialPayment] = useState()
+  const [waitingOnDev, setWaitingOnDev] = useState()
 
   const today = new Date()
   let tomorrow = new Date(today.setDate(today.getDate() + 1))
   tomorrow = tomorrow.toLocaleDateString('en-ca')
   let threeMonths = new Date(today.setDate(today.getDate() + 90))
   threeMonths = threeMonths.toLocaleDateString('en-ca')
+
+  const isCompanyReady = userDoc.isProfileComplete && userDoc.emailVerified
 
   const handleInitialPaymentChange = e => {
     const value = e.target.value
@@ -59,9 +63,10 @@ export default function MatchView ({ userDoc, ...props }) {
     if (matchDoc) {
       reset({ startDate: matchDoc.startDate, finalSalary: matchDoc.finalSalary }) // this refires the defaultValues on the form to fill them up once the db data loads.
       const isFormComplete = matchDoc.startDate && matchDoc.finalSalary
-      setIsButtonLocked(!['documents_signed', 'dev_interested'].includes(matchDoc.status) || !isFormComplete)
+      setIsButtonLocked(!['documents_signed', 'dev_interested'].includes(matchDoc.status) || !isFormComplete || !isCompanyReady)
       setInitialPayment(matchDoc.initialPayment)
       setButtonColor(buttonColors[matchDoc.status])
+      setWaitingOnDev(['position_offered'].includes(matchDoc.status))
     }
   }, [matchDoc])
 
@@ -96,6 +101,7 @@ export default function MatchView ({ userDoc, ...props }) {
   }
 
   const onSubmit = async data => {
+    if (matchDoc.locked) return
     setSaving(true)
     if (!initialPayment || initialPayment < 0) {
       toast.error('Initial payment cannot be null or negative')
@@ -112,7 +118,9 @@ export default function MatchView ({ userDoc, ...props }) {
     <>
       {!(matchLoaded && profileLoaded) && <SuspensePlaceholders />}
       {(matchLoaded && profileLoaded) &&
+
         <div className='m-4'>
+          {waitingOnDev && <Banner name='no-action-required' color='bg-indigo-600' text='waiting on dev, no action required' />}
           <h3 className='text-gray-500'>dev resume</h3>
 
           <div className='flex justify-center'>
@@ -120,13 +128,13 @@ export default function MatchView ({ userDoc, ...props }) {
           </div>
 
           <div className='m-6 overflow-hidden bg-white shadow sm:rounded-lg'>
-            <h3 className='p-4 m-4 text-gray-500 text-center'>
-              <i className='mr-4 fa fa-calendar text-blue-500' aria-hidden='true' /><a href={profileDoc.calendlyURL} target='_blank'>book a meeting here</a>
+            <h3 className='p-4 m-4 text-center text-gray-500'>
+              <i className='mr-4 text-blue-400 fa fa-calendar' aria-hidden='true' /><a href={profileDoc.calendlyURL} target='_blank'>click to book a meeting</a>
             </h3>
           </div>
 
           <form onSubmit={handleSubmit(onSubmit)}>
-            <div className='relative m-4 p-4 md:m-6 md:p-6 rounded-lg overflow-hidden shadow grid grid-cols-6 gap-6 pb-12'>
+            <div className='relative p-4 pb-12 m-4 overflow-hidden rounded-lg shadow md:m-6 md:p-6 grid grid-cols-6 gap-6'>
 
               <div className='col-span-6'>
                 <div className='text-lg font-medium text-gray-500'>match specific fields</div>
@@ -141,7 +149,7 @@ export default function MatchView ({ userDoc, ...props }) {
                   id='finalSalary'
                   name='finalSalary'
                   disabled={matchDoc?.locked}
-                  className='mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
+                  className='block w-full mt-1 border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm sm:text-sm rounded-md'
                   {...register('finalSalary', {
                     required: true,
                     min: matchDoc?.jobData.salaryMin,
@@ -160,18 +168,18 @@ export default function MatchView ({ userDoc, ...props }) {
                   id='startDate'
                   name='startDate'
                   disabled={matchDoc?.locked}
-                  className='mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
+                  className='block w-full mt-1 border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm sm:text-sm rounded-md'
                 /> */}
-              <input 
-                type="date"
-                id='startDate'
-                name='startDate'
-                disabled={matchDoc?.locked}
-                min={tomorrow}
-                max={threeMonths}
-                className='mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
-                {...register('startDate', { required: true })}
-              />
+                <input
+                  type="date"
+                  id='startDate'
+                  name='startDate'
+                  disabled={matchDoc?.locked}
+                  min={tomorrow}
+                  max={threeMonths}
+                  className='block w-full mt-1 border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm sm:text-sm rounded-md'
+                  {...register('startDate', { required: true })}
+                />
                 {errors.startDate && <div className='m-2 text-sm text-red-500'>please select a starting date</div>}
               </div>
 
@@ -185,7 +193,7 @@ export default function MatchView ({ userDoc, ...props }) {
                   id='initialPayment'
                   name='initialPayment'
                   value={initialPayment}
-                  className='mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md bg-gray-200'
+                  className='block w-full mt-1 bg-gray-200 border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm sm:text-sm rounded-md'
                 />
               </div>
 
@@ -199,7 +207,7 @@ export default function MatchView ({ userDoc, ...props }) {
             </div>
           </form>
 
-          <div className='flex align-items justify-center m-4'>
+          <div className='flex justify-center m-4 align-items'>
 
             <div className='m-4'>
               <Button disabled={saving} loading={saving} onClick={handleDeclineMatch} color='red'>
@@ -209,12 +217,13 @@ export default function MatchView ({ userDoc, ...props }) {
             </div>
 
             <div className='m-4'>
-              <Button disabled={saving || isButtonLocked} loading={saving} onClick={handleClick} color={buttonColor}>
+              <Button className={matchDoc?.status === 'documents_signed' ? 'motion-safe:animate-bounce' : ''} disabled={saving || isButtonLocked} loading={saving} onClick={handleClick} color={!isCompanyReady ? 'orange' : buttonColor}>
                 {saving && <span>sending...</span>}
-                {!saving && matchDoc?.status === 'dev_interested' && <span>accept and send job offer</span>}
-                {!saving && matchDoc?.status === 'documents_signed' && <span>pay now</span>}
-                {!saving && matchDoc?.status === 'position_offered' && <span>waiting for signed documents</span>}
-                {!saving && matchDoc?.status === 'billing' && <span>staffed position!</span>}
+                {!saving && !isCompanyReady && <span>complete profile</span>}
+                {!saving && isCompanyReady && matchDoc?.status === 'dev_interested' && <span>accept and send job offer</span>}
+                {!saving && isCompanyReady && matchDoc?.status === 'documents_signed' && <span>pay now</span>}
+                {!saving && isCompanyReady && matchDoc?.status === 'position_offered' && <span>waiting for signed documents</span>}
+                {!saving && isCompanyReady && matchDoc?.status === 'active' && <span>staffed position!</span>}
               </Button>
             </div>
 

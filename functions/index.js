@@ -118,15 +118,31 @@ exports.handleMatchDoc = functions.firestore.document('matches/{matchID}').onWri
         email: 'devEmail',
         emailText: 'visit https://totaldevs.com/projects to view your match!',
         emailSubject: 'you just got a new job match! 🤩'
+      },
+      documents_signed: {
+        role: 'company',
+        text: `${doc.devName} just signed the contract, are you ready to start?`,
+        url: `/matches/${doc.matchID}`,
+        email: 'companyEmail',
+        emailText: `${doc.devName} just signed the contract, are you ready to start 🤩? Visit https://totaldevs.com to view your match and finish the process.`,
+        emailSubject: `${doc.devName} just signed the contract, are you ready to start 🤩?`,
+      },
+      first_payment: {
+        role: 'dev',
+        text: 'you just got hired!',
+        url: `/projects`,
+        email: 'devEmail',
+        emailText: 'Congratulations, you landed the job! visit https://totaldevs.com to view your job description and starting date. Expect to see an upfront payment reflected in your account in 3-5 business days.',
+        emailSubject: 'you just got hired! 🤩'
       }
     }
 
+    if (!(doc.status) in statusMapping) return
     const obj = statusMapping[doc.status]
     const text = obj.text
     const uid = doc[obj.role]
     const email = obj.email === 'companyEmail' ? doc.jobData.companyEmail : doc[obj.email]
     if (doc.status === 'position_offered') {
-      // TODO: update status, and create right templates/signers/fields/webhook url for real stuff
       const fields = [{ identifier: 'specific_text', value: doc.job }]
       const signers = [
         {
@@ -198,6 +214,7 @@ exports.sendEmailOnJobCreate = functions.firestore.document('jobs/{jobID}').onCr
 })
 
 exports.updateUserDoc = functions.firestore.document('users/{uid}').onUpdate(async (change, context) => {
+  const after = change.after.exists ? change.after.data() : {}
   const uid = context.params.uid
   const uref = await admin
     .firestore()
@@ -205,6 +222,12 @@ exports.updateUserDoc = functions.firestore.document('users/{uid}').onUpdate(asy
     .doc(uid)
     .get()
   const userDoc = uref.data()
+  if (userDoc.role === 'company' && after.displayName !== uref.displayName) {
+      admin.firestore().collection('jobs').where('company', '==', uid)
+      .get().then((querySnapshot) => {
+        querySnapshot.docs.forEach(doc => (doc.ref.update({ companyName: after.displayName })))
+      })
+  }
   if (userDoc.email) {
     const hasAcceptedInvite = await wasUserInvitedAndReclaimInvitation(userDoc) || !!isDevelopment
     await admin
@@ -242,15 +265,6 @@ exports.handleUserLogin = functions.https.onCall(async (data, ctx) => {
           to: ['talent@totaldevs.com'],
           createdAt: new Date().toISOString()
         })
-      // we have to add the company data to the job they just posted anonymously
-      admin
-        .firestore()
-        .collection('jobs')
-        .where('uid', '==', uid)
-        .get()
-        .then(snap => {
-          snap.docs.forEach(doc => doc.ref.update({ company: uid, companyEmail: data.email }))
-        })
     }
   } else {
     // try redeeming invites by updating the user doc, so the listener can fire.
@@ -269,35 +283,15 @@ exports.handleAnonUserConversion = functions.https.onCall(async (data, ctx) => {
     .collection('users')
     .doc(uid)
   await uref.update({ ...data })
-})
-
-exports.getAssignments = functions.https.onCall(async (data, ctx) => {
-  const db = admin.firestore()
-  const uid = ctx.auth.uid
-  const assignments = await db.collection('matches').where('dev', '==', uid)
-    .get().then((querySnapshot) => {
-      return querySnapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }))
-    })
-  const actors = await db.collection('users')
-    .where('uid', 'in',
-      [...new Set(assignments.reduce((result, assignment) => [...result, assignment.explorer, assignment.company], []))]
-    )
-    .get().then((querySnapshot) => {
-      return querySnapshot.docs.reduce((result, doc) => ({ ...result, [doc.id]: doc.data() }), {})
-    })
-  const jobs = await db.collection('jobs')
-    .where('__name__', 'in', assignments.map((assignment) => assignment.job))
-    .get().then((querySnapshot) => {
-      return querySnapshot.docs.reduce((result, doc) => ({ ...result, [doc.id]: doc.data() }), {})
-    })
-
-  return assignments.map((assignment) => (
-    {
-      ...assignment,
-      explorer: actors[assignment.explorer],
-      company: actors[assignment.company],
-      job: jobs[assignment.job]
-    }))
+  // we have to add the company data to the job they just posted anonymously
+  admin
+  .firestore()
+  .collection('jobs')
+  .where('uid', '==', uid)
+  .get()
+  .then(snap => {
+    snap.docs.forEach(doc => doc.ref.update({ company: uid, companyEmail: data.email }))
+  })
 })
 
 const triggerOnUpdate = ({ document, fieldToSearch, valueToSearch, destinationField, latestObject }) => {
@@ -309,7 +303,7 @@ const triggerOnUpdate = ({ document, fieldToSearch, valueToSearch, destinationFi
 }
 
 exports.updateMatchDocOnServer = functions.https.onCall(async (data, ctx) => {
-  const uid = isAuthedAndAppChecked(ctx)
+  isAuthedAndAppChecked(ctx)
   const { matchID } = data
   const mref = admin
     .firestore()
@@ -380,13 +374,12 @@ exports.handleEversignEvent = functions.firestore.document('rawEversignEvents/{e
 exports.updateDocument = functions.firestore.document('eversignDocuments/{id}').onUpdate(async (change, context) => {
   const document = change.after.data()
   if (document.document_completed) {
-    console.log(document.match, 'starting stripe process')
     const mref = admin
       .firestore()
       .collection('matches')
       .doc(document.match)
     await mref.update({ status: 'documents_signed' })
-    // todo@stripe-checkout change match.status -> 'dev_accepted'
+
   }
 })
 
@@ -431,7 +424,7 @@ const sendEversignDocuments = async (signers, fields, match) => {
 }
 
 exports.sendCompanyInvite = functions.https.onCall(async ({ position, devProfile, pitch, explorer, email, bcc }, ctx) => {
-  const iref = await admin
+  const iref = admin
     .firestore()
     .collection('invites')
     .doc(`${email}:company`)

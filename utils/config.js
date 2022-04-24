@@ -1,9 +1,10 @@
 import { initializeApp, getApp } from 'firebase/app'
 import { getFirestore, connectFirestoreEmulator } from 'firebase/firestore'
 import { getFunctions, connectFunctionsEmulator } from 'firebase/functions'
-import { getAuth, connectAuthEmulator } from 'firebase/auth'
+import { getAuth, connectAuthEmulator, sendSignInLinkToEmail } from 'firebase/auth'
 import { getStorage, connectStorageEmulator } from 'firebase/storage'
 import { getAnalytics } from 'firebase/analytics'
+import { toast } from 'react-toastify'
 // anothr method of getting things only on the client
 // import dynamic from 'next/dynamic'
 const { initializeAppCheck, ReCaptchaV3Provider } = require('firebase/app-check')
@@ -69,4 +70,20 @@ const actionCodeSettings = {
   // dynamicLinkDomain: 'example.page.link'
 }
 
-export { app, auth, functions, db, firebaseConfig, storage, analytics, vapidKeyFCM, actionCodeSettings }
+const sendEmailVerification = (userDoc, noToast) => {
+  if (window.localStorage.getItem('emailForSignIn', userDoc.email)) {
+    if (!noToast) toast.info('verification already sent')
+    return
+  }
+  sendSignInLinkToEmail(auth, userDoc.email, actionCodeSettings)
+    .then(() => {
+      window.localStorage.setItem('emailForSignIn', userDoc.email)
+      toast.success('email verification sent')
+    })
+    .catch(err => {
+      console.error(err)
+      toast.error(err.message)
+    })
+}
+
+export { app, auth, functions, db, firebaseConfig, storage, analytics, vapidKeyFCM, sendEmailVerification }

@@ -1,4 +1,6 @@
-export default function CompanyProfileDisplay ({ userDoc, setIsEditing }) {
+import { sendEmailVerification } from '@/utils/config'
+
+export default function CompanyProfileDisplay({ userDoc, setIsEditing }) {
   return (
     <div className='bg-white shadow overflow-hidden sm:rounded-lg m-4'>
       <div className='px-4 py-5 sm:px-6'>
@@ -9,7 +11,10 @@ export default function CompanyProfileDisplay ({ userDoc, setIsEditing }) {
             {userDoc.isProfileComplete && <span className='px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800'> complete </span>}
             {!userDoc.isProfileComplete && <span className='px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800'> incomplete </span>}
             {/* {!userDoc.status && <span className='px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800'> unpublished </span>} */}
-
+            &nbsp;
+            &nbsp;
+            {userDoc.emailVerified && <span className='px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800'> email verified </span>}
+            {!userDoc.emailVerified && <span onClick={() => sendEmailVerification(userDoc)} className='px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800 cursor-pointer'> verify email </span>}
           </div>
           <div>
             <button
