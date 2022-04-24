@@ -30,7 +30,7 @@ function PendingBanners({ userDoc, setIsPageLoading, ...props }) {
           buttonText='go to profile' href='/profile'
         />}
       {isProfileBannerActive &&
-        //  ['dev', 'explorer'].includes(userDoc.role) &&
+        ['dev', 'explorer'].includes(userDoc.role) &&
         <Banner
           name='profile-complete' color='bg-red-400' text='complete your profile to start matching'
           buttonText='go to profile' href='/profile'

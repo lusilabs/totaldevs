@@ -214,6 +214,7 @@ exports.sendEmailOnJobCreate = functions.firestore.document('jobs/{jobID}').onCr
 })
 
 exports.updateUserDoc = functions.firestore.document('users/{uid}').onUpdate(async (change, context) => {
+  const after = change.after.exists ? change.after.data() : {}
   const uid = context.params.uid
   const uref = await admin
     .firestore()
@@ -221,6 +222,12 @@ exports.updateUserDoc = functions.firestore.document('users/{uid}').onUpdate(asy
     .doc(uid)
     .get()
   const userDoc = uref.data()
+  if (userDoc.role === 'company' && after.displayName !== uref.displayName) {
+      admin.firestore().collection('jobs').where('company', '==', uid)
+      .get().then((querySnapshot) => {
+        querySnapshot.docs.forEach(doc => (doc.ref.update({ companyName: after.displayName })))
+      })
+  }
   if (userDoc.email) {
     const hasAcceptedInvite = await wasUserInvitedAndReclaimInvitation(userDoc) || !!isDevelopment
     await admin

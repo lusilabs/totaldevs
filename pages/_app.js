@@ -198,7 +198,7 @@ function MyApp({ Component, pageProps }) {
         }
         toast.success('email successfully verified')
       }
-      if (!emailLink && userDoc && !userDoc.emailVerified) {
+      if (!emailLink && userDoc && userDoc.email && !userDoc.emailVerified) {
         sendEmailVerification(userDoc, true)
       }
     }

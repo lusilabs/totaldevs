@@ -76,17 +76,15 @@ export default function MatchView({ userDoc, ...props }) {
     setSaving(true)
     const { status } = matchDoc
     switch (status) {
-      case 'dev_accepted': // accepting match
+      case 'documents_signed': // accepting match
         await sleep(2000)
-        await handleConfirmMatch(routerMatchID)
-        toast.success('position successfully filled!')
-        router.push('/matches')
+        await handleAcceptMatch(routerMatchID)
         break
       case 'dev_interested': // offering position
         await sleep(2000)
         await updateMatchDocOnServer({ matchID: routerMatchID, status: 'position_offered', locked: true })
         toast.success('job offer sent!')
-        router.push('/matches')
+        router.push('/jobs')
         break
       case 'rejected':
       case 'position_offered':
