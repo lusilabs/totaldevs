@@ -3,7 +3,8 @@ import { useRouter } from 'next/router'
 import { useDocuments } from '@/utils/hooks'
 import { setDoc, doc, limit, where } from '@firebase/firestore'
 import { SuspensePlaceholders } from '@/components/suspense'
-import { SpeakerphoneIcon } from '@heroicons/react/outline'
+import { SpeakerphoneIcon, DocumentAddIcon } from '@heroicons/react/outline'
+import Banner from '@/components/banner'
 
 function Dashboard ({ userDoc, setIsPageLoading, ...props }) {
   const queryConstraints = [
@@ -23,19 +24,30 @@ function Dashboard ({ userDoc, setIsPageLoading, ...props }) {
 
   return (
     <div>
+
       {!actionsLoaded && <SuspensePlaceholders />}
-      {actionsLoaded && actions.length === 0 && <EmptyDashboardView />}
+      {actionsLoaded && !userDoc?.email && <Banner name='profile-complete' color='bg-red-400' text='sign up to keep in touch' buttonText='click here' href='/signup/complete?convert=undefined' />}
+      {actionsLoaded && actions.length === 0 && <EmptyDashboardView userDoc={userDoc} router={router} />}
       {/* {actionsLoaded && actions.length > 0 && actions.map((a, aix) => <ActionView action={a} key={a.id} handleClickOnAction={handleClickOnAction} />)} */}
       {actionsLoaded && actions.length > 0 && <ActionView actions={actions} handleClickOnAction={handleClickOnAction} />}
     </div>
+
   )
 }
 
-const EmptyDashboardView = () => {
+const EmptyDashboardView = ({ userDoc, router }) => {
   return (
     <div className='flex flex-col items-center'>
-      <img src='/astronaut.png' className='w-40 mt-4' />
-      <h4 className='text-gray-500'>welcome to hyperspace!</h4>
+      {userDoc?.email && <>
+        <img src='/astronaut.png' className='w-40 mt-4' />
+        <h4 className='text-gray-500'>welcome to hyperspace!</h4>
+                         </>}
+      {
+        !userDoc?.email && <div className='mt-4 cursor-pointer' onClick={() => router.push('/jobs/add?signup=true&convert=false')}>
+          <DocumentAddIcon className='mt-4 h-48 w-48 text-green-400 m-4' />
+          <h2 className='text-gray-500'> new job posting </h2>
+                           </div>
+      }
     </div>
   )
 }

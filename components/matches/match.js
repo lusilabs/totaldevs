@@ -56,8 +56,8 @@ const RecommendRole = ({ userDoc, selectedDev, selectedJob }) => {
 }
 
 export const JobsToMatch = ({ userDoc }) => {
-  const [jobs, jobsLoaded, _jr] = useDocuments({ docs: 'jobs' })
-  const [devs, devsLoaded, _dr] = useDocuments({
+  const [jobs, jobsLoaded, _jr, _sj] = useDocuments({ docs: 'jobs' })
+  const [devs, devsLoaded, _dr, _sd] = useDocuments({
     docs: 'users',
     queryConstraints: [
       where('role', '==', 'dev'),
@@ -67,8 +67,8 @@ export const JobsToMatch = ({ userDoc }) => {
   })
   const [selectedJob, setSelectedJob] = useState(null)
   const [selectedDev, setSelectedDev] = useState(null)
-  const [start, setStart] = useState('Dev')
-  const [next, setNext] = useState('Position')
+  const [start, setStart] = useState('dev')
+  const [next, setNext] = useState('position')
 
   const getterMapping = {
     stack: (row) => row.stack?.join(', '),

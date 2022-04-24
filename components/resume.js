@@ -1,16 +1,14 @@
 import { useDocument } from '@/utils/hooks'
-import { useRouter } from 'next/router'
-import { useState, useEffect } from 'react'
 import { SuspensePlaceholders } from '@/components/suspense'
 
 const TotalResume = ({ profileID }) => {
-  const [profileDoc, profileLoaded, _pr] = useDocument({ collection: 'profiles', docID: profileID }, [profileID])
+  const [profileDoc, profileLoaded, _pr, _sp] = useDocument({ collection: 'profiles', docID: profileID }, [profileID])
   return (
     <>
       {!profileLoaded && <SuspensePlaceholders />}
       {profileLoaded && profileDoc.isProfileComplete &&
-        <div className='flex justify-center max-w-fit w-full'>
-          <div className='flex-auto m-6 max-w-3xl'>
+        <div className='flex justify-center w-full max-w-fit'>
+          <div className='flex-auto max-w-3xl m-6'>
             <AboutMeSection profileDoc={profileDoc} />
             <hr />
             <ExperienceSection profileDoc={profileDoc} />
@@ -20,14 +18,14 @@ const TotalResume = ({ profileID }) => {
             {profileDoc.degrees?.length > 1 && <EducationSection profileDoc={profileDoc} />}
           </div>
         </div>}
-      {profileLoaded && !profileDoc.isProfileComplete && <h1> under construction... </h1>}
+      {profileLoaded && !profileDoc.isProfileComplete && <h1> profile under construction... </h1>}
     </>
   )
 }
 
 const AboutMeSection = ({ profileDoc }) => {
   return (
-    <section className='mt-4 mb-4 flex flex-col items-center'>
+    <section className='flex flex-col items-center mt-4 mb-4'>
       <h1>{profileDoc.displayName}</h1>
       <p>{profileDoc.bio}</p>
     </section>

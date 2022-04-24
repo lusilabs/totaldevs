@@ -10,7 +10,7 @@ const mergeSearchResults = (prev, names) => {
   return deduped
 }
 
-export default function ProfileProjects ({ projects, setProjects }) {
+export default function ProfileProjects({ projects, setProjects }) {
   const [dropdownOptions, setDropdownOptions] = useState(projects.map(p => p.stack?.map(name => ({ key: name, value: name, text: name })) ?? []))
   const [searchQuery, setSearchQuery] = useState(['', 0])
 

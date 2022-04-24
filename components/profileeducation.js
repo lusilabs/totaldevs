@@ -36,7 +36,7 @@ export default function ProfileEducation ({ degrees, setDegrees }) {
 
           </div> */}
         </div>
-      </>}
+                               </>}
       {degrees.length > 0 && degrees.map((d, ix) =>
 
         <div key={ix} className='relative m-4 p-4 md:m-6 md:p-6 rounded-lg overflow-hidden shadow grid grid-cols-6 gap-6 pb-12'>
