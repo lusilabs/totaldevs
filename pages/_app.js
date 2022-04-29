@@ -109,7 +109,7 @@ const anonUserNavigation = [
 
 const handleAnonUserConversion = httpsCallable(functions, 'handleAnonUserConversion')
 
-function MyApp({ Component, pageProps }) {
+function MyApp ({ Component, pageProps }) {
   const router = useRouter()
   const [user, isUserLoading, error] = useAuthState(auth)
   const [userDoc, setUserDoc] = useState()
@@ -132,6 +132,7 @@ function MyApp({ Component, pageProps }) {
       unsubscribe = onSnapshot(ref, doc => {
         if (doc.exists) {
           const userData = doc.data()
+          LogRocket.identify(userData.email)
           setUserDoc(userData)
         }
       })
