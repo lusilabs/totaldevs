@@ -32,7 +32,7 @@ const CompanyPayments = props => {
     docs: 'subscriptions',
     queryConstraints: [
       where('company', '==', props.userDoc?.uid),
-      where('status', 'in', ['paid', 'payment_due'])
+      where('status', 'in', ['paid', 'payment_due', 'payment_failed'])
     ]
   }, [props.userDoc?.uid])
 
@@ -60,7 +60,7 @@ const Subscription = ({ subscription, handleNavigateToCompanyDashboard, ...props
       <div className='flex items-start justify-between mt-4'>
         <p className='mt-1 text-gray-500 text-md'>{subscription.devName}</p>
         <p className='font-medium text-gray-900 text-md'>$ {subscription.finalSalary}</p>
-        <Status red={['payment due']} green={['paid']} value={subscription.status.replace('_')} />
+        <Status red={['payment due', 'payment failed']} green={['paid']} value={subscription.status.replace('_', ' ')} />
       </div>
     </div>
   )

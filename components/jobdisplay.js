@@ -16,7 +16,7 @@ export default function JobDisplay({ userDoc, jobDoc = {}, matches = [], setIsEd
                   <img className='h-8 w-8 rounded-full' src={m.devPhotoURL} alt='' />
                   <div className='fixed left-24'>{m.devName}</div>
                   <div>
-                    <Status green={['position_offered', 'dev_interested']} yellow={['dev_interested']} red={['rejected']} value={m.status} />
+                    <Status green={['position_offered', 'dev_interested', 'active']} yellow={['dev_interested']} red={['rejected']} value={m.status} />
                   </div>
                 </div>
               </Link>

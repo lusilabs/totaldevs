@@ -276,6 +276,30 @@ const handleCheckoutSessionCompleted = session => {
     .update({ status: 'first_payment' })
 }
 
+const handleFailedCharge = ({ customer }) => {
+  admin
+    .firestore()
+    .collection('subscriptions')
+    .where('customer', '==', customer)
+    .limit(1)
+    .get()
+    .then(snap => {
+      const doc = snap.docs[0]
+      const { company } = doc.data()
+      doc.ref.update({ status: 'payment_failed' })
+      admin
+        .firestore()
+        .collection('actions')
+        .add({
+          uid: company,
+          text: "a payment couldn't be processed, please verify any pending billing adjustments",
+          seen: false,
+          color: 'red',
+          url: '/payments'
+        })
+    })
+}
+
 const handleInvoiceUpdate = async invoice => {
   admin
     .firestore()
@@ -341,6 +365,9 @@ exports.handleWebhooks = functions.https.onRequest(async (req, resp) => {
         break
       case 'checkout.session.completed':
         handleCheckoutSessionCompleted(event.data.object)
+        break
+      case 'charge.failed':
+        handleFailedCharge(event.data.object)
         break
       case 'customer.subscription.created':
         await handleSubscriptionCreated(event.data.object)
