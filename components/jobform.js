@@ -83,7 +83,7 @@ function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
   }
 
   const onSubmit = async data => {
-    if (data.salaryMax && Number(data.salaryMax) < Number(data.salaryMin)) {
+    if (data.salaryMax && Number(data.salaryMax) < Number(data.avgSalary)) {
       toast.error('max salary cannot be smaller than min salary')
       return
     }
@@ -102,10 +102,8 @@ function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
         title: data.title,
         stack,
         position: data.position,
-        hours: data.hours,
         description: data.description,
-        salaryMin: data.salaryMin,
-        salaryMax: data.salaryMax,
+        avgSalary: data.avgSalary,
         jobURL: data.jobURL,
         jobTitle: data.jobTitle,
         pdfURL,
@@ -121,10 +119,8 @@ function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
         title: data.title,
         stack,
         position: data.position,
-        hours: data.hours,
         description: data.description,
-        salaryMin: data.salaryMin,
-        salaryMax: data.salaryMax,
+        avgSalary: data.avgSalary,
         jobURL: data.jobURL,
         jobTitle: data.jobTitle,
         pdfURL,
@@ -232,7 +228,7 @@ function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
                   </label>
                   <div className='flex mt-1 rounded-md shadow-sm'>
                     <input
-                      type='text' name='company-website' id='company-website' className='flex-1 block w-full border-gray-300 rounded-none focus:ring-indigo-500 focus:border-indigo-500 rounded-r-md sm:text-sm' placeholder='e.g. support engineer'
+                      type='text' name='company-website' id='company-website' className='flex-1 block w-full border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 rounded-md sm:text-sm' placeholder='e.g. support engineer'
                       {...register('jobTitle', { required: false, maxLength: 256 })}
                     />
                   </div>
@@ -289,7 +285,7 @@ function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
                   {errors.description && <div className='m-2 text-sm text-red-500'>please add a small description</div>}
                 </div>
 
-                <div className='items-center content-start col-span-6 sm:col-span-3'>
+                {/* <div className='items-center content-start col-span-6 sm:col-span-3'>
                   <label htmlFor='position' className='block p-2 text-sm font-medium text-gray-700'>
                     position
                   </label>
@@ -327,9 +323,9 @@ function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
 
                     {errors.position && <div className='m-2 text-sm text-red-500'>select a type of position</div>}
                   </div>
-                </div>
+                </div> */}
 
-                <div className='items-center content-start col-span-6 sm:col-span-3'>
+                {/* <div className='items-center content-start col-span-6 sm:col-span-3'>
                   <label htmlFor='visibility' className='block p-2 text-sm font-medium text-gray-700'>
                     hours
                   </label>
@@ -381,11 +377,11 @@ function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
 
                     {errors.hours && <div className='m-2 text-sm text-red-500'>select a type of working hours</div>}
                   </div>
-                </div>
+                </div> */}
 
-                <div className='col-span-6 sm:col-span-3'>
+                <div className='col-span-6 sm:col-span-6'>
                   <label htmlFor='salary' className='block text-sm font-medium text-gray-700'>
-                    min monthly salary or payment
+                    avg monthly salary or payment
                   </label>
                   <div className='relative mt-1 rounded-md shadow-sm'>
                     <div className='absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none'>
@@ -393,37 +389,16 @@ function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
                     </div>
                     <input
                       type='number'
-                      name='salaryMin'
-                      id='salaryMin'
+                      name='avgSalary'
+                      id='avgSalary'
                       min='0'
                       step='1'
                       className={`focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-14 pr-12 sm:text-sm border-gray-300 rounded-md shadow-sm ${props.sid ? 'bg-gray-100' : ''}`}
                       disabled={jobDoc.locked}
-                      {...register('salaryMin', { required: true })}
+                      {...register('avgSalary', { required: true })}
                     />
                   </div>
-                  {errors.salaryMin && <div className='m-2 text-sm text-red-500'>min salary or payment cannot be null</div>}
-                </div>
-
-                <div className='col-span-6 sm:col-span-3'>
-                  <label htmlFor='salary' className='block text-sm font-medium text-gray-700'>
-                    (max monthly salary or payment)
-                  </label>
-                  <div className='relative mt-1 rounded-md shadow-sm'>
-                    <div className='absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none'>
-                      <span className='text-gray-500 sm:text-sm'>USD$</span>
-                    </div>
-                    <input
-                      type='number'
-                      name='salaryMax'
-                      id='salaryMax'
-                      min='0'
-                      step='1'
-                      className={`focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-14 pr-12 sm:text-sm border-gray-300 rounded-md shadow-sm ${props.sid ? 'bg-gray-100' : ''}`}
-                      disabled={jobDoc.locked}
-                      {...register('salaryMax', { required: false })}
-                    />
-                  </div>
+                  {errors.avgSalary && <div className='m-2 text-sm text-red-500'>min salary or payment cannot be null</div>}
                 </div>
                 <div className='col-span-6 sm:col-span-6'>
                   <label className='block text-sm font-medium text-gray-700'>img (leave blank for random dev image)</label>
@@ -470,7 +445,7 @@ function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
                     <div className='flex items-center flex-1 w-0'>
                       {pdfName && <> <svg className='flex-shrink-0 w-5 h-5 text-gray-400' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='currentColor' aria-hidden='true'>
                         <path fillRule='evenodd' d='M8 4a3 3 0 00-3 3v4a5 5 0 0010 0V7a1 1 0 112 0v4a7 7 0 11-14 0V7a5 5 0 0110 0v4a3 3 0 11-6 0V7a1 1 0 012 0v4a1 1 0 102 0V7a3 3 0 00-3-3z' clipRule='evenodd' />
-                      </svg>
+                                     </svg>
                         <span className='flex-1 w-0 ml-2 truncate'>
                           {pdfName}
                         </span>
@@ -480,7 +455,7 @@ function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
                             download
                           </a>
                         </div>
-                      </>}
+                                  </>}
                     </div>
                   </div>
                   <div className='flex justify-center px-6 pt-5 pb-6 mt-1 border-2 border-gray-300 border-dashed rounded-md'>
@@ -535,14 +510,14 @@ function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
                 {saving && <span>posting...</span>}
                 {!saving && <span>{jobID && <span>re</span>}post</span>}
               </Button>
-            &nbsp;
+              &nbsp;
               {/* {allowSkip && <Button disabled={saving} loading={saving} onClick={handleSkip} color='grey' fluid className='text-sm'>
               skip
             </Button>} */}
             </div>
           </div>
         </form>
-      </>}
+                    </>}
     </div>
   )
 }
