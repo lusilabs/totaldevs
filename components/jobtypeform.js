@@ -11,9 +11,22 @@ import sleep from '@/utils/misc'
 import { useRouter } from 'next/router'
 import JobDisplay from '@/components/jobdisplay'
 
+const defaultTechnologies = [
+  { src: 'https://img.icons8.com/ios/50/000000/postgreesql.png', value: 'postgres' },
+  { src: 'https://img.icons8.com/dotty/80/000000/react.png', value: 'react' },
+  { src: 'https://img.icons8.com/ios/50/000000/javascript.png', value: 'javascript' },
+
+  { src: 'https://img.icons8.com/ios/50/000000/postgreesql.png', value: 'postgres' },
+  { src: 'https://img.icons8.com/ios/50/000000/postgreesql.png', value: 'postgres' },
+  { src: 'https://img.icons8.com/ios/50/000000/postgreesql.png', value: 'postgres' },
+
+  { src: 'https://img.icons8.com/ios/50/000000/postgreesql.png', value: 'postgres' },
+  { src: 'https://img.icons8.com/ios/50/000000/postgreesql.png', value: 'postgres' }
+]
+
 const Steps = [Step1, Step2, Step3]
 
-function JobTypeForm ({ userDoc, setIsPageLoading, onSaveRoute, allowSkip, ...props }) {
+function JobTypeForm({ userDoc, setIsPageLoading, onSaveRoute, allowSkip, ...props }) {
   const router = useRouter()
   const [step, setStep] = useState(1)
   const Component = Steps[step]
@@ -79,16 +92,15 @@ function JobTypeForm ({ userDoc, setIsPageLoading, onSaveRoute, allowSkip, ...pr
           }}
         >
           <Component register={register} errors={errors} userDoc={userDoc} setNextStep={setNextStep} />
-          <div className='absolute bottom-20 right-20' onClick={() => setStep(s => s - 1)}>go back</div>
+          <div className='absolute bottom-20 right-20 cursor-pointer' onClick={() => setStep(s => s - 1)}>go back</div>
         </div>
       </form>
     </>
   )
 }
 
-function Step1 ({ userDoc, register, setNextStep, errors }) {
+function Step1({ userDoc, register, setNextStep, errors }) {
   return (
-
     <>
       <div>
         <label htmlFor='position' className='block mb-4 ml-4 font-medium text-gray-500'>
@@ -116,7 +128,7 @@ function Step1 ({ userDoc, register, setNextStep, errors }) {
   )
 }
 
-function Step2 ({ userDoc, register, errors, setStep }) {
+function Step2({ userDoc, register, errors, setNextStep }) {
   return (
     <>
       <div className='items-center content-start col-span-6 sm:col-span-3'>
@@ -125,21 +137,55 @@ function Step2 ({ userDoc, register, errors, setStep }) {
         </label>
 
         <div className=' grid grid-cols-6 xl:grid-cols-12 gap-2 w-full'>
-          <TechStackCard src='https://img.icons8.com/ios/50/000000/postgreesql.png' value='postgres' register={register} />
-          <TechStackCard src='https://img.icons8.com/dotty/80/000000/react.png' value='react' register={register} />
-
+          {defaultTechnologies.map((t, ix) => (<TechStackCard key={ix} src={t.src} value={t.value} register={register} />))}
         </div>
 
       </div>
-
-      <Button onClick={() => setStep(s => s + 1)}>Next</Button>
+      <div className='flex items-center m-2'>
+        <div className='block w-20'>
+          <Button fluid compact primary onClick={setNextStep}>next</Button>
+        </div>
+        <div className='text-xs ml-4'>
+          hit Enter ↵
+        </div>
+      </div>
     </>
   )
 }
 
-const TechStackCard = ({ src, value, register }) => {
+function Step3({ userDoc, register, errors }) {
   return (
-    <div className='flex flex-col cursor-pointer shadow-md rounded-md bg-gray-100'>
+    <>
+      <div>
+        <label htmlFor='avgSalary' className='block text-sm font-medium text-gray-700'>
+          what is the average monthly salary in USD?
+        </label>
+
+        <input
+          autoFocus
+          className='bg-transparent border-0 border-b-2 border-gray-300 focus:outline-none focus:ring-0 focus:border-indigo-600 '
+          placeholder='type your answer here'
+          type='text' name='position' id='position'
+          required
+          {...register('avgSalary', { required: true, maxLength: 64 })}
+        />
+      </div>
+      {errors.avgSalary && <div className='m-2 text-sm text-red-500'>this can't be blank</div>}
+      <div className='flex items-center m-2'>
+        <div className='block w-20'>
+          <Button fluid compact primary type='submit'>submit</Button>
+        </div>
+        <div className='text-xs ml-4'>
+          hit Enter ↵
+        </div>
+      </div>
+    </>
+  )
+}
+
+const TechStackCard = ({ key, src, value, register }) => {
+  return (
+    <div key={key} className='flex flex-col cursor-pointer shadow-md rounded-md bg-gray-100'>
       <label className='flex flex-col items-center'>
         <input
           {...register('stack', { required: true })}
@@ -157,32 +203,6 @@ const TechStackCard = ({ src, value, register }) => {
         </span>
       </label>
     </div>
-  )
-}
-
-function Step3 ({ userDoc, register }) {
-  return (
-    <>
-      <div className='flex flex-col justify-center m-8 align-center'>
-        <div className='col-span-6 sm:col-span-2'>
-          <label htmlFor='salaryMin' className='block text-sm font-medium text-gray-700'>
-            salaryMin
-          </label>
-          <div className='flex mt-1 rounded-md shadow-sm'>
-            <input
-              type='number'
-              name='salaryMin'
-              id='salaryMin'
-              min='0'
-              step='1'
-              className='focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-14 pr-12 sm:text-sm border-gray-300 rounded-md shadow-sm'
-              {...register('salaryMin', { required: true })}
-            />
-          </div>
-        </div>
-      </div>
-      <Button type='submit'>submit</Button>
-    </>
   )
 }
 
