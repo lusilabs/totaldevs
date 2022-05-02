@@ -14,7 +14,7 @@ import Banner from '@/components/banner'
 
 const createCheckoutSession = httpsCallable(functions, 'stripe-createCheckoutSession')
 const updateMatchDocOnServer = httpsCallable(functions, 'updateMatchDocOnServer')
-const INITIAL_PAYMENT_PCT = 0.20
+const INITIAL_PAYMENT_PCT = 0.25
 
 const handleConfirmMatch = async match => {
   const { data } = await createCheckoutSession({ match })
@@ -78,7 +78,7 @@ export default function MatchView({ userDoc, ...props }) {
     switch (status) {
       case 'documents_signed': // accepting match
         await sleep(2000)
-        await handleAcceptMatch(routerMatchID)
+        await handleConfirmMatch(routerMatchID)
         break
       case 'dev_interested': // offering position
         await sleep(2000)

@@ -73,8 +73,8 @@ export const JobsToMatch = ({ userDoc }) => {
   const getterMapping = {
     stack: (row) => row.stack?.join(', '),
     compatibility: (row) => {
-      const availableStack = start === 'Dev' ? selectedDev?.stack : row.stack
-      const targetStack = start === 'Dev' ? row.stack : selectedJob?.stack
+      const availableStack = start === 'dev' ? selectedDev?.stack : row.stack
+      const targetStack = start === 'dev' ? row.stack : selectedJob?.stack
 
       if (availableStack && targetStack) {
         return (targetStack?.reduce((accumulated, tech) => accumulated + availableStack.indexOf(tech) !== -1, 0) /
@@ -90,22 +90,22 @@ export const JobsToMatch = ({ userDoc }) => {
     }
   }
   const tableMapping = {
-    Dev: {
+    dev: {
       tableProps: {
         columns: ['displayName', 'email', 'stack', 'jobSearch'],
         data: devs,
         onSelect: setSelectedDev,
-        type: 'Dev'
+        type: 'dev'
       },
       entity: selectedDev,
       detailProps: ['displayName', 'email', 'stack', 'jobSearch']
     },
-    Position: {
+    position: {
       tableProps: {
         columns: ['companyName', 'position', 'salaryMin', 'salaryMax', 'title', 'stack'],
         data: jobs,
         onSelect: setSelectedJob,
-        type: 'Position'
+        type: 'position'
       },
       entity: selectedJob,
       detailProps: ['description', 'position', 'salary', 'title', 'stack']
@@ -118,7 +118,7 @@ export const JobsToMatch = ({ userDoc }) => {
       <div>
         <Label htmlFor='startWith' title='Start by Dev or Position?' />
         <Select
-          value={start} options={['Dev', 'Position']} onChange={({ target: { value } }) => {
+          value={start} options={['dev', 'position']} onChange={({ target: { value } }) => {
             setNext(start)
             setStart(value)
             setSelectedJob(null)
