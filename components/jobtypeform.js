@@ -15,11 +15,11 @@ const Steps = [Step1, Step2, Step3]
 
 function JobTypeForm ({ userDoc, setIsPageLoading, onSaveRoute, allowSkip, ...props }) {
   const router = useRouter()
-  const [step, setStep] = useState(0)
+  const [step, setStep] = useState(1)
   const Component = Steps[step]
   const { register, handleSubmit, watch, getValues, formState: { errors }, reset } = useForm({ defaultValues: {} })
 
-  console.log(watch(['position', 'avgSalary']))
+  console.log(watch(['position', 'avgSalary', 'stack']))
 
   const generateRandomPhoto = async () => {
     const unsplashURL = 'https://source.unsplash.com/random/300x300/?software'
@@ -79,7 +79,7 @@ function JobTypeForm ({ userDoc, setIsPageLoading, onSaveRoute, allowSkip, ...pr
           }}
         >
           <Component register={register} errors={errors} userDoc={userDoc} setNextStep={setNextStep} />
-          <div onClick={() => setStep(s => s - 1)}>go back</div>
+          <div className='absolute bottom-20 right-20' onClick={() => setStep(s => s - 1)}>go back</div>
         </div>
       </form>
     </>
@@ -121,44 +121,42 @@ function Step2 ({ userDoc, register, errors, setStep }) {
     <>
       <div className='items-center content-start col-span-6 sm:col-span-3'>
         <label htmlFor='position' className='block p-2 text-sm font-medium text-gray-700'>
-          position
+          what tech stack will the position be using?
         </label>
-        <div className='flex flex-col'>
 
-          <div>
-            <input
-              {...register('position', { required: true })}
-              id='public'
-              name='position'
-              type='radio'
-              value='public'
-              className='w-4 h-4 ml-1 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500'
-            />
-            <label htmlFor='permanent' className='ml-2 text-gray-700 text-md'>
-              permanent
-            </label>
-          </div>
+        <div className=' grid grid-cols-6 xl:grid-cols-12 gap-2 w-full'>
+          <TechStackCard src='https://img.icons8.com/ios/50/000000/postgreesql.png' value='postgres' register={register} />
+          <TechStackCard src='https://img.icons8.com/dotty/80/000000/react.png' value='react' register={register} />
 
-          <div>
-            <input
-              {...register('position', { required: true })}
-              id='private'
-              name='position'
-              type='radio'
-              value='private'
-              className='w-4 h-4 ml-1 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500'
-            />
-            <label htmlFor='one-time' className='ml-2 text-gray-700 text-md'>
-              one-time job
-            </label>
-          </div>
-
-          {errors.position && <div className='m-2 text-sm text-red-500'>select a type of position</div>}
         </div>
+
       </div>
 
       <Button onClick={() => setStep(s => s + 1)}>Next</Button>
     </>
+  )
+}
+
+const TechStackCard = ({ src, value, register }) => {
+  return (
+    <div className='flex flex-col cursor-pointer shadow-md rounded-md bg-gray-100'>
+      <label className='flex flex-col items-center'>
+        <input
+          {...register('stack', { required: true })}
+          id={value}
+          value={value}
+          name='stack'
+          type='checkbox'
+          className='peer hidden'
+        />
+        <img src={src} className='cursor-pointer w-6 mt-2' />
+        <span
+          className='block text-xs cursor-pointer select-none rounded-md p-2 text-center peer-checked:text-blue-500'
+        >
+          {value}
+        </span>
+      </label>
+    </div>
   )
 }
 
