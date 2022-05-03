@@ -12,21 +12,37 @@ import { useRouter } from 'next/router'
 import JobDisplay from '@/components/jobdisplay'
 
 const defaultTechnologies = [
-  { src: 'https://img.icons8.com/ios/50/000000/postgreesql.png', value: 'postgres' },
-  { src: 'https://img.icons8.com/dotty/80/000000/react.png', value: 'react' },
-  { src: 'https://img.icons8.com/ios/50/000000/javascript.png', value: 'javascript' },
+  { src: 'https://img.icons8.com/office/50/000000/react.png', value: 'react' },
+  { src: 'https://img.icons8.com/color/50/000000/vue-js.png', value: 'vue' },
+  { src: 'https://img.icons8.com/color/50/000000/angularjs.png', value: 'angular' },
+  { src: 'https://img.icons8.com/fluency/50/000000/laravel.png', value: 'laravel' },
+  { src: 'https://img.icons8.com/color/50/000000/angularjs.png', value: 'angularjs' },
+  { src: 'https://img.icons8.com/windows/50/000000/ruby-on-rails.png', value: 'rails' },
+  { src: 'https://img.icons8.com/ios-filled/50/000000/jquery.png', value: 'jQuery' },
+  { src: 'https://img.icons8.com/external-tal-revivo-color-tal-revivo/50/000000/external-net-or-dot-net-a-software-framework-developed-by-microsoft-logo-color-tal-revivo.png', value: '.net' },
 
-  { src: 'https://img.icons8.com/ios/50/000000/postgreesql.png', value: 'postgres' },
-  { src: 'https://img.icons8.com/ios/50/000000/postgreesql.png', value: 'postgres' },
-  { src: 'https://img.icons8.com/ios/50/000000/postgreesql.png', value: 'postgres' },
+  { src: 'https://img.icons8.com/color/50/000000/python.png', value: 'python' },
+  { src: 'https://img.icons8.com/color/50/000000/java-coffee-cup-logo--v1.png"', value: 'java' },
+  { src: 'https://img.icons8.com/officel/50/000000/php-logo.png', value: 'php' },
+  { src: 'https://img.icons8.com/color/50/000000/golang.png', value: 'go' },
+  { src: 'https://img.icons8.com/color/50/000000/swift.png', value: 'swift' },
+  { src: 'https://img.icons8.com/color/50/000000/c-sharp-logo.png', value: 'C#' },
+  { src: 'https://img.icons8.com/color/50/000000/typescript.png', value: 'typescript' },
 
-  { src: 'https://img.icons8.com/ios/50/000000/postgreesql.png', value: 'postgres' },
-  { src: 'https://img.icons8.com/ios/50/000000/postgreesql.png', value: 'postgres' }
+  { src: 'https://img.icons8.com/dusk/50/000000/database.png', value: 'sql' },
+  { src: 'https://img.icons8.com/fluency/50/000000/database.png', value: 'no sql' },
+  { src: 'https://img.icons8.com/color/50/000000/kubernetes.png', value: 'k8s' },
+  { src: 'https://img.icons8.com/color/50/000000/docker.png', value: 'docker' },
+  { src: 'https://img.icons8.com/color/50/000000/terraform.png', value: 'terraform' },
+  { src: 'https://img.icons8.com/color/50/000000/amazon-web-services.png', value: 'aws' },
+  { src: 'https://img.icons8.com/color/50/000000/google-cloud-platform.png', value: 'gcp' },
+  { src: 'https://img.icons8.com/color/50/000000/azure-1.png', value: 'azure' },
+  { src: 'https://img.icons8.com/windows/32/000000/digital-ocean.png', value: 'digital ocean' }
 ]
 
 const Steps = [Step1, Step2, Step3]
 
-function JobTypeForm({ userDoc, setIsPageLoading, onSaveRoute, allowSkip, ...props }) {
+function JobTypeForm ({ userDoc, setIsPageLoading, onSaveRoute, allowSkip, ...props }) {
   const router = useRouter()
   const [step, setStep] = useState(1)
   const Component = Steps[step]
@@ -99,7 +115,7 @@ function JobTypeForm({ userDoc, setIsPageLoading, onSaveRoute, allowSkip, ...pro
   )
 }
 
-function Step1({ userDoc, register, setNextStep, errors }) {
+function Step1 ({ userDoc, register, setNextStep, errors }) {
   return (
     <>
       <div>
@@ -110,7 +126,7 @@ function Step1({ userDoc, register, setNextStep, errors }) {
           // className='flex-1 block w-full border-gray-300 rounded-none focus:ring-indigo-500 focus:border-indigo-500 rounded-r-md sm:text-sm'
           autoFocus
           className='bg-transparent border-0 border-b-2 border-gray-300 focus:outline-none focus:ring-0 focus:border-indigo-600 '
-          placeholder='type your answer here'
+          placeholder='e.g. frontend engineer'
           type='text' name='position' id='position'
           {...register('position', { required: true, maxLength: 64 })}
         />
@@ -128,15 +144,15 @@ function Step1({ userDoc, register, setNextStep, errors }) {
   )
 }
 
-function Step2({ userDoc, register, errors, setNextStep }) {
+function Step2 ({ userDoc, register, errors, setNextStep }) {
   return (
     <>
-      <div className='items-center content-start col-span-6 sm:col-span-3'>
+      <div className='items-center content-start'>
         <label htmlFor='position' className='block p-2 text-sm font-medium text-gray-700'>
-          what tech stack will the position be using?
+          what technologies will the position be using?
         </label>
 
-        <div className=' grid grid-cols-6 xl:grid-cols-12 gap-2 w-full'>
+        <div className='w-full grid gap-1 grid-cols-3 md:grid-cols-8'>
           {defaultTechnologies.map((t, ix) => (<TechStackCard key={ix} src={t.src} value={t.value} register={register} />))}
         </div>
 
@@ -153,18 +169,31 @@ function Step2({ userDoc, register, errors, setNextStep }) {
   )
 }
 
-function Step3({ userDoc, register, errors }) {
+function Step3 ({ userDoc, register, errors }) {
   return (
     <>
       <div>
         <label htmlFor='avgSalary' className='block text-sm font-medium text-gray-700'>
-          what is the average monthly salary in USD?
+          what is the average annual salary in USD?
+          (this is the only thing you will pay)
+          {/* junior
+          20k
+          this person needs constant guidance */}
+          {/* midlevel
+          40k
+          this person needs guidance regularly
+          */}
+          {/*
+          senior
+          70k
+           */}
+
         </label>
 
         <input
           autoFocus
           className='bg-transparent border-0 border-b-2 border-gray-300 focus:outline-none focus:ring-0 focus:border-indigo-600 '
-          placeholder='type your answer here'
+          placeholder=''
           type='text' name='position' id='position'
           required
           {...register('avgSalary', { required: true, maxLength: 64 })}
@@ -195,7 +224,7 @@ const TechStackCard = ({ key, src, value, register }) => {
           type='checkbox'
           className='peer hidden'
         />
-        <img src={src} className='cursor-pointer w-6 mt-2' />
+        <img src={src} className='cursor-pointer w-10 mt-2 grayscale peer-checked:grayscale-0' />
         <span
           className='block text-xs cursor-pointer select-none rounded-md p-2 text-center peer-checked:text-blue-500'
         >
