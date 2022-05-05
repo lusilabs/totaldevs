@@ -42,9 +42,17 @@ const defaultTechnologies = [
 
 const Steps = [Step1, Step2, Step3]
 
+const mergeSearchResults = (prev, names) => {
+  const prevNames = prev.map(({ value }) => value)
+  const dedupedNames = new Set([...prevNames, ...names])
+  const deduped = [...dedupedNames].map(name => ({ key: name, value: name, text: name }))
+  return deduped
+}
+
 function JobTypeForm ({ userDoc, setIsPageLoading, onSaveRoute, allowSkip, ...props }) {
   const router = useRouter()
-  const [step, setStep] = useState(1)
+  const [step, setStep] = useState(0)
+  const [stack, setStack] = useState([])
   const Component = Steps[step]
   const { register, handleSubmit, watch, getValues, formState: { errors }, reset } = useForm({ defaultValues: {} })
 
@@ -61,6 +69,7 @@ function JobTypeForm ({ userDoc, setIsPageLoading, onSaveRoute, allowSkip, ...pr
     await sleep(1000)
     const jref = collection(db, 'jobs')
     const photoURL = await generateRandomPhoto()
+    data.stack = [...(new Set([...data.stack, ...stack]))]
     await addDoc(jref, {
       ...data,
       photoURL,
@@ -101,13 +110,19 @@ function JobTypeForm ({ userDoc, setIsPageLoading, onSaveRoute, allowSkip, ...pr
     <>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div
-          // className='flex flex-col justify-center m-8 align-center bg-fixed'
           className='absolute top-0 w-full h-full bg-center bg-cover justify-center flex items-center flex-col'
           style={{
             backgroundImage: "url('https://images.pexels.com/photos/911738/pexels-photo-911738.jpeg')"
           }}
         >
-          <Component register={register} errors={errors} userDoc={userDoc} setNextStep={setNextStep} />
+          <Component
+            register={register}
+            errors={errors}
+            userDoc={userDoc}
+            setNextStep={setNextStep}
+            stack={stack}
+            setStack={setStack}
+          />
           <div className='absolute bottom-20 right-20 cursor-pointer' onClick={() => setStep(s => s - 1)}>go back</div>
         </div>
       </form>
@@ -123,7 +138,6 @@ function Step1 ({ userDoc, register, setNextStep, errors }) {
           what position is this?
         </label>
         <input
-          // className='flex-1 block w-full border-gray-300 rounded-none focus:ring-indigo-500 focus:border-indigo-500 rounded-r-md sm:text-sm'
           autoFocus
           className='bg-transparent border-0 border-b-2 border-gray-300 focus:outline-none focus:ring-0 focus:border-indigo-600 '
           placeholder='e.g. frontend engineer'
@@ -144,18 +158,52 @@ function Step1 ({ userDoc, register, setNextStep, errors }) {
   )
 }
 
-function Step2 ({ userDoc, register, errors, setNextStep }) {
+function Step2 ({ userDoc, register, errors, setNextStep, stack, setStack }) {
+  const [searchQuery, setSearchQuery] = useState('')
+  const [dropdownOptions, setDropdownOptions] = useState([])
+
+  const fetchAndSetDropdownOptions = async url => {
+    const response = await fetch(url)
+    const { items } = await response.json()
+    if (items && items.length > 0) setDropdownOptions(prev => mergeSearchResults(prev, items.map(({ name }) => name)))
+  }
+
+  const handleSearchChange = async (e, { searchQuery: query }) => setSearchQuery(query)
+  const handleDropdownChange = (e, { value }) => setStack(value)
+  const handleDropdownOnClose = (e, data) => setSearchQuery('')
+  useEffect(() => {
+    const searchURL = `https://api.stackexchange.com/2.3/tags?pagesize=25&order=desc&sort=popular&inname=${searchQuery}&site=stackoverflow`
+    const timer = setTimeout(() => {
+      if (searchQuery !== '') fetchAndSetDropdownOptions(searchURL)
+    }, 300)
+    return () => clearTimeout(timer)
+  }, [searchQuery])
+
   return (
     <>
       <div className='items-center content-start'>
         <label htmlFor='position' className='block p-2 text-sm font-medium text-gray-700'>
           what technologies will the position be using?
         </label>
-
         <div className='w-full grid gap-1 grid-cols-3 md:grid-cols-8'>
-          {defaultTechnologies.map((t, ix) => (<TechStackCard key={ix} src={t.src} value={t.value} register={register} />))}
+          {defaultTechnologies.map((t, ix) => (<TechStackCard src={t.src} value={t.value} register={register} />))}
         </div>
-
+        <span className='text-gray-700 mt-4 block'>
+          not among those? try searching for it
+        </span>
+        <Dropdown
+          onChange={handleDropdownChange}
+          onClose={handleDropdownOnClose}
+          onSearchChange={handleSearchChange}
+          closeOnChange
+          options={dropdownOptions}
+          searchQuery={searchQuery}
+          value={stack}
+          fluid
+          multiple
+          selection
+          search
+        />
       </div>
       <div className='flex items-center m-2'>
         <div className='block w-20'>
@@ -212,9 +260,9 @@ function Step3 ({ userDoc, register, errors }) {
   )
 }
 
-const TechStackCard = ({ key, src, value, register }) => {
+const TechStackCard = ({ src, value, register }) => {
   return (
-    <div key={key} className='flex flex-col cursor-pointer shadow-md rounded-md bg-gray-100'>
+    <div className='flex flex-col cursor-pointer shadow-md rounded-md bg-gray-100'>
       <label className='flex flex-col items-center'>
         <input
           {...register('stack', { required: true })}
