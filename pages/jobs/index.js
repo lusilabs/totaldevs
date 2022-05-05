@@ -10,7 +10,7 @@ import { useDocuments } from '@/utils/hooks'
 import Link from 'next/link'
 import CreateButton from '@/components/createbutton'
 
-function JobList ({ userDoc, ...props }) {
+function JobList({ userDoc, ...props }) {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(true)
   const [matchesMap, setMatchesMap] = useState({})
@@ -57,7 +57,7 @@ function JobList ({ userDoc, ...props }) {
   )
 }
 
-function Job ({ job, numPendingRequests, ...props }) {
+function Job({ job, numPendingRequests, ...props }) {
   return (
     <Link href={`/jobs/${job.id}`}>
       <div className='group relative cursor-pointer'>
@@ -67,7 +67,7 @@ function Job ({ job, numPendingRequests, ...props }) {
         </div>
         <div className='mt-4 flex justify-between items-start'>
           <p className='mt-1 text-md text-gray-500'>{job.title}</p>
-          <p className='text-md font-medium text-gray-900'>$ {job.salaryMin} {job.salaryMax && ` - ${job.salaryMax}`} </p>
+          <p className='text-md font-medium text-gray-900'>$ {job.avgSalary} </p>
           {job.status === 'locked' && <span className='px-2 inline-flex text-md leading-5 font-semibold rounded-full bg-green-100 text-green-800'> up to date.  </span>}
           {job.status === 'matching' && <span className='px-2 inline-flex text-md leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800'> matching </span>}
         </div>

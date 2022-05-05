@@ -18,7 +18,7 @@ const mergeSearchResults = (prev, names) => {
   return deduped
 }
 
-function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
+function JobForm({ userDoc, onSaveRoute, allowSkip, ...props }) {
   const router = useRouter()
   const [saving, setSaving] = useState(false)
   const [pdfURL, setPdfURL] = useState('')
@@ -83,10 +83,10 @@ function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
   }
 
   const onSubmit = async data => {
-    if (data.salaryMax && Number(data.salaryMax) < Number(data.avgSalary)) {
-      toast.error('max salary cannot be smaller than min salary')
-      return
-    }
+    // if (data.salaryMax && Number(data.salaryMax) < Number(data.avgSalary)) {
+    //   toast.error('max salary cannot be smaller than min salary')
+    //   return
+    // }
     setSaving(true)
     let url
     if (!photoURL) {
@@ -99,13 +99,11 @@ function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
     if (jobID) {
       const jref = doc(db, 'jobs', jobID)
       await setDoc(jref, {
-        title: data.title,
         stack,
         position: data.position,
         description: data.description,
         avgSalary: data.avgSalary,
         jobURL: data.jobURL,
-        jobTitle: data.jobTitle,
         pdfURL,
         pdfName,
         photoURL: url,
@@ -116,13 +114,11 @@ function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
     } else {
       const jref = collection(db, 'jobs')
       await addDoc(jref, {
-        title: data.title,
         stack,
         position: data.position,
         description: data.description,
         avgSalary: data.avgSalary,
         jobURL: data.jobURL,
-        jobTitle: data.jobTitle,
         pdfURL,
         pdfName,
         photoURL: photoURL ?? url,
@@ -184,7 +180,8 @@ function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
           <div className='mt-4 overflow-hidden rounded-lg shadow'>
             <div className='px-4 py-5 bg-white sm:p-6'>
               <div className='grid grid-cols-6 gap-6'>
-                <div className='col-span-6 sm:col-span-2'>
+
+                {/* <div className='col-span-6 sm:col-span-2'>
                   <label htmlFor='title' className='block text-sm font-medium text-gray-700'>
                     position
                   </label>
@@ -220,21 +217,21 @@ function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
                     <option value='security engineer'>security engineer</option>
                     <option value='dev ops'>dev ops</option>
                   </select>
-                </div>
+                </div> */}
 
-                <div className='col-span-6 sm:col-span-2'>
-                  <label htmlFor='company-website' className='block text-sm font-medium text-gray-700'>
-                    (official job title)
+                <div className='col-span-6 sm:col-span-3'>
+                  <label htmlFor='position' className='block text-sm font-medium text-gray-700'>
+                    position
                   </label>
                   <div className='flex mt-1 rounded-md shadow-sm'>
                     <input
-                      type='text' name='company-website' id='company-website' className='flex-1 block w-full border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 rounded-md sm:text-sm' placeholder='e.g. support engineer'
-                      {...register('jobTitle', { required: false, maxLength: 256 })}
+                      type='text' name='position' id='position' className='flex-1 block w-full border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 rounded-md sm:text-sm' placeholder='e.g. support engineer'
+                      {...register('position', { required: false, maxLength: 256 })}
                     />
                   </div>
                 </div>
 
-                <div className='col-span-6 sm:col-span-2'>
+                <div className='col-span-6 sm:col-span-3'>
                   <label htmlFor='company-website' className='block text-sm font-medium text-gray-700'>
                     (job posting url)
                   </label>
@@ -445,7 +442,7 @@ function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
                     <div className='flex items-center flex-1 w-0'>
                       {pdfName && <> <svg className='flex-shrink-0 w-5 h-5 text-gray-400' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='currentColor' aria-hidden='true'>
                         <path fillRule='evenodd' d='M8 4a3 3 0 00-3 3v4a5 5 0 0010 0V7a1 1 0 112 0v4a7 7 0 11-14 0V7a5 5 0 0110 0v4a3 3 0 11-6 0V7a1 1 0 012 0v4a1 1 0 102 0V7a3 3 0 00-3-3z' clipRule='evenodd' />
-                                     </svg>
+                      </svg>
                         <span className='flex-1 w-0 ml-2 truncate'>
                           {pdfName}
                         </span>
@@ -455,7 +452,7 @@ function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
                             download
                           </a>
                         </div>
-                                  </>}
+                      </>}
                     </div>
                   </div>
                   <div className='flex justify-center px-6 pt-5 pb-6 mt-1 border-2 border-gray-300 border-dashed rounded-md'>
@@ -517,7 +514,7 @@ function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
             </div>
           </div>
         </form>
-                    </>}
+      </>}
     </div>
   )
 }
