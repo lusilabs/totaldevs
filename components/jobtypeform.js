@@ -49,15 +49,14 @@ const mergeSearchResults = (prev, names) => {
   return deduped
 }
 
-function JobTypeForm ({ userDoc, setIsPageLoading, onSaveRoute, allowSkip, ...props }) {
+function JobTypeForm({ userDoc, setIsPageLoading, onSaveRoute, allowSkip, ...props }) {
   const router = useRouter()
   const [step, setStep] = useState(0)
   const [stack, setStack] = useState([])
   const Component = Steps[step]
   const { register, handleSubmit, watch, getValues, setValue, formState: { errors }, reset } = useForm({ defaultValues: {} })
 
-  document.addEventListener('keydown', e => console.log({ e }))
-  document.onkeydown = (e) => console.log(e)
+  // document.onkeydown = (e) => console.log(e)
   console.log(watch(['position', 'avgSalary', 'stack']))
 
   const generateRandomPhoto = async () => {
@@ -92,21 +91,23 @@ function JobTypeForm ({ userDoc, setIsPageLoading, onSaveRoute, allowSkip, ...pr
 
   const setNextStep = () => {
     const { position, stack } = getValues()
+    console.log({ stack, step, position, errors })
     if (step === 0) {
       if (!position) {
         errors.position = true
         return
       }
       errors.position = false
+      setStep(s => s + 1)
     }
     if (step === 1) {
-      if (stack.length === 0) {
-        errors.stack = true
+      if (stack.length && stack.length > 0) {
+        errors.stack = false
+        setStep(s => s + 1)
         return
       }
-      errors.stack = false
+      errors.stack = true
     }
-    setStep(s => s + 1)
   }
   return (
     <>
@@ -126,14 +127,14 @@ function JobTypeForm ({ userDoc, setIsPageLoading, onSaveRoute, allowSkip, ...pr
             setStack={setStack}
             setValue={setValue}
           />
-          <div className='absolute bottom-20 right-20 cursor-pointer' onClick={() => setStep(s => s - 1)}>go back</div>
+          {step > 0 && <div className='absolute bottom-20 right-20 cursor-pointer' onClick={() => setStep(s => s - 1)}>go back</div>}
         </div>
       </form>
     </>
   )
 }
 
-function Step1 ({ userDoc, register, setNextStep, errors }) {
+function Step1({ userDoc, register, setNextStep, errors }) {
   return (
     <>
       <div>
@@ -161,9 +162,19 @@ function Step1 ({ userDoc, register, setNextStep, errors }) {
   )
 }
 
-function Step2 ({ userDoc, register, errors, setNextStep, stack, setStack }) {
+function Step2({ userDoc, register, errors, setNextStep, stack, setStack }) {
   const [searchQuery, setSearchQuery] = useState('')
   const [dropdownOptions, setDropdownOptions] = useState([])
+  // const listeners = useRef()
+
+  // document.addEventListener('keydown', function (e) {
+  //   if (e.key === 'Enter') {
+  //     setNextStep()
+  //   }
+  // })
+  // useEffect(() => {
+  //   return document.removeEventListener('keydown', setNextStep)
+  // })
 
   const fetchAndSetDropdownOptions = async url => {
     const response = await fetch(url)
@@ -227,7 +238,7 @@ const SENIORITIES = [
   { name: 'senior', src: 'https://img.icons8.com/external-itim2101-lineal-color-itim2101/64/000000/external-hipster-avatar-itim2101-lineal-color-itim2101.png', avgSalary: 60_000.00, description: 'can lead and mentor others' }
 ]
 
-function Step3 ({ userDoc, register, errors, setValue }) {
+function Step3({ userDoc, register, errors, setValue }) {
   const [seniorityDescription, setSeniorityDescription] = useState('')
   const selectSeniority = sr => {
     setValue('avgSalary', sr.avgSalary)
@@ -245,7 +256,7 @@ function Step3 ({ userDoc, register, errors, setValue }) {
   // }
   const SeniorityCard = ({ sr }) => {
     return (
-      <div className='flex flex-col cursor-pointer shadow-md rounded-md bg-gray-100'>
+      <div key={sr.name} className='flex flex-col cursor-pointer shadow-md rounded-md bg-gray-100'>
         <label
           className='flex flex-col items-center'
         // onClick={() => selectSeniority(sr)}
