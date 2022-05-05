@@ -51,10 +51,10 @@ const mergeSearchResults = (prev, names) => {
 
 function JobTypeForm ({ userDoc, setIsPageLoading, onSaveRoute, allowSkip, ...props }) {
   const router = useRouter()
-  const [step, setStep] = useState(0)
+  const [step, setStep] = useState(2)
   const [stack, setStack] = useState([])
   const Component = Steps[step]
-  const { register, handleSubmit, watch, getValues, formState: { errors }, reset } = useForm({ defaultValues: {} })
+  const { register, handleSubmit, watch, getValues, setValue, formState: { errors }, reset } = useForm({ defaultValues: {} })
 
   console.log(watch(['position', 'avgSalary', 'stack']))
 
@@ -122,6 +122,7 @@ function JobTypeForm ({ userDoc, setIsPageLoading, onSaveRoute, allowSkip, ...pr
             setNextStep={setNextStep}
             stack={stack}
             setStack={setStack}
+            setValue={setValue}
           />
           <div className='absolute bottom-20 right-20 cursor-pointer' onClick={() => setStep(s => s - 1)}>go back</div>
         </div>
@@ -186,7 +187,7 @@ function Step2 ({ userDoc, register, errors, setNextStep, stack, setStack }) {
           what technologies will the position be using?
         </label>
         <div className='w-full grid gap-1 grid-cols-3 md:grid-cols-8'>
-          {defaultTechnologies.map((t, ix) => (<TechStackCard src={t.src} value={t.value} register={register} />))}
+          {defaultTechnologies.map((t, ix) => (<TechStackCard key={ix} src={t.src} value={t.value} register={register} />))}
         </div>
         <span className='text-gray-700 mt-4 block'>
           not among those? try searching for it
@@ -217,35 +218,86 @@ function Step2 ({ userDoc, register, errors, setNextStep, stack, setStack }) {
   )
 }
 
-function Step3 ({ userDoc, register, errors }) {
+const SENIORITIES = [
+  { name: 'junior', src: 'https://img.icons8.com/external-ddara-lineal-color-ddara/64/000000/external-hipster-user-avatar-ddara-lineal-color-ddara.png', avgSalary: 20_000.00, description: 'needs constant guidance' },
+  { name: 'midlevel', src: 'https://img.icons8.com/external-filled-outline-icons-maxicons/85/000000/external-avatar-avatar-filled-outline-filled-outline-icons-maxicons-14.png', avgSalary: 35_000.00, description: 'can mostly work on their own' },
+  { name: 'senior', src: 'https://img.icons8.com/external-itim2101-lineal-color-itim2101/64/000000/external-hipster-avatar-itim2101-lineal-color-itim2101.png', avgSalary: 60_000.00, description: 'can lead and mentor others' }
+]
+
+function Step3 ({ userDoc, register, errors, setValue }) {
+  const [seniorityDescription, setSeniorityDescription] = useState('')
+  const selectSeniority = sr => {
+    setValue('avgSalary', sr.avgSalary)
+    setSeniorityDescription(sr.description)
+  }
+  // this doesn't work because they don't exist before rendering, we need to use useRef?
+  // const inputs = document.querySelectorAll('input[name="seniority"]')
+  // console.log({ inputs })
+  // for (let i = 0; i < inputs.length; i++) {
+  //   inputs[i].addEventListener('click', function (e) {
+  //     console.log({ e })
+  //     const val = this.value // this == the clicked radio,
+  //     console.log(val)
+  //   })
+  // }
+  const SeniorityCard = ({ sr }) => {
+    return (
+      <div className='flex flex-col cursor-pointer shadow-md rounded-md bg-gray-100'>
+        <label
+          className='flex flex-col items-center'
+        // onClick={() => selectSeniority(sr)}
+        >
+          <input
+            name='seniority'
+            type='radio'
+            className='peer hidden'
+            // onclick='select()'
+            // somehow this prevents the input from being clicked?
+            onChange={() => selectSeniority(sr)}
+          />
+          <img src={sr.src} className='cursor-pointer w-10 mt-2 grayscale peer-checked:grayscale-0' />
+          <span
+            className='block text-xs cursor-pointer select-none rounded-md p-2 text-center peer-checked:text-blue-500'
+          >
+            {sr.name}
+          </span>
+        </label>
+      </div>
+
+    )
+  }
+
   return (
     <>
       <div>
         <label htmlFor='avgSalary' className='block text-sm font-medium text-gray-700'>
-          what is the average annual salary in USD?
-          (this is the only thing you will pay)
-          {/* junior
-          20k
-          this person needs constant guidance */}
-          {/* midlevel
-          40k
-          this person needs guidance regularly
-          */}
-          {/*
-          senior
-          70k
-           */}
-
+          <div>
+            what is the average annual salary in USD?
+          </div>
+          <div className='w-full grid gap-1 grid-cols-3 m-2'>
+            {SENIORITIES.map((sr, ix) => (<SeniorityCard sr={sr} />))}
+          </div>
+          {seniorityDescription &&
+            <>
+              <span className='text-indigo-600'>{seniorityDescription}</span>
+            </>}
         </label>
 
         <input
           autoFocus
-          className='bg-transparent border-0 border-b-2 border-gray-300 focus:outline-none focus:ring-0 focus:border-indigo-600 '
-          placeholder=''
-          type='text' name='position' id='position'
+          className='bg-transparent border-0 border-b-2 border-gray-300 focus:outline-none focus:ring-0 focus:border-indigo-600 w-full'
+          placeholder='click any button to estimate'
+          type='text'
+          name='avgSalary'
+          id='avgSalary'
           required
-          {...register('avgSalary', { required: true, maxLength: 64 })}
+          {...register('avgSalary', { required: true, maxLength: 24 })}
         />
+        {seniorityDescription &&
+          <div className='text-xs'>
+            (you will only be charged the monthly equivalent once they pass trial period)
+          </div>}
+
       </div>
       {errors.avgSalary && <div className='m-2 text-sm text-red-500'>this can't be blank</div>}
       <div className='flex items-center m-2'>
