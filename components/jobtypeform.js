@@ -51,11 +51,13 @@ const mergeSearchResults = (prev, names) => {
 
 function JobTypeForm ({ userDoc, setIsPageLoading, onSaveRoute, allowSkip, ...props }) {
   const router = useRouter()
-  const [step, setStep] = useState(2)
+  const [step, setStep] = useState(0)
   const [stack, setStack] = useState([])
   const Component = Steps[step]
   const { register, handleSubmit, watch, getValues, setValue, formState: { errors }, reset } = useForm({ defaultValues: {} })
 
+  document.addEventListener('keydown', e => console.log({ e }))
+  document.onkeydown = (e) => console.log(e)
   console.log(watch(['position', 'avgSalary', 'stack']))
 
   const generateRandomPhoto = async () => {
@@ -189,6 +191,7 @@ function Step2 ({ userDoc, register, errors, setNextStep, stack, setStack }) {
         <div className='w-full grid gap-1 grid-cols-3 md:grid-cols-8'>
           {defaultTechnologies.map((t, ix) => (<TechStackCard key={ix} src={t.src} value={t.value} register={register} />))}
         </div>
+        {errors.stack && <div className='m-2 text-sm text-red-500'>select at least 1 tech</div>}
         <span className='text-gray-700 mt-4 block'>
           not among those? try searching for it
         </span>
@@ -324,7 +327,7 @@ const TechStackCard = ({ src, value, register }) => {
           type='checkbox'
           className='peer hidden'
         />
-        <img src={src} className='cursor-pointer w-10 mt-2 grayscale peer-checked:grayscale-0' />
+        <img src={src} className='cursor-pointer w-4 md:w-8 mt-2 grayscale peer-checked:grayscale-0' />
         <span
           className='block text-xs cursor-pointer select-none rounded-md p-2 text-center peer-checked:text-blue-500'
         >
