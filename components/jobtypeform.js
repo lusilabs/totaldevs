@@ -49,15 +49,19 @@ const mergeSearchResults = (prev, names) => {
   return deduped
 }
 
-function JobTypeForm({ userDoc, setIsPageLoading, onSaveRoute, allowSkip, ...props }) {
+function JobTypeForm ({ userDoc, setIsPageLoading, onSaveRoute, allowSkip, ...props }) {
   const router = useRouter()
   const [step, setStep] = useState(0)
   const [stack, setStack] = useState([])
   const Component = Steps[step]
-  const { register, handleSubmit, watch, getValues, setValue, formState: { errors }, reset } = useForm({ defaultValues: {} })
+  const { register, handleSubmit, watch, getValues, setValue, formState: { errors }, reset, trigger, setError } = useForm({ defaultValues: {} })
+  console.log(watch(['position', 'stack', 'avgSalary']))
 
-  // document.onkeydown = (e) => console.log(e)
-  console.log(watch(['position', 'avgSalary', 'stack']))
+  useEffect(() => {
+    const onEnter = e => e.key === 'Enter' ? setNextStep() : null
+    document.addEventListener('keydown', onEnter)
+    return () => document.removeEventListener('keydown', onEnter)
+  }, [])
 
   const generateRandomPhoto = async () => {
     const unsplashURL = 'https://source.unsplash.com/random/300x300/?software'
@@ -89,26 +93,23 @@ function JobTypeForm({ userDoc, setIsPageLoading, onSaveRoute, allowSkip, ...pro
     router.push('/jobs/?created=true')
   }
 
-  const setNextStep = () => {
+  const setNextStep = async () => {
     const { position, stack } = getValues()
     console.log({ stack, step, position, errors })
     if (step === 0) {
-      if (!position) {
-        errors.position = true
-        return
-      }
-      errors.position = false
+      const result = await trigger('position', { shouldFocus: true })
+      if (!result) return
       setStep(s => s + 1)
     }
     if (step === 1) {
-      if (stack.length && stack.length > 0) {
-        errors.stack = false
-        setStep(s => s + 1)
+      if (!stack || stack.length === 0) {
+        setError('stack', { type: 'custom', message: 'stack is empty' })
         return
       }
-      errors.stack = true
+      setStep(s => s + 1)
     }
   }
+
   return (
     <>
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -122,10 +123,10 @@ function JobTypeForm({ userDoc, setIsPageLoading, onSaveRoute, allowSkip, ...pro
             register={register}
             errors={errors}
             userDoc={userDoc}
-            setNextStep={setNextStep}
             stack={stack}
             setStack={setStack}
             setValue={setValue}
+            setNextStep={setNextStep}
           />
           {step > 0 && <div className='absolute bottom-20 right-20 cursor-pointer' onClick={() => setStep(s => s - 1)}>go back</div>}
         </div>
@@ -134,7 +135,7 @@ function JobTypeForm({ userDoc, setIsPageLoading, onSaveRoute, allowSkip, ...pro
   )
 }
 
-function Step1({ userDoc, register, setNextStep, errors }) {
+function Step1 ({ userDoc, register, setNextStep, errors }) {
   return (
     <>
       <div>
@@ -162,29 +163,19 @@ function Step1({ userDoc, register, setNextStep, errors }) {
   )
 }
 
-function Step2({ userDoc, register, errors, setNextStep, stack, setStack }) {
+function Step2 ({ userDoc, register, errors, setNextStep, stack, setStack }) {
   const [searchQuery, setSearchQuery] = useState('')
   const [dropdownOptions, setDropdownOptions] = useState([])
-  // const listeners = useRef()
-
-  // document.addEventListener('keydown', function (e) {
-  //   if (e.key === 'Enter') {
-  //     setNextStep()
-  //   }
-  // })
-  // useEffect(() => {
-  //   return document.removeEventListener('keydown', setNextStep)
-  // })
 
   const fetchAndSetDropdownOptions = async url => {
     const response = await fetch(url)
     const { items } = await response.json()
     if (items && items.length > 0) setDropdownOptions(prev => mergeSearchResults(prev, items.map(({ name }) => name)))
   }
-
   const handleSearchChange = async (e, { searchQuery: query }) => setSearchQuery(query)
   const handleDropdownChange = (e, { value }) => setStack(value)
   const handleDropdownOnClose = (e, data) => setSearchQuery('')
+
   useEffect(() => {
     const searchURL = `https://api.stackexchange.com/2.3/tags?pagesize=25&order=desc&sort=popular&inname=${searchQuery}&site=stackoverflow`
     const timer = setTimeout(() => {
@@ -238,7 +229,7 @@ const SENIORITIES = [
   { name: 'senior', src: 'https://img.icons8.com/external-itim2101-lineal-color-itim2101/64/000000/external-hipster-avatar-itim2101-lineal-color-itim2101.png', avgSalary: 60_000.00, description: 'can lead and mentor others' }
 ]
 
-function Step3({ userDoc, register, errors, setValue }) {
+function Step3 ({ userDoc, register, errors, setValue }) {
   const [seniorityDescription, setSeniorityDescription] = useState('')
   const selectSeniority = sr => {
     setValue('avgSalary', sr.avgSalary)
@@ -331,7 +322,7 @@ const TechStackCard = ({ src, value, register }) => {
     <div className='flex flex-col cursor-pointer shadow-md rounded-md bg-gray-100'>
       <label className='flex flex-col items-center'>
         <input
-          {...register('stack', { required: true })}
+          {...register('stack')}
           id={value}
           value={value}
           name='stack'
