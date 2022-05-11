@@ -207,8 +207,14 @@ export default function MatchView({ userDoc, ...props }) {
             </div>
           </form>
 
+          {matchDoc?.status === 'documents_signed' &&
+            <div className='m-4'>
+              note: this payment will represent the initial charge, and start a 7 day period as trial.
+              Once trial is finished, a monthly subscription with the final agree salary USD will start
+              to be charged on the same payment method registered.
+            </div>
+          }
           <div className='flex justify-center m-4 align-items'>
-
             <div className='m-4'>
               <Button disabled={saving} loading={saving} onClick={handleDeclineMatch} color='red'>
                 {saving && <span>sending...</span>}

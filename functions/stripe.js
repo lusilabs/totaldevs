@@ -196,23 +196,32 @@ exports.constructStripeModels = functions.firestore.document('subscriptions/{sub
   }, { stripeAccount: stripeAccountID })
 
   const unit_amount = (100 * Number(finalSalary)).toFixed(0)
+  const initialUnitAmount = (100 * Number(finalSalary) * .25).toFixed(0)
   const { id: price } = await stripe.prices.create({
     currency: 'usd', product, unit_amount, recurring: { interval: 'month' }
   }, { stripeAccount: stripeAccountID })
+  const { id: initialPrice } = await stripe.prices.create({
+    currency: 'usd', product, unit_amount: initialUnitAmount,
+  }, { stripeAccount: stripeAccountID })
 
-  return snap.ref.set({ customer, product, price, status: 'pending_payment', finalSalary, description, title, photoURL }, { merge: true })
+  return snap.ref.set({
+    customer, product, price, initialPrice,
+    initialPaymentAmount: initialUnitAmount, status: 'pending_payment',
+    finalSalary: unit_amount, description, title, photoURL
+  }, { merge: true })
 })
 
 exports.createCheckoutSession = functions.https.onCall(async (data, ctx) => {
+  const { match: matchId, mode } = data
   const subDoc = await admin
     .firestore()
     .collection('subscriptions')
-    .where('match', '==', data.match)
+    .where('match', '==', matchId)
     .limit(1)
     .get()
     .then(d => d.docs[0].data())
 
-  const { price, company, dev, job, match, customer } = subDoc
+  const { initialPrice, company, dev, job, match, customer, initialPaymentAmount } = subDoc
 
   const uref = await admin
     .firestore()
@@ -226,11 +235,12 @@ exports.createCheckoutSession = functions.https.onCall(async (data, ctx) => {
     cancel_url: STRIPE_CHECKOUT_CANCEL_URL,
     payment_method_types: ['card'],
     line_items: [
-      { price, quantity: 1 }
+      { price: initialPrice, quantity: 1 }
     ],
-    mode: 'subscription',
-    subscription_data: {
-      application_fee_percent: APPLICATION_FEE_PERCENT
+    mode: 'payment',
+    payment_intent_data: {
+      setup_future_usage: 'off_session',
+      application_fee_amount: (Number(initialPaymentAmount) * (APPLICATION_FEE_PERCENT / 100)).toFixed(0)
     },
     customer,
     metadata: {
@@ -273,7 +283,7 @@ const handleCheckoutSessionCompleted = session => {
     .firestore()
     .collection('matches')
     .doc(session.metadata.match)
-    .update({ status: 'first_payment' })
+    .update({ status: 'active' })
 }
 
 const handleFailedCharge = ({ customer }) => {
@@ -339,6 +349,31 @@ const handleSubscriptionCreated = async sub => {
     })
 }
 
+const handlePaymentMethodCreated = async (paymentMethod, stripeAccount) => {
+  admin
+    .firestore()
+    .collection('subscriptions')
+    .where('customer', '==', paymentMethod.customer)
+    .limit(1)
+    .get()
+    .then(async snap => {
+      const doc = snap.docs[0]
+      const data = doc.data()
+      doc.ref.update({ paymentMethod, status: "paid" })
+      const subscription = await stripe.subscriptions.create({
+        application_fee_percent: APPLICATION_FEE_PERCENT,
+        default_payment_method: paymentMethod.id,
+        customer: paymentMethod.customer,
+        items: [
+          { price: data.price, quantity: 1 }
+        ],
+        trial_period_days: 7
+      }, { stripeAccount })
+      doc.ref.update({ subscriptionObject: subscription })
+
+    })
+}
+
 exports.handleWebhooks = functions.https.onRequest(async (req, resp) => {
   let event
   try {
@@ -371,6 +406,9 @@ exports.handleWebhooks = functions.https.onRequest(async (req, resp) => {
         break
       case 'customer.subscription.created':
         await handleSubscriptionCreated(event.data.object)
+        break
+      case 'payment_method.attached':
+        await handlePaymentMethodCreated(event.data.object, event.account)
         break
       default:
         logger.error(new Error('Unhandled event!'), { type: event.type })
