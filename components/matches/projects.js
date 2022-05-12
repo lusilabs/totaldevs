@@ -19,7 +19,7 @@ const JobCard = ({ status, jobData, id }) => {
         <div className='mt-4 flex justify-between items-start'>
           <p className='mt-1 text-md text-gray-500'>{jobData.title}</p>
           <p className='text-md font-medium text-gray-900'>$ {jobData.salaryMin} {jobData.salaryMax && ` - ${jobData.salaryMax}`} </p>
-          <Status red={['dev_unavailable']} value={status} />
+          <Status red={['dev_unavailable']} green={['active']} value={status} />
         </div>
       </div>
     </Link>
