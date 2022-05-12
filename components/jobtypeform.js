@@ -1,15 +1,12 @@
 import { useForm } from 'react-hook-form'
 import { Button, Dropdown } from 'semantic-ui-react'
 import React, { useState, useEffect } from 'react'
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
-import Assignments from '@/components/matches/assignments'
-import { storage, db } from '@/utils/config'
-import { useDocuments } from '@/utils/hooks'
-import { doc, setDoc, addDoc, collection, getDoc, where } from 'firebase/firestore'
-import { toast } from 'react-toastify'
+import { db } from '@/utils/config'
+import { addDoc, collection } from 'firebase/firestore'
 import sleep from '@/utils/misc'
 import { useRouter } from 'next/router'
-import JobDisplay from '@/components/jobdisplay'
+
+const backgroundURL = 'https://images.unsplash.com/photo-1603980442192-63fb611f25cb?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=774&q=80'
 
 const defaultTechnologies = [
   { src: 'https://img.icons8.com/office/50/000000/react.png', value: 'react' },
@@ -54,7 +51,7 @@ function JobTypeForm ({ userDoc, setIsPageLoading, onSaveRoute, allowSkip, ...pr
   const [step, setStep] = useState(0)
   const [stack, setStack] = useState([])
   const Component = Steps[step]
-  const { register, handleSubmit, watch, getValues, setValue, formState: { errors }, reset, trigger, setError } = useForm({ defaultValues: {} })
+  const { register, handleSubmit, watch, getValues, setValue, formState: { errors }, trigger, setError } = useForm()
   console.log(watch(['position', 'stack', 'avgSalary']))
 
   useEffect(() => {
@@ -96,18 +93,20 @@ function JobTypeForm ({ userDoc, setIsPageLoading, onSaveRoute, allowSkip, ...pr
   const setNextStep = async () => {
     const { position, stack } = getValues()
     console.log({ stack, step, position, errors })
-    if (step === 0) {
-      const result = await trigger('position', { shouldFocus: true })
-      if (!result) return
-      setStep(s => s + 1)
-    }
-    if (step === 1) {
-      if (!stack || stack.length === 0) {
-        setError('stack', { type: 'custom', message: 'stack is empty' })
-        return
+    setStep(async s => {
+      if (step === 0) {
+        const result = await trigger('position')
+        if (!result) return
+        return s + 1
       }
-      setStep(s => s + 1)
-    }
+      if (step === 1) {
+        if (!stack || stack.length === 0) {
+          setError('stack', { type: 'custom', message: 'stack is empty' })
+          return
+        }
+      }
+      return s + 1
+    })
   }
 
   return (
@@ -116,7 +115,7 @@ function JobTypeForm ({ userDoc, setIsPageLoading, onSaveRoute, allowSkip, ...pr
         <div
           className='absolute top-0 w-full h-full bg-center bg-cover justify-center flex items-center flex-col'
           style={{
-            backgroundImage: "url('https://images.pexels.com/photos/911738/pexels-photo-911738.jpeg')"
+            backgroundImage: `url('${backgroundURL}')`
           }}
         >
           <Component
@@ -280,7 +279,7 @@ function Step3 ({ userDoc, register, errors, setValue }) {
             what is the average annual salary in USD?
           </div>
           <div className='w-full grid gap-1 grid-cols-3 m-2'>
-            {SENIORITIES.map((sr, ix) => (<SeniorityCard sr={sr} />))}
+            {SENIORITIES.map((sr, ix) => <SeniorityCard sr={sr} />)}
           </div>
           {seniorityDescription &&
             <>
