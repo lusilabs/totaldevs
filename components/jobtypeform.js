@@ -6,7 +6,7 @@ import { addDoc, collection } from 'firebase/firestore'
 import sleep from '@/utils/misc'
 import { useRouter } from 'next/router'
 
-const backgroundURL = 'https://images.unsplash.com/photo-1603980442192-63fb611f25cb?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=774&q=80'
+const backgroundURL = 'https://images.unsplash.com/photo-1524685364536-a6f820f6c5ce?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1064&q=80'
 
 const defaultTechnologies = [
   { src: 'https://img.icons8.com/office/50/000000/react.png', value: 'react' },
@@ -46,19 +46,13 @@ const mergeSearchResults = (prev, names) => {
   return deduped
 }
 
-function JobTypeForm ({ userDoc, setIsPageLoading, onSaveRoute, allowSkip, ...props }) {
+function JobTypeForm({ userDoc, setIsPageLoading, onSaveRoute, allowSkip, ...props }) {
   const router = useRouter()
   const [step, setStep] = useState(0)
   const [stack, setStack] = useState([])
   const Component = Steps[step]
   const { register, handleSubmit, watch, getValues, setValue, formState: { errors }, trigger, setError } = useForm()
   console.log(watch(['position', 'stack', 'avgSalary']))
-
-  useEffect(() => {
-    const onEnter = e => e.key === 'Enter' ? setNextStep() : null
-    document.addEventListener('keydown', onEnter)
-    return () => document.removeEventListener('keydown', onEnter)
-  }, [])
 
   const generateRandomPhoto = async () => {
     const unsplashURL = 'https://source.unsplash.com/random/300x300/?software'
@@ -90,23 +84,25 @@ function JobTypeForm ({ userDoc, setIsPageLoading, onSaveRoute, allowSkip, ...pr
     router.push('/jobs/?created=true')
   }
 
-  const setNextStep = async () => {
+  const setNextStep = async e => {
+    e.preventDefault()
     const { position, stack } = getValues()
     console.log({ stack, step, position, errors })
-    setStep(async s => {
-      if (step === 0) {
-        const result = await trigger('position')
-        if (!result) return
-        return s + 1
-      }
-      if (step === 1) {
-        if (!stack || stack.length === 0) {
-          setError('stack', { type: 'custom', message: 'stack is empty' })
-          return
-        }
-      }
-      return s + 1
-    })
+    //   setStep(async s => {
+    //     if (step === 0) {
+    //       const result = await trigger('position')
+    //       if (!result) return
+    //       return s + 1
+    //     }
+    //     if (step === 1) {
+    //       if (!stack || stack.length === 0) {
+    //         setError('stack', { type: 'custom', message: 'stack is empty' })
+    //         return
+    //       }
+    //     }
+    //     return s + 1
+    //   }
+    setStep(s => s + 1)
   }
 
   return (
@@ -121,7 +117,6 @@ function JobTypeForm ({ userDoc, setIsPageLoading, onSaveRoute, allowSkip, ...pr
           <Component
             register={register}
             errors={errors}
-            userDoc={userDoc}
             stack={stack}
             setStack={setStack}
             setValue={setValue}
@@ -134,11 +129,11 @@ function JobTypeForm ({ userDoc, setIsPageLoading, onSaveRoute, allowSkip, ...pr
   )
 }
 
-function Step1 ({ userDoc, register, setNextStep, errors }) {
+function Step1({ register, setNextStep, errors }) {
   return (
     <>
       <div>
-        <label htmlFor='position' className='block mb-4 ml-4 font-medium text-gray-500'>
+        <label htmlFor='position' className='block mb-4 ml-4 font-medium'>
           what position is this?
         </label>
         <input
@@ -162,9 +157,15 @@ function Step1 ({ userDoc, register, setNextStep, errors }) {
   )
 }
 
-function Step2 ({ userDoc, register, errors, setNextStep, stack, setStack }) {
+function Step2({ register, errors, setNextStep, stack, setStack }) {
   const [searchQuery, setSearchQuery] = useState('')
   const [dropdownOptions, setDropdownOptions] = useState([])
+
+  useEffect(() => {
+    const onEnter = e => e.key === 'Enter' ? setNextStep() : null
+    document.addEventListener('keydown', onEnter)
+    return () => document.removeEventListener('keydown', onEnter)
+  }, [])
 
   const fetchAndSetDropdownOptions = async url => {
     const response = await fetch(url)
@@ -172,6 +173,7 @@ function Step2 ({ userDoc, register, errors, setNextStep, stack, setStack }) {
     if (items && items.length > 0) setDropdownOptions(prev => mergeSearchResults(prev, items.map(({ name }) => name)))
   }
   const handleSearchChange = async (e, { searchQuery: query }) => setSearchQuery(query)
+  console.log({ stack })
   const handleDropdownChange = (e, { value }) => setStack(value)
   const handleDropdownOnClose = (e, data) => setSearchQuery('')
 
@@ -186,7 +188,7 @@ function Step2 ({ userDoc, register, errors, setNextStep, stack, setStack }) {
   return (
     <>
       <div className='items-center content-start'>
-        <label htmlFor='position' className='block p-2 text-sm font-medium text-gray-700'>
+        <label htmlFor='position' className='block p-2 text-sm font-medium'>
           what technologies will the position be using?
         </label>
         <div className='w-full grid gap-1 grid-cols-3 md:grid-cols-8'>
@@ -228,7 +230,7 @@ const SENIORITIES = [
   { name: 'senior', src: 'https://img.icons8.com/external-itim2101-lineal-color-itim2101/64/000000/external-hipster-avatar-itim2101-lineal-color-itim2101.png', avgSalary: 60_000.00, description: 'can lead and mentor others' }
 ]
 
-function Step3 ({ userDoc, register, errors, setValue }) {
+function Step3({ register, errors, setValue }) {
   const [seniorityDescription, setSeniorityDescription] = useState('')
   const selectSeniority = sr => {
     setValue('avgSalary', sr.avgSalary)
@@ -267,7 +269,6 @@ function Step3 ({ userDoc, register, errors, setValue }) {
           </span>
         </label>
       </div>
-
     )
   }
 
@@ -281,10 +282,7 @@ function Step3 ({ userDoc, register, errors, setValue }) {
           <div className='w-full grid gap-1 grid-cols-3 m-2'>
             {SENIORITIES.map((sr, ix) => <SeniorityCard sr={sr} />)}
           </div>
-          {seniorityDescription &&
-            <>
-              <span className='text-indigo-600'>{seniorityDescription}</span>
-            </>}
+          {seniorityDescription && <> <span className='text-indigo-600'>{seniorityDescription}</span> </>}
         </label>
 
         <input
