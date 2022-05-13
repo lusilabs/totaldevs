@@ -46,7 +46,7 @@ const mergeSearchResults = (prev, names) => {
   return deduped
 }
 
-function JobTypeForm({ userDoc, setIsPageLoading, onSaveRoute, allowSkip, ...props }) {
+function JobTypeForm ({ userDoc, setIsPageLoading, onSaveRoute, allowSkip, ...props }) {
   const router = useRouter()
   const [step, setStep] = useState(0)
   const [stack, setStack] = useState([])
@@ -65,7 +65,7 @@ function JobTypeForm({ userDoc, setIsPageLoading, onSaveRoute, allowSkip, ...pro
     await sleep(1000)
     const jref = collection(db, 'jobs')
     const photoURL = await generateRandomPhoto()
-    data.stack = [...(new Set([...data.stack, ...stack]))]
+    data.stack = [...(new Set([...(data.stack || []), ...stack]))]
     await addDoc(jref, {
       ...data,
       photoURL,
@@ -84,24 +84,20 @@ function JobTypeForm({ userDoc, setIsPageLoading, onSaveRoute, allowSkip, ...pro
     router.push('/jobs/?created=true')
   }
 
-  const setNextStep = async e => {
-    e.preventDefault()
+  const setNextStep = async (e, dropdownStack) => {
+    e && e.preventDefault()
     const { position, stack } = getValues()
     console.log({ stack, step, position, errors })
-    //   setStep(async s => {
-    //     if (step === 0) {
-    //       const result = await trigger('position')
-    //       if (!result) return
-    //       return s + 1
-    //     }
-    //     if (step === 1) {
-    //       if (!stack || stack.length === 0) {
-    //         setError('stack', { type: 'custom', message: 'stack is empty' })
-    //         return
-    //       }
-    //     }
-    //     return s + 1
-    //   }
+    if (step === 0) {
+      const pos = await trigger('position')
+      if (!pos) return
+    }
+    if (step === 1) {
+      if ((!stack && !dropdownStack) || (stack.length === 0 && dropdownStack.length === 0)) {
+        setError('stack', { type: 'custom', message: 'stack is empty' })
+        return
+      }
+    }
     setStep(s => s + 1)
   }
 
@@ -129,7 +125,7 @@ function JobTypeForm({ userDoc, setIsPageLoading, onSaveRoute, allowSkip, ...pro
   )
 }
 
-function Step1({ register, setNextStep, errors }) {
+function Step1 ({ register, setNextStep, errors }) {
   return (
     <>
       <div>
@@ -157,7 +153,7 @@ function Step1({ register, setNextStep, errors }) {
   )
 }
 
-function Step2({ register, errors, setNextStep, stack, setStack }) {
+function Step2 ({ register, errors, setNextStep, stack, setStack }) {
   const [searchQuery, setSearchQuery] = useState('')
   const [dropdownOptions, setDropdownOptions] = useState([])
 
@@ -214,7 +210,7 @@ function Step2({ register, errors, setNextStep, stack, setStack }) {
       </div>
       <div className='flex items-center m-2'>
         <div className='block w-20'>
-          <Button fluid compact primary onClick={setNextStep}>next</Button>
+          <Button fluid compact primary onClick={e => setNextStep(e, stack)}>next</Button>
         </div>
         <div className='text-xs ml-4'>
           hit Enter ↵
@@ -230,48 +226,12 @@ const SENIORITIES = [
   { name: 'senior', src: 'https://img.icons8.com/external-itim2101-lineal-color-itim2101/64/000000/external-hipster-avatar-itim2101-lineal-color-itim2101.png', avgSalary: 60_000.00, description: 'can lead and mentor others' }
 ]
 
-function Step3({ register, errors, setValue }) {
-  const [seniorityDescription, setSeniorityDescription] = useState('')
+function Step3 ({ register, errors, setValue }) {
+  const [seniorityDescription, setSeniorityDescription] = useState('select any experience level')
   const selectSeniority = sr => {
     setValue('avgSalary', sr.avgSalary)
     setSeniorityDescription(sr.description)
   }
-  // this doesn't work because they don't exist before rendering, we need to use useRef?
-  // const inputs = document.querySelectorAll('input[name="seniority"]')
-  // console.log({ inputs })
-  // for (let i = 0; i < inputs.length; i++) {
-  //   inputs[i].addEventListener('click', function (e) {
-  //     console.log({ e })
-  //     const val = this.value // this == the clicked radio,
-  //     console.log(val)
-  //   })
-  // }
-  const SeniorityCard = ({ sr }) => {
-    return (
-      <div key={sr.name} className='flex flex-col cursor-pointer shadow-md rounded-md bg-gray-100'>
-        <label
-          className='flex flex-col items-center'
-        // onClick={() => selectSeniority(sr)}
-        >
-          <input
-            name='seniority'
-            type='radio'
-            className='peer hidden'
-            // onclick='select()'
-            // somehow this prevents the input from being clicked?
-            onChange={() => selectSeniority(sr)}
-          />
-          <img src={sr.src} className='cursor-pointer w-10 mt-2 grayscale peer-checked:grayscale-0' />
-          <span
-            className='block text-xs cursor-pointer select-none rounded-md p-2 text-center peer-checked:text-blue-500'
-          >
-            {sr.name}
-          </span>
-        </label>
-      </div>
-    )
-  }
-
   return (
     <>
       <div>
@@ -280,7 +240,7 @@ function Step3({ register, errors, setValue }) {
             what is the average annual salary in USD?
           </div>
           <div className='w-full grid gap-1 grid-cols-3 m-2'>
-            {SENIORITIES.map((sr, ix) => <SeniorityCard sr={sr} />)}
+            {SENIORITIES.map((sr, ix) => <SeniorityCard sr={sr} selectSeniority={selectSeniority} />)}
           </div>
           {seniorityDescription && <> <span className='text-indigo-600'>{seniorityDescription}</span> </>}
         </label>
@@ -297,7 +257,7 @@ function Step3({ register, errors, setValue }) {
         />
         {seniorityDescription &&
           <div className='text-xs'>
-            (you will only be charged the monthly equivalent once they pass trial period)
+            (charged a monthly equivalent once they pass a trial period)
           </div>}
 
       </div>
@@ -311,6 +271,29 @@ function Step3({ register, errors, setValue }) {
         </div>
       </div>
     </>
+  )
+}
+
+const SeniorityCard = ({ sr, selectSeniority }) => {
+  return (
+    <div key={sr.name} className='flex flex-col cursor-pointer shadow-md rounded-md bg-gray-100'>
+      <label
+        className='flex flex-col items-center'
+      >
+        <input
+          name='seniority'
+          type='radio'
+          className='peer hidden'
+          onChange={() => selectSeniority(sr)}
+        />
+        <img src={sr.src} className='cursor-pointer w-10 mt-2 grayscale peer-checked:grayscale-0' />
+        <span
+          className='block text-xs cursor-pointer select-none rounded-md p-2 text-center peer-checked:text-blue-500'
+        >
+          {sr.name}
+        </span>
+      </label>
+    </div>
   )
 }
 
