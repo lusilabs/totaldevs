@@ -152,11 +152,11 @@ export default function MatchView({ userDoc, ...props }) {
                   className='block w-full mt-1 border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm sm:text-sm rounded-md'
                   {...register('finalSalary', {
                     required: true,
-                    min: matchDoc?.jobData.salaryMin,
+                    min: matchDoc?.jobData.avgSalary / 2,
                     onChange: handleInitialPaymentChange
                   })}
                 />
-                {errors.finalSalary && <div className='m-2 text-sm text-red-500'>cannot be lower than min salary or null</div>}
+                {errors.finalSalary && <div className='m-2 text-sm text-red-500'>cannot be lower than half of avg salary or null</div>}
               </div>
 
               <div className='col-span-6 sm:col-span-2'>

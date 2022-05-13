@@ -102,7 +102,7 @@ export const JobsToMatch = ({ userDoc }) => {
     },
     Position: {
       tableProps: {
-        columns: ['companyName', 'position', 'salaryMin', 'salaryMax', 'title', 'stack'],
+        columns: ['companyName', 'position', 'avgSalary', 'title', 'stack'],
         data: jobs,
         onSelect: setSelectedJob,
         type: 'Position'

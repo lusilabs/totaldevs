@@ -46,7 +46,7 @@ const mergeSearchResults = (prev, names) => {
   return deduped
 }
 
-function JobTypeForm ({ userDoc, setIsPageLoading, onSaveRoute, allowSkip, ...props }) {
+function JobTypeForm({ userDoc, setIsPageLoading, onSaveRoute, allowSkip, ...props }) {
   const router = useRouter()
   const [step, setStep] = useState(0)
   const [stack, setStack] = useState([])
@@ -125,7 +125,7 @@ function JobTypeForm ({ userDoc, setIsPageLoading, onSaveRoute, allowSkip, ...pr
   )
 }
 
-function Step1 ({ register, setNextStep, errors }) {
+function Step1({ register, setNextStep, errors }) {
   return (
     <>
       <div>
@@ -153,7 +153,7 @@ function Step1 ({ register, setNextStep, errors }) {
   )
 }
 
-function Step2 ({ register, errors, setNextStep, stack, setStack }) {
+function Step2({ register, errors, setNextStep, stack, setStack }) {
   const [searchQuery, setSearchQuery] = useState('')
   const [dropdownOptions, setDropdownOptions] = useState([])
 
@@ -226,7 +226,7 @@ const SENIORITIES = [
   { name: 'senior', src: 'https://img.icons8.com/external-itim2101-lineal-color-itim2101/64/000000/external-hipster-avatar-itim2101-lineal-color-itim2101.png', avgSalary: 60_000.00, description: 'can lead and mentor others' }
 ]
 
-function Step3 ({ register, errors, setValue }) {
+function Step3({ register, errors, setValue }) {
   const [seniorityDescription, setSeniorityDescription] = useState('select any experience level')
   const selectSeniority = sr => {
     setValue('avgSalary', sr.avgSalary)

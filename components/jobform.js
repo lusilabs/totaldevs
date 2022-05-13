@@ -83,10 +83,6 @@ function JobForm({ userDoc, onSaveRoute, allowSkip, ...props }) {
   }
 
   const onSubmit = async data => {
-    // if (data.salaryMax && Number(data.salaryMax) < Number(data.avgSalary)) {
-    //   toast.error('max salary cannot be smaller than min salary')
-    //   return
-    // }
     setSaving(true)
     let url
     if (!photoURL) {
