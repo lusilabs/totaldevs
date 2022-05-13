@@ -61,7 +61,7 @@ export default function MatchView({ userDoc, ...props }) {
 
   useEffect(() => {
     if (matchDoc) {
-      reset({ startDate: matchDoc.startDate, finalSalary: matchDoc.finalSalary }) // this refires the defaultValues on the form to fill them up once the db data loads.
+      reset({ startDate: matchDoc.startDate, finalSalary: matchDoc.finalSalary || matchDoc.jobData?.avgSalary / 12 }) // this refires the defaultValues on the form to fill them up once the db data loads.
       const isFormComplete = matchDoc.startDate && matchDoc.finalSalary
       setIsButtonLocked(!['documents_signed', 'dev_interested'].includes(matchDoc.status) || !isFormComplete || !isCompanyReady)
       setInitialPayment(matchDoc.initialPayment)
@@ -142,7 +142,7 @@ export default function MatchView({ userDoc, ...props }) {
 
               <div className='col-span-6 sm:col-span-2'>
                 <label htmlFor='finalSalary' className='block text-sm font-medium text-gray-700'>
-                  final agreed salary USD
+                  final agreed MONTHLY salary USD
                 </label>
                 <input
                   type='number'
@@ -152,11 +152,10 @@ export default function MatchView({ userDoc, ...props }) {
                   className='block w-full mt-1 border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm sm:text-sm rounded-md'
                   {...register('finalSalary', {
                     required: true,
-                    min: matchDoc?.jobData.avgSalary / 2,
                     onChange: handleInitialPaymentChange
                   })}
                 />
-                {errors.finalSalary && <div className='m-2 text-sm text-red-500'>cannot be lower than half of avg salary or null</div>}
+                {errors.finalSalary && <div className='m-2 text-sm text-red-500'>cannot be null</div>}
               </div>
 
               <div className='col-span-6 sm:col-span-2'>
