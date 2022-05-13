@@ -73,12 +73,12 @@ export const JobsToMatch = ({ userDoc }) => {
   const getterMapping = {
     stack: (row) => row.stack?.join(', '),
     compatibility: (row) => {
-      const availableStack = start === 'Dev' ? selectedDev?.stack : row.stack
-      const targetStack = start === 'Dev' ? row.stack : selectedJob?.stack
+      const availableStack = start === 'dev' ? selectedDev?.stack : row.stack
+      const targetStack = start === 'dev' ? row.stack : selectedJob?.stack
 
       if (availableStack && targetStack) {
         return (targetStack?.reduce((accumulated, tech) => accumulated + availableStack.indexOf(tech) !== -1, 0) /
-                    targetStack.length) * 100
+          targetStack.length) * 100
       } else {
         return ''
       }
@@ -90,22 +90,22 @@ export const JobsToMatch = ({ userDoc }) => {
     }
   }
   const tableMapping = {
-    Dev: {
+    dev: {
       tableProps: {
         columns: ['displayName', 'email', 'stack', 'jobSearch'],
         data: devs,
         onSelect: setSelectedDev,
-        type: 'Dev'
+        type: 'dev'
       },
       entity: selectedDev,
       detailProps: ['displayName', 'email', 'stack', 'jobSearch']
     },
-    Position: {
+    position: {
       tableProps: {
         columns: ['companyName', 'position', 'avgSalary', 'title', 'stack'],
         data: jobs,
         onSelect: setSelectedJob,
-        type: 'Position'
+        type: 'position'
       },
       entity: selectedJob,
       detailProps: ['description', 'position', 'salary', 'title', 'stack']
@@ -113,12 +113,13 @@ export const JobsToMatch = ({ userDoc }) => {
   }
   const startTable = tableMapping[start]
   const nextTable = tableMapping[next]
+  console.log({ startTable, nextTable })
   return (
     <div className='px-4 py-5 bg-white sm:p-6'>
       <div>
-        <Label htmlFor='startWith' title='Start by Dev or Position?' />
+        <Label htmlFor='startWith' title='Start by dev or position?' />
         <Select
-          value={start} options={['Dev', 'Position']} onChange={({ target: { value } }) => {
+          value={start} options={['dev', 'position']} onChange={({ target: { value } }) => {
             setNext(start)
             setStart(value)
             setSelectedJob(null)
@@ -150,9 +151,9 @@ export const JobsToMatch = ({ userDoc }) => {
             </div>
             {
               nextTable.entity &&
-                <div className='col-span-6 sm:col-span-3 '>
-                  <DetailedView {...{ ...nextTable }} />
-                </div>
+              <div className='col-span-6 sm:col-span-3 '>
+                <DetailedView {...{ ...nextTable }} />
+              </div>
             }
           </div>
         </>}
