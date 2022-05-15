@@ -132,7 +132,7 @@ function MyApp ({ Component, pageProps }) {
       unsubscribe = onSnapshot(ref, doc => {
         if (doc.exists) {
           const userData = doc.data()
-          LogRocket.identify(userData.email)
+          LogRocket.identify(userData?.email)
           setUserDoc(userData)
         }
       })
