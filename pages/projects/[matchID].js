@@ -16,7 +16,7 @@ const ConfirmAvailability = ({ userDoc, matchDoc, setMatch }) => {
     await setDoc(mref, { status }, { merge: true })
     toast.success(`${notifyee ?? 'company'} has been notified.`)
   }
-  const waitingOnCompany = ['dev_interested', 'position_offered'].includes(matchDoc.status)
+  const waitingOnCompany = ['dev_interested', 'documents_signed'].includes(matchDoc.status)
   const canContinue = matchDoc.status === 'requesting_dev_status'
   const waitingForSignedDocuments = matchDoc.status === 'position_offered'
   const isDevAccountReady = userDoc.emailVerified && userDoc.isStripeVerified && userDoc.isProfileComplete

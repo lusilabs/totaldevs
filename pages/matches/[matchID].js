@@ -14,7 +14,7 @@ import Banner from '@/components/banner'
 
 const createCheckoutSession = httpsCallable(functions, 'stripe-createCheckoutSession')
 const updateMatchDocOnServer = httpsCallable(functions, 'updateMatchDocOnServer')
-const INITIAL_PAYMENT_PCT = 0.20
+const INITIAL_PAYMENT_PCT = 0.25
 
 const handleConfirmMatch = async match => {
   const { data } = await createCheckoutSession({ match })
@@ -78,7 +78,7 @@ export default function MatchView({ userDoc, ...props }) {
     switch (status) {
       case 'documents_signed': // accepting match
         await sleep(2000)
-        await handleAcceptMatch(routerMatchID)
+        await handleConfirmMatch(routerMatchID)
         break
       case 'dev_interested': // offering position
         await sleep(2000)
@@ -206,8 +206,13 @@ export default function MatchView({ userDoc, ...props }) {
             </div>
           </form>
 
+          {matchDoc?.status === 'documents_signed' &&
+            <div className='m-4'>
+              note: this payment will represent the initial charge, and will start a 7 day trial period.
+              Once the trial expires, a monthly subscription with the final agreed upon salary in USD will be charged to the same payment method registered.
+            </div>
+          }
           <div className='flex justify-center m-4 align-items'>
-
             <div className='m-4'>
               <Button disabled={saving} loading={saving} onClick={handleDeclineMatch} color='red'>
                 {saving && <span>sending...</span>}
