@@ -1,4 +1,4 @@
-import JobForm from '@/components/jobform'
+import JobTypeForm from '@/components/jobtypeform'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 
@@ -10,7 +10,7 @@ function AddJob (props) {
     if (signup) setOnSaveRoute(`/signup/complete?convert=${convert}`)
   }, [signup, convert])
   return (
-    <JobForm onSaveRoute={onSaveRoute} {...props} />
+    <JobTypeForm onSaveRoute={onSaveRoute} {...props} />
   )
 }
 

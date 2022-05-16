@@ -18,7 +18,7 @@ const mergeSearchResults = (prev, names) => {
   return deduped
 }
 
-function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
+function JobForm({ userDoc, onSaveRoute, allowSkip, ...props }) {
   const router = useRouter()
   const [saving, setSaving] = useState(false)
   const [pdfURL, setPdfURL] = useState('')
@@ -83,10 +83,6 @@ function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
   }
 
   const onSubmit = async data => {
-    if (data.salaryMax && Number(data.salaryMax) < Number(data.salaryMin)) {
-      toast.error('max salary cannot be smaller than min salary')
-      return
-    }
     setSaving(true)
     let url
     if (!photoURL) {
@@ -99,15 +95,11 @@ function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
     if (jobID) {
       const jref = doc(db, 'jobs', jobID)
       await setDoc(jref, {
-        title: data.title,
         stack,
         position: data.position,
-        hours: data.hours,
         description: data.description,
-        salaryMin: data.salaryMin,
-        salaryMax: data.salaryMax,
+        avgSalary: data.avgSalary,
         jobURL: data.jobURL,
-        jobTitle: data.jobTitle,
         pdfURL,
         pdfName,
         photoURL: url,
@@ -118,15 +110,11 @@ function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
     } else {
       const jref = collection(db, 'jobs')
       await addDoc(jref, {
-        title: data.title,
         stack,
         position: data.position,
-        hours: data.hours,
         description: data.description,
-        salaryMin: data.salaryMin,
-        salaryMax: data.salaryMax,
+        avgSalary: data.avgSalary,
         jobURL: data.jobURL,
-        jobTitle: data.jobTitle,
         pdfURL,
         pdfName,
         photoURL: photoURL ?? url,
@@ -188,7 +176,8 @@ function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
           <div className='mt-4 overflow-hidden rounded-lg shadow'>
             <div className='px-4 py-5 bg-white sm:p-6'>
               <div className='grid grid-cols-6 gap-6'>
-                <div className='col-span-6 sm:col-span-2'>
+
+                {/* <div className='col-span-6 sm:col-span-2'>
                   <label htmlFor='title' className='block text-sm font-medium text-gray-700'>
                     position
                   </label>
@@ -224,21 +213,21 @@ function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
                     <option value='security engineer'>security engineer</option>
                     <option value='dev ops'>dev ops</option>
                   </select>
-                </div>
+                </div> */}
 
-                <div className='col-span-6 sm:col-span-2'>
-                  <label htmlFor='company-website' className='block text-sm font-medium text-gray-700'>
-                    (official job title)
+                <div className='col-span-6 sm:col-span-3'>
+                  <label htmlFor='position' className='block text-sm font-medium text-gray-700'>
+                    position
                   </label>
                   <div className='flex mt-1 rounded-md shadow-sm'>
                     <input
-                      type='text' name='company-website' id='company-website' className='flex-1 block w-full border-gray-300 rounded-none focus:ring-indigo-500 focus:border-indigo-500 rounded-r-md sm:text-sm' placeholder='e.g. support engineer'
-                      {...register('jobTitle', { required: false, maxLength: 256 })}
+                      type='text' name='position' id='position' className='flex-1 block w-full border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 rounded-md sm:text-sm' placeholder='e.g. support engineer'
+                      {...register('position', { required: false, maxLength: 256 })}
                     />
                   </div>
                 </div>
 
-                <div className='col-span-6 sm:col-span-2'>
+                <div className='col-span-6 sm:col-span-3'>
                   <label htmlFor='company-website' className='block text-sm font-medium text-gray-700'>
                     (job posting url)
                   </label>
@@ -289,7 +278,7 @@ function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
                   {errors.description && <div className='m-2 text-sm text-red-500'>please add a small description</div>}
                 </div>
 
-                <div className='items-center content-start col-span-6 sm:col-span-3'>
+                {/* <div className='items-center content-start col-span-6 sm:col-span-3'>
                   <label htmlFor='position' className='block p-2 text-sm font-medium text-gray-700'>
                     position
                   </label>
@@ -327,9 +316,9 @@ function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
 
                     {errors.position && <div className='m-2 text-sm text-red-500'>select a type of position</div>}
                   </div>
-                </div>
+                </div> */}
 
-                <div className='items-center content-start col-span-6 sm:col-span-3'>
+                {/* <div className='items-center content-start col-span-6 sm:col-span-3'>
                   <label htmlFor='visibility' className='block p-2 text-sm font-medium text-gray-700'>
                     hours
                   </label>
@@ -381,11 +370,11 @@ function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
 
                     {errors.hours && <div className='m-2 text-sm text-red-500'>select a type of working hours</div>}
                   </div>
-                </div>
+                </div> */}
 
-                <div className='col-span-6 sm:col-span-3'>
+                <div className='col-span-6 sm:col-span-6'>
                   <label htmlFor='salary' className='block text-sm font-medium text-gray-700'>
-                    min monthly salary or payment
+                    avg monthly salary or payment
                   </label>
                   <div className='relative mt-1 rounded-md shadow-sm'>
                     <div className='absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none'>
@@ -393,37 +382,16 @@ function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
                     </div>
                     <input
                       type='number'
-                      name='salaryMin'
-                      id='salaryMin'
+                      name='avgSalary'
+                      id='avgSalary'
                       min='0'
                       step='1'
                       className={`focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-14 pr-12 sm:text-sm border-gray-300 rounded-md shadow-sm ${props.sid ? 'bg-gray-100' : ''}`}
                       disabled={jobDoc.locked}
-                      {...register('salaryMin', { required: true })}
+                      {...register('avgSalary', { required: true })}
                     />
                   </div>
-                  {errors.salaryMin && <div className='m-2 text-sm text-red-500'>min salary or payment cannot be null</div>}
-                </div>
-
-                <div className='col-span-6 sm:col-span-3'>
-                  <label htmlFor='salary' className='block text-sm font-medium text-gray-700'>
-                    (max monthly salary or payment)
-                  </label>
-                  <div className='relative mt-1 rounded-md shadow-sm'>
-                    <div className='absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none'>
-                      <span className='text-gray-500 sm:text-sm'>USD$</span>
-                    </div>
-                    <input
-                      type='number'
-                      name='salaryMax'
-                      id='salaryMax'
-                      min='0'
-                      step='1'
-                      className={`focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-14 pr-12 sm:text-sm border-gray-300 rounded-md shadow-sm ${props.sid ? 'bg-gray-100' : ''}`}
-                      disabled={jobDoc.locked}
-                      {...register('salaryMax', { required: false })}
-                    />
-                  </div>
+                  {errors.avgSalary && <div className='m-2 text-sm text-red-500'>min salary or payment cannot be null</div>}
                 </div>
                 <div className='col-span-6 sm:col-span-6'>
                   <label className='block text-sm font-medium text-gray-700'>img (leave blank for random dev image)</label>
@@ -535,7 +503,7 @@ function JobForm ({ userDoc, onSaveRoute, allowSkip, ...props }) {
                 {saving && <span>posting...</span>}
                 {!saving && <span>{jobID && <span>re</span>}post</span>}
               </Button>
-            &nbsp;
+              &nbsp;
               {/* {allowSkip && <Button disabled={saving} loading={saving} onClick={handleSkip} color='grey' fluid className='text-sm'>
               skip
             </Button>} */}
