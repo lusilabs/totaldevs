@@ -127,7 +127,7 @@ exports.handleMatchDoc = functions.firestore.document('matches/{matchID}').onWri
         emailText: `${doc.devName} just signed the contract, are you ready to start 🤩? Visit https://totaldevs.com to view your match and finish the process.`,
         emailSubject: `${doc.devName} just signed the contract, are you ready to start 🤩?`,
       },
-      first_payment: {
+      active: {
         role: 'dev',
         text: 'you just got hired!',
         url: `/projects`,
@@ -223,7 +223,7 @@ exports.updateUserDoc = functions.firestore.document('users/{uid}').onUpdate(asy
     .get()
   const userDoc = uref.data()
   if (userDoc.role === 'company' && after.displayName !== uref.displayName) {
-      admin.firestore().collection('jobs').where('company', '==', uid)
+    admin.firestore().collection('jobs').where('company', '==', uid)
       .get().then((querySnapshot) => {
         querySnapshot.docs.forEach(doc => (doc.ref.update({ companyName: after.displayName })))
       })
@@ -285,13 +285,13 @@ exports.handleAnonUserConversion = functions.https.onCall(async (data, ctx) => {
   await uref.update({ ...data })
   // we have to add the company data to the job they just posted anonymously
   admin
-  .firestore()
-  .collection('jobs')
-  .where('uid', '==', uid)
-  .get()
-  .then(snap => {
-    snap.docs.forEach(doc => doc.ref.update({ company: uid, companyEmail: data.email }))
-  })
+    .firestore()
+    .collection('jobs')
+    .where('uid', '==', uid)
+    .get()
+    .then(snap => {
+      snap.docs.forEach(doc => doc.ref.update({ company: uid, companyEmail: data.email }))
+    })
 })
 
 const triggerOnUpdate = ({ document, fieldToSearch, valueToSearch, destinationField, latestObject }) => {
@@ -421,6 +421,13 @@ const sendEversignDocuments = async (signers, fields, match) => {
     originalSigners: signers,
     originalFields: fields
   })
+  console.log(isDevelopment)
+  if (isDevelopment) {
+    admin.firestore().collection('eversignDocuments').doc(data.document_hash).set({
+      document_completed: true
+    }, { merge: true })
+  }
+
 }
 
 exports.sendCompanyInvite = functions.https.onCall(async ({ position, devProfile, pitch, explorer, email, bcc }, ctx) => {

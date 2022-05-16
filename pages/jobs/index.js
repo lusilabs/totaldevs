@@ -66,7 +66,7 @@ function Job({ job, numPendingRequests, ...props }) {
           <img src={job.photoURL} alt={job.photoURL} className='w-full h-full object-center object-cover lg:w-full lg:h-full' />
         </div>
         <div className='mt-4 flex justify-between items-start'>
-          <p className='mt-1 text-md text-gray-500'>{job.title}</p>
+          <p className='mt-1 text-md text-gray-500'>{job.position}</p>
           <p className='text-md font-medium text-gray-900'>$ {job.avgSalary} </p>
           {job.status === 'locked' && <span className='px-2 inline-flex text-md leading-5 font-semibold rounded-full bg-green-100 text-green-800'> up to date.  </span>}
           {job.status === 'matching' && <span className='px-2 inline-flex text-md leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800'> matching </span>}

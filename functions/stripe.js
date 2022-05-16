@@ -183,7 +183,7 @@ exports.constructStripeModels = functions.firestore.document('subscriptions/{sub
     .collection('jobs')
     .doc(job)
     .get()
-  const { photoURL, description, title } = jref.data()
+  const { photoURL, description, position } = jref.data()
   const mref = await admin
     .firestore()
     .collection('matches')
@@ -192,7 +192,7 @@ exports.constructStripeModels = functions.firestore.document('subscriptions/{sub
   const { finalSalary } = mref.data()
   const images = [photoURL]
   const { id: product } = await stripe.products.create({
-    name: title, description, images
+    name: position, description, images
   }, { stripeAccount: stripeAccountID })
 
   const unit_amount = (100 * Number(finalSalary)).toFixed(0)
@@ -205,9 +205,9 @@ exports.constructStripeModels = functions.firestore.document('subscriptions/{sub
   }, { stripeAccount: stripeAccountID })
 
   return snap.ref.set({
-    customer, product, price, initialPrice,
-    initialPaymentAmount: initialUnitAmount, status: 'pending_payment',
-    finalSalary: unit_amount, description, title, photoURL
+    customer, product, initialPrice, price, status: 'pending_payment',
+    finalSalary, position, photoURL, description: description ?? "",
+    initialPaymentAmount: initialUnitAmount,
   }, { merge: true })
 })
 
