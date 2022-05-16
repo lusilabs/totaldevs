@@ -421,7 +421,6 @@ const sendEversignDocuments = async (signers, fields, match) => {
     originalSigners: signers,
     originalFields: fields
   })
-  console.log(isDevelopment)
   if (isDevelopment) {
     admin.firestore().collection('eversignDocuments').doc(data.document_hash).set({
       document_completed: true
