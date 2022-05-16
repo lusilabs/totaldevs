@@ -2,7 +2,7 @@ import { PaperClipIcon } from '@heroicons/react/solid'
 import Link from 'next/link'
 import Status from '@/components/misc/status'
 
-export default function JobDisplay({ userDoc, jobDoc = {}, matches = [], setIsEditing }) {
+export default function JobDisplay ({ userDoc, jobDoc = {}, matches = [], setIsEditing }) {
   return (
     <>
       {userDoc.role !== 'dev' &&
@@ -48,8 +48,8 @@ export default function JobDisplay({ userDoc, jobDoc = {}, matches = [], setIsEd
         <div className='border-t border-gray-200'>
           <dl>
             <div className='px-4 py-5 bg-gray-50 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6'>
-              <dt className='text-sm font-medium text-gray-500'>title</dt>
-              <dd className='mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2'>{jobDoc.title}</dd>
+              <dt className='text-sm font-medium text-gray-500'>position</dt>
+              <dd className='mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2'>{jobDoc.position}</dd>
             </div>
 
             <div className='px-4 py-5 bg-white sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6'>
@@ -65,7 +65,7 @@ export default function JobDisplay({ userDoc, jobDoc = {}, matches = [], setIsEd
 
             <div className='px-4 py-5 bg-white sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6'>
               <dt className='text-sm font-medium text-gray-500'>salary</dt>
-              <dd className='mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2'>$ {jobDoc.salaryMin} {jobDoc.salaryMax && ` - ${jobDoc.salaryMax}`} </dd>
+              <dd className='mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2'>USD$ {jobDoc.avgSalary} </dd>
             </div>
 
             <div className='px-4 py-5 bg-gray-50 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6'>
@@ -73,10 +73,10 @@ export default function JobDisplay({ userDoc, jobDoc = {}, matches = [], setIsEd
               <dd className='mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2'>{jobDoc.position} </dd>
             </div>
 
-            <div className='px-4 py-5 bg-white sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6'>
+            {/* <div className='px-4 py-5 bg-white sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6'>
               <dt className='text-sm font-medium text-gray-500'>hours</dt>
               <dd className='mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2'>{jobDoc.hours} </dd>
-            </div>
+            </div> */}
 
             <div className='px-4 py-5 bg-gray-50 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6'>
               <dt className='text-sm font-medium text-gray-500'>extra docs</dt>

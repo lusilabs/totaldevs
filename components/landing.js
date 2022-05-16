@@ -52,7 +52,7 @@ function Landing ({ handleCreateJobPosting, ...props }) {
                   hire with total confidence
                 </h1>
                 <p className='mt-4 text-lg text-gray-300'>
-                  from an exclusive community of professional developers, with proven results.
+                  from an exclusive community of professional latin american developers
                 </p>
                 <button
                   className='bg-blue-700 text-white hover:bg-blue-500 text-xl font-bold px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 mt-12'
@@ -60,7 +60,7 @@ function Landing ({ handleCreateJobPosting, ...props }) {
                   style={{ transition: 'all .50s ease' }}
                   onClick={handleCreateJobPosting}
                 >
-                  post remote jobs &nbsp;
+                  hire now &nbsp;
                   <i className='fas fa-arrow-alt-circle-right' />
                 </button>
               </div>

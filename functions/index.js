@@ -131,7 +131,7 @@ exports.handleMatchDoc = functions.firestore.document('matches/{matchID}').onWri
         emailText: `${doc.devName} just signed the contract, are you ready to start 🤩? Visit https://totaldevs.com to view your match and finish the process.`,
         emailSubject: `${doc.devName} just signed the contract, are you ready to start 🤩?`
       },
-      first_payment: {
+      active: {
         role: 'dev',
         text: 'you just got hired!',
         url: '/projects',
@@ -424,6 +424,12 @@ const sendEversignDocuments = async (signers, fields, match) => {
     originalSigners: signers,
     originalFields: fields
   })
+  if (isDevelopment) {
+    admin.firestore().collection('eversignDocuments').doc(data.document_hash).set({
+      document_completed: true
+    }, { merge: true })
+  }
+
 }
 
 exports.sendCompanyInvite = functions.https.onCall(async ({ position, devProfile, pitch, explorer, email, bcc }, ctx) => {
