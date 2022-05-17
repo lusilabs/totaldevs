@@ -109,7 +109,7 @@ function ProfileAvailability ({ register, errors }) {
 
         </div>
       </div>
-
+      {/*
       <div className='col-span-6 sm:col-span-3'>
         <label htmlFor='salary' className='block text-sm font-medium text-gray-700'>
           desired min monthly salary or payment
@@ -129,11 +129,11 @@ function ProfileAvailability ({ register, errors }) {
           />
         </div>
         {errors.salaryMin && <div className='m-2 text-sm text-red-500'>min salary or payment cannot be null</div>}
-      </div>
+      </div> */}
 
-      <div className='col-span-6 sm:col-span-3'>
+      <div className='col-span-6'>
         <label htmlFor='salary' className='block text-sm font-medium text-gray-700'>
-          (realistic max monthly salary or payment)
+          (realistic average monthly salary or payment)
         </label>
         <div className='mt-1 relative rounded-md shadow-sm'>
           <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none'>
@@ -141,12 +141,12 @@ function ProfileAvailability ({ register, errors }) {
           </div>
           <input
             type='number'
-            name='salaryMax'
-            id='salaryMax'
+            name='avgSalary'
+            id='avgSalary'
             min='0'
             step='1'
             className='focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-14 pr-12 sm:text-sm border-gray-300 rounded-md shadow-sm '
-            {...register('salaryMax', { required: false })}
+            {...register('avgSalary', { required: false })}
           />
         </div>
       </div>
