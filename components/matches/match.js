@@ -56,7 +56,7 @@ const RecommendRole = ({ userDoc, selectedDev, selectedJob }) => {
 }
 
 export const JobsToMatch = ({ userDoc }) => {
-  const [jobs, jobsLoaded, _jr, _sj] = useDocuments({ docs: 'jobs' })
+  const [jobs, jobsLoaded, _jr, _sj] = useDocuments({ docs: 'jobs' , queryConstraints: [where('status', '==', 'matching')]})
   const [devs, devsLoaded, _dr, _sd] = useDocuments({
     docs: 'users',
     queryConstraints: [
