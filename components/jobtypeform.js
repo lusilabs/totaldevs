@@ -52,7 +52,7 @@ function JobTypeForm({ userDoc, setIsPageLoading, onSaveRoute, allowSkip, ...pro
   const [stack, setStack] = useState([])
   const Component = Steps[step]
   const { register, handleSubmit, watch, getValues, setValue, formState: { errors }, trigger, setError } = useForm()
-  console.log(watch(['position', 'stack', 'avgSalary']))
+  // console.log(watch(['position', 'stack', 'avgSalary']))
 
   const generateRandomPhoto = async () => {
     const unsplashURL = 'https://source.unsplash.com/random/300x300/?software'
