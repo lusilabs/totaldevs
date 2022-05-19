@@ -68,7 +68,11 @@ exports.createUserDoc = functions.auth.user().onCreate(async user => {
     .doc(user.uid)
     .set({
       ...userJSONData,
-      numInvitesLeft: NUM_DEFAULT_INVITES
+      numInvitesLeft: NUM_DEFAULT_INVITES,
+      isProfileComplete: !!isDevelopment,
+      isStripeVerified: !!isDevelopment,
+      stripeAccountID: isDevelopment ? 'acct_1KCe5c2cSEZKTEoo' : '',
+      calendlyURL: isDevelopment ? 'https://calendly.com/carlo-totaldevs/1-on-1' : ''
     })
   if (!user.email) return
   admin
@@ -125,12 +129,12 @@ exports.handleMatchDoc = functions.firestore.document('matches/{matchID}').onWri
         url: `/matches/${doc.matchID}`,
         email: 'companyEmail',
         emailText: `${doc.devName} just signed the contract, are you ready to start 🤩? Visit https://totaldevs.com to view your match and finish the process.`,
-        emailSubject: `${doc.devName} just signed the contract, are you ready to start 🤩?`,
+        emailSubject: `${doc.devName} just signed the contract, are you ready to start 🤩?`
       },
       active: {
         role: 'dev',
         text: 'you just got hired!',
-        url: `/projects`,
+        url: '/projects',
         email: 'devEmail',
         emailText: 'Congratulations, you landed the job! visit https://totaldevs.com to view your job description and starting date. Expect to see an upfront payment reflected in your account in 3-5 business days.',
         emailSubject: 'you just got hired! 🤩'
@@ -379,7 +383,6 @@ exports.updateDocument = functions.firestore.document('eversignDocuments/{id}').
       .collection('matches')
       .doc(document.match)
     await mref.update({ status: 'documents_signed' })
-
   }
 })
 
