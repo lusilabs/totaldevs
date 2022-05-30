@@ -75,8 +75,8 @@ export default function ProfileExperience({ jobs, setJobs }) {
     const jobsClone = [...jobs]
     jobsClone[ix].stack = value
     setJobs(jobsClone)
+    setSearchQuery(['', ix])
   }
-
   return (
     <div>
       <div className='flex justify-between p-2'>
@@ -95,7 +95,7 @@ export default function ProfileExperience({ jobs, setJobs }) {
               options={dropdownOptions[ix] ?? []}
               onChange={(e, v) => handleChange(e, v, ix)}
               onSearchChange={(e, v) => handleSearchChange(e, v, ix)}
-              searchQuery={searchQuery[0]}
+              searchQuery={ix === searchQuery[1] ? searchQuery[0] : '' }
               value={j.stack}
               fluid
               multiple
