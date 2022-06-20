@@ -32,6 +32,7 @@ const anonRoutes = [
   // these routes are hard-matches and allow anon users to visit sensitive pages so add with care.
   '/about',
   '/privacy',
+  '/terms',
   '/login',
   '/login?role=dev',
   '/login?role=dev&convert=false',

@@ -11,6 +11,7 @@ import { useRouter } from 'next/router'
 import TotalResume from '@/components/resume'
 import { SuspensePlaceholders } from '@/components/suspense'
 import Banner from '@/components/banner'
+import Link from 'next/link'
 
 const createCheckoutSession = httpsCallable(functions, 'stripe-createCheckoutSession')
 const updateMatchDocOnServer = httpsCallable(functions, 'updateMatchDocOnServer')
@@ -62,7 +63,7 @@ export default function MatchView({ userDoc, ...props }) {
   useEffect(() => {
     if (matchDoc) {
       reset({ startDate: matchDoc.startDate, finalSalary: matchDoc.finalSalary || matchDoc.jobData?.avgSalary / 12 }) // this refires the defaultValues on the form to fill them up once the db data loads.
-      const isFormComplete = matchDoc.startDate && matchDoc.finalSalary
+      const isFormComplete = matchDoc.startDate && matchDoc.finalSalary && matchDoc.hasAcceptedTerms
       setIsButtonLocked(!['documents_signed', 'dev_interested'].includes(matchDoc.status) || !isFormComplete || !isCompanyReady)
       setInitialPayment(matchDoc.initialPayment)
       setButtonColor(buttonColors[matchDoc.status])
@@ -194,6 +195,19 @@ export default function MatchView({ userDoc, ...props }) {
                   value={initialPayment}
                   className='block w-full mt-1 bg-gray-200 border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm sm:text-sm rounded-md'
                 />
+              </div>
+
+              <div className='col-span-6'>
+                <input
+                  {...register('hasAcceptedTerms', { required: true })}
+                  id='terms'
+                  type='checkbox'
+                  checked={matchDoc?.hasAcceptedTerms}
+                  className='ml-1 h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded'
+                />
+                <label htmlFor='terms' className='ml-2 text-md text-gray-700'>
+                  I have read and agree to the <Link href='/terms'><a> Payment Terms </a></Link>  of totaldevs.com
+                </label>
               </div>
 
               <div className='col-span-6'>

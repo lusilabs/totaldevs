@@ -1,6 +1,7 @@
 import Footer from '@/components/footer.js'
 import Link from 'next/link'
-export default function Privacy () {
+
+export default function Privacy() {
   return (
     <>
       <div className='flex-shrink-0 bg-black'>
