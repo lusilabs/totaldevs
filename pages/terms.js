@@ -1,7 +1,10 @@
 import Footer from '@/components/footer.js'
 import Link from 'next/link'
+import { useMediaQuery } from '@/utils/hooks'
+
 
 export default function Terms() {
+  const smallScreen = useMediaQuery()
   return (
     <>
       <div className='flex-shrink-0 bg-black'>
@@ -14,7 +17,7 @@ export default function Terms() {
         </Link>
       </div>
 
-      <div className='text-center m-4'>
+      <div className={`${smallScreen ? 'text-center' : ''} m-4`}>
         <h1>Payment Terms</h1>
         <p>Last updated: June 7, 2022</p>
         <p>These Payment Terms describes Our policies and procedures on the collection and use and disclosure of Your credit card information when You use the Service.</p>
