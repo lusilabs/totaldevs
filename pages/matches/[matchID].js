@@ -62,7 +62,7 @@ export default function MatchView({ userDoc, ...props }) {
 
   useEffect(() => {
     if (matchDoc) {
-      reset({ startDate: matchDoc.startDate, finalSalary: matchDoc.finalSalary || matchDoc.jobData?.avgSalary / 12 })) // this refires the defaultValues on the form to fill them up once the db data loads.
+      reset({ startDate: matchDoc.startDate, finalSalary: matchDoc.finalSalary || matchDoc.jobData?.avgSalary / 12 }) // this refires the defaultValues on the form to fill them up once the db data loads.
       const isFormComplete = matchDoc.startDate && matchDoc.finalSalary && matchDoc.hasAcceptedTerms
       setIsButtonLocked(!['documents_signed', 'dev_interested'].includes(matchDoc.status) || !isFormComplete || !isCompanyReady)
       setInitialPayment(matchDoc.initialPayment)
