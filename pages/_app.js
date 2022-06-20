@@ -133,7 +133,7 @@ function MyApp ({ Component, pageProps }) {
       unsubscribe = onSnapshot(ref, doc => {
         if (doc.exists) {
           const userData = doc.data()
-          LogRocket.identify(userData.email)
+          if (userData && userData.email) LogRocket.identify(userData.email)
           setUserDoc(userData)
         }
       })
@@ -157,7 +157,7 @@ function MyApp ({ Component, pageProps }) {
   const handleCreateJobPosting = async ({ convert }) => {
     setIsPageLoading(true)
     if (!convert) await signInAnonymously(auth)
-    await sleep(2000)
+    await sleep(1000)
     router.push(`/jobs/add?signup=true&convert=${convert}`)
     logEvent(analytics, 'new company signup')
     setIsPageLoading(false)

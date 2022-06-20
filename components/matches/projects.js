@@ -45,15 +45,14 @@ export const ProjectsToCheck = ({ userDoc }) => {
   const router = useRouter()
 
   const tableProps = {
-    columns: ['title', 'min_salary', 'max_salary', 'company name', 'current status', 'explorer name'],
+    columns: ['title', 'avg_salary', 'company name', 'current status', 'explorer name'],
     type: 'matches',
     data: matches,
     onSelect: (row) => router.push(`/projects/${row.id}`),
     getterMapping: {
       'explorer name': (row) => row.explorerName,
       title: (row) => row.jobData.title,
-      min_salary: (row) => row.jobData.salaryMin,
-      max_salary: (row) => row.jobData.salaryMax,
+      avg_salary: (row) => row.jobData.avgSalary,
       'company name': (row) => row.companyName,
       'current status': (row) => row.status
     },

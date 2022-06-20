@@ -56,7 +56,7 @@ const RecommendRole = ({ userDoc, selectedDev, selectedJob }) => {
 }
 
 export const JobsToMatch = ({ userDoc }) => {
-  const [jobs, jobsLoaded, _jr, _sj] = useDocuments({ docs: 'jobs' })
+  const [jobs, jobsLoaded, _jr, _sj] = useDocuments({ docs: 'jobs' , queryConstraints: [where('status', '==', 'matching')]})
   const [devs, devsLoaded, _dr, _sd] = useDocuments({
     docs: 'users',
     queryConstraints: [
@@ -78,7 +78,7 @@ export const JobsToMatch = ({ userDoc }) => {
 
       if (availableStack && targetStack) {
         return (targetStack?.reduce((accumulated, tech) => accumulated + availableStack.indexOf(tech) !== -1, 0) /
-                    targetStack.length) * 100
+          targetStack.length) * 100
       } else {
         return ''
       }
@@ -102,7 +102,7 @@ export const JobsToMatch = ({ userDoc }) => {
     },
     position: {
       tableProps: {
-        columns: ['companyName', 'position', 'salaryMin', 'salaryMax', 'title', 'stack'],
+        columns: ['companyName', 'position', 'avgSalary', 'title', 'stack'],
         data: jobs,
         onSelect: setSelectedJob,
         type: 'position'
@@ -113,10 +113,11 @@ export const JobsToMatch = ({ userDoc }) => {
   }
   const startTable = tableMapping[start]
   const nextTable = tableMapping[next]
+  console.log({ startTable, nextTable })
   return (
     <div className='px-4 py-5 bg-white sm:p-6'>
       <div>
-        <Label htmlFor='startWith' title='Start by Dev or Position?' />
+        <Label htmlFor='startWith' title='Start by dev or position?' />
         <Select
           value={start} options={['dev', 'position']} onChange={({ target: { value } }) => {
             setNext(start)
@@ -150,9 +151,9 @@ export const JobsToMatch = ({ userDoc }) => {
             </div>
             {
               nextTable.entity &&
-                <div className='col-span-6 sm:col-span-3 '>
-                  <DetailedView {...{ ...nextTable }} />
-                </div>
+              <div className='col-span-6 sm:col-span-3 '>
+                <DetailedView {...{ ...nextTable }} />
+              </div>
             }
           </div>
         </>}

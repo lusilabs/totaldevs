@@ -1,7 +1,7 @@
 import { useDocument } from '@/utils/hooks'
 import { SuspensePlaceholders } from '@/components/suspense'
 
-const TotalResume = ({ profileID }) => {
+const TotalResume = ({ profileID, handleCreateJobPosting }) => {
   const [profileDoc, profileLoaded, _pr, _sp] = useDocument({ collection: 'profiles', docID: profileID }, [profileID])
   return (
     <>
@@ -16,6 +16,15 @@ const TotalResume = ({ profileID }) => {
             <ProjectsSection profileDoc={profileDoc} />
             <hr />
             {profileDoc.degrees?.length > 1 && <EducationSection profileDoc={profileDoc} />}
+            {handleCreateJobPosting && <button
+              className='bg-blue-700 text-white hover:bg-blue-500 text-xl font-bold px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 mt-12'
+              type='button'
+              style={{ transition: 'all .50s ease' }}
+              onClick={handleCreateJobPosting}
+            >
+              hire {profileDoc.displayName} &nbsp;
+              <i className='fas fa-arrow-alt-circle-right' />
+            </button>}
           </div>
         </div>}
       {profileLoaded && !profileDoc.isProfileComplete && <h1> profile under construction... </h1>}
